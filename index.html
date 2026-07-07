@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Surface Tension — три индикатора для TradingView: Relief (Market Profile TPO), Meridian (сетапы + Undertow), Contour (6-state аукцион). PineScript v6.">
+<meta property="og:title" content="Surface Tension — Market Profile для TradingView">
+<meta property="og:description" content="Relief, Meridian и Contour — инструменты для чтения рыночной структуры на TradingView.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:image" content="image.png">
+<title>Surface Tension — Market Profile Instruments для TradingView</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- VHS / CRT overlays -->
+<div class="crt-vignette"></div>
+<div class="scanlines"></div>
+<div class="vhs-line"></div>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="wrap">
+    <a class="nav-logo" href="index.html">
+      <div class="nav-logo-mark">
+        <!--
+          7 hexagons honeycomb = silhouette of a large hexagon.
+          On hover morphs to BoC-style 4-in-a-row via CSS translate.
+          flat-top r=6, spacing=9 (slight overlap).
+        -->
+        <svg class="hex-logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+          <g style="isolation:isolate">
+            <polygon id="hh-ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#2E96B0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#5BBFCE" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#154E62" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="nav-logo-lockup">
+        <span class="nav-logo-l1">Surface</span>
+        <span class="nav-logo-l2">Tension</span>
+        <span class="nav-logo-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <ul class="nav-links" id="nav-menu">
+      <li><a href="relief.html">Relief</a></li>
+      <li><a href="meridian.html">Meridian</a></li>
+      <li><a href="contour.html">Contour</a></li>
+      <li><a href="free.html">Free</a></li>
+      <li><a href="pricing.html">Цены</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a class="nav-cta" href="https://ru.tradingview.com/script/zW96uPe2-relief-by-robotlegs/" target="_blank" rel="noopener">TradingView →</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <!-- Honeycomb decoration (Tomorrow's Harvest style) -->
+  <div class="hero-hex-deco" aria-hidden="true">
+    <svg viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- ── OUTER RING: 6 large hexes R=68, dashed, slow CW ── -->
+      <g class="hex-outer" opacity="0.055"
+         stroke="#0D3A4A" stroke-width="1.2" stroke-dasharray="9 6">
+        <polygon points="536,140 502,81 434,81 400,140 434,199 502,199"/>
+        <polygon points="328,20 294,-39 226,-39 192,20 226,79 294,79"/>
+        <polygon points="120,140 86,81 18,81 -16,140 18,199 86,199"/>
+        <polygon points="120,380 86,321 18,321 -16,380 18,439 86,439"/>
+        <polygon points="328,500 294,441 226,441 192,500 226,559 294,559"/>
+        <polygon points="536,380 502,321 434,321 400,380 434,439 502,439"/>
+      </g>
+
+      <!-- ── MIDDLE RING: 6 medium hexes R=52, solid, medium CCW ── -->
+      <g class="hex-mid" opacity="0.1"
+         stroke="#154E62" stroke-width="1.3">
+        <polygon points="462,260 436,215 384,215 358,260 384,305 436,305"/>
+        <polygon points="387,130 361,85 309,85 283,130 309,175 361,175"/>
+        <polygon points="237,130 211,85 159,85 133,130 159,175 211,175"/>
+        <polygon points="162,260 136,215 84,215 58,260 84,305 136,305"/>
+        <polygon points="237,390 211,345 159,345 133,390 159,435 211,435"/>
+        <polygon points="387,390 361,345 309,345 283,390 309,435 361,435"/>
+      </g>
+
+      <!-- ── INNER CLUSTER: 7 small hexes R=38, fast CW, teal fills ── -->
+      <g class="hex-inner" opacity="0.19"
+         stroke="#2E96B0" stroke-width="1.6">
+        <!-- center — strongest fill -->
+        <polygon points="298,260 279,227 241,227 222,260 241,293 279,293"
+          fill="#1A9E78" fill-opacity="0.12"/>
+        <!-- ring — 6 hexes, alternating light fills -->
+        <polygon points="364,260 345,227 307,227 288,260 307,293 345,293"
+          fill="#2E96B0" fill-opacity="0.07"/>
+        <polygon points="331,203 312,170 274,170 255,203 274,236 312,236"/>
+        <polygon points="265,203 246,170 208,170 189,203 208,236 246,236"
+          fill="#2E96B0" fill-opacity="0.07"/>
+        <polygon points="232,260 213,227 175,227 156,260 175,293 213,293"/>
+        <polygon points="265,317 246,284 208,284 189,317 208,350 246,350"
+          fill="#2E96B0" fill-opacity="0.07"/>
+        <polygon points="331,317 312,284 274,284 255,317 274,350 312,350"/>
+      </g>
+
+    </svg>
+  </div>
+  <div class="wrap">
+    <div class="hero-split">
+
+      <!-- LEFT -->
+      <div class="hero-left">
+        <div class="hero-eyebrow">PineScript v6 · TradingView</div>
+        <h1>Read the<br><span class="anim-grad">Market</span><br>Surface</h1>
+        <p class="hero-lead">
+          Три самостоятельных инструмента для TradingView. Relief — Market Profile
+          на 1m с TPO-структурой, сетапами и структурой BOS/CHoCH. Meridian — сетапы структуры
+          и сигнал Undertow с общим Resonance-подтверждением. Contour — 6-состояний аукциона
+          по 30m-периодам с сигналом Undertow, отфильтрованным по состоянию.
+        </p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="#indicators">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Смотреть индикаторы
+          </a>
+          <a class="btn-secondary" href="https://ru.tradingview.com/script/zW96uPe2-relief-by-robotlegs/" target="_blank" rel="noopener">TradingView →</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><span class="val">3</span><span class="lbl">индикатора</span></div>
+          <div class="stat"><span class="val">TPO</span><span class="lbl">Profile</span></div>
+          <div class="stat"><span class="val">Undertow</span><span class="lbl">сигнал</span></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: suite stack -->
+      <div class="hero-right">
+        <div class="suite-stack">
+
+          <a class="suite-card" href="relief.html" style="--sc-c:#C85A20;--sc-spot:rgba(200,90,32,0.06);--sc-border:rgba(200,90,32,0.35);--sc-row-bg:rgba(200,90,32,0.05);--sc-row-border:rgba(200,90,32,0.12)">
+            <div class="sc-header">
+              <span class="sc-hex">
+                <svg width="40" height="14" viewBox="0 6 28 12" xmlns="http://www.w3.org/2000/svg">
+                  <g style="isolation:isolate">
+                    <polygon points="10,7 13,12 10,17 4,17 1,12 4,7"   fill="#9A2808" style="mix-blend-mode:multiply"/>
+                    <polygon points="17,7 20,12 17,17 11,17 8,12 11,7"  fill="#C04820" style="mix-blend-mode:multiply"/>
+                    <polygon points="24,7 27,12 24,17 18,17 15,12 18,7" fill="#E07038" style="mix-blend-mode:multiply"/>
+                  </g>
+                </svg>
+              </span>
+              <span class="sc-name">Relief</span>
+              <span class="sc-tag">TPO · Market Profile</span>
+              <span class="sc-arrow">→</span>
+            </div>
+            <div class="sc-rows">
+              <div class="sc-row"><span class="sc-lbl">Day</span><span class="sc-val" style="color:#C85A20">NV ↑</span></div>
+              <div class="sc-row"><span class="sc-lbl">Bias</span><span class="sc-val" style="color:#1A9E78">▲ L 4/5</span></div>
+              <div class="sc-row"><span class="sc-lbl">Struct</span><span class="sc-val" style="color:#1A9E78">BOS ↑</span></div>
+            </div>
+          </a>
+
+          <a class="suite-card" href="meridian.html" style="--sc-c:#1A9E78;--sc-spot:rgba(26,158,120,0.06);--sc-border:rgba(26,158,120,0.35);--sc-row-bg:rgba(26,158,120,0.05);--sc-row-border:rgba(26,158,120,0.12)">
+            <div class="sc-header">
+              <span class="sc-hex">
+                <svg width="20" height="24" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
+                  <g style="isolation:isolate">
+                    <polygon points="12,10 15,15 12,20 6,20 3,15 6,10"   fill="#083528" style="mix-blend-mode:multiply"/>
+                    <polygon points="22,10 25,15 22,20 16,20 13,15 16,10" fill="#0E6B52" style="mix-blend-mode:multiply"/>
+                    <polygon points="17,1 20,6 17,11 11,11 8,6 11,1"     fill="#1A9E78" style="mix-blend-mode:multiply"/>
+                  </g>
+                </svg>
+              </span>
+              <span class="sc-name">Meridian</span>
+              <span class="sc-tag">Setups · Undertow · Resonance</span>
+              <span class="sc-arrow">→</span>
+            </div>
+            <div class="sc-rows">
+              <div class="sc-row"><span class="sc-lbl">Setup</span><span class="sc-val" style="color:#1A9E78">Fulcrum ↑ Active</span></div>
+              <div class="sc-row"><span class="sc-lbl">Resonance</span><span class="sc-val" style="color:#1A9E78">Fulcrum + Undertow ↑</span></div>
+              <div class="sc-row"><span class="sc-lbl">Undertow HTF</span><span class="sc-val" style="color:#1A9E78">Active</span></div>
+            </div>
+          </a>
+
+          <a class="suite-card" href="contour.html" style="--sc-c:#7B5EA7;--sc-spot:rgba(123,94,167,0.06);--sc-border:rgba(123,94,167,0.35);--sc-row-bg:rgba(123,94,167,0.05);--sc-row-border:rgba(123,94,167,0.12)">
+            <div class="sc-header">
+              <span class="sc-hex">
+                <svg width="20" height="24" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
+                  <g style="isolation:isolate">
+                    <polygon points="17,-1 20,4 17,9 11,9 8,4 11,-1"    fill="#3B1E7A" style="mix-blend-mode:multiply"/>
+                    <polygon points="11,6 14,11 11,16 5,16 2,11 5,6"    fill="#5B3A9A" style="mix-blend-mode:multiply"/>
+                    <polygon points="23,6 26,11 23,16 17,16 14,11 17,6" fill="#7B5EA7" style="mix-blend-mode:multiply"/>
+                    <polygon points="17,13 20,18 17,23 11,23 8,18 11,13" fill="#9B7EC8" style="mix-blend-mode:multiply"/>
+                  </g>
+                </svg>
+              </span>
+              <span class="sc-name">Contour</span>
+              <span class="sc-tag">6-State Auction</span>
+              <span class="sc-arrow">→</span>
+            </div>
+            <div class="sc-rows">
+              <div class="sc-row"><span class="sc-lbl">State</span><span class="sc-val" style="color:#7B5EA7">State I</span></div>
+              <div class="sc-row"><span class="sc-lbl">Fulcrum</span><span class="sc-val" style="color:#7B5EA7">↓ Active</span></div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── INDICATORS ── -->
+<section id="indicators">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-label">indicators</div>
+      <h2 class="section-title">Три индикатора</h2>
+      <p class="section-sub">Каждый решает отдельную задачу и работает самостоятельно. Вместе — полная картина рынка.</p>
+    </div>
+
+    <div class="indicator-grid">
+
+      <div class="ind-card reveal" style="
+        --ind-c: #C85A20;
+        --ind-border: rgba(200,90,32,0.28);
+        --ind-spot: rgba(200,90,32,0.06);
+        --ind-feat-bg: rgba(200,90,32,0.07);
+        --ind-feat-border: rgba(200,90,32,0.18);
+      ">
+        <div class="ind-header">
+          <!-- Relief: 3-hex horizontal row — TPO profile layers -->
+          <svg class="ind-hex-svg" width="46" height="20" viewBox="0 6 28 12" xmlns="http://www.w3.org/2000/svg">
+            <g style="isolation:isolate">
+              <polygon points="10,7 13,12 10,17 4,17 1,12 4,7"   fill="#9A2808" style="mix-blend-mode:multiply"/>
+              <polygon points="17,7 20,12 17,17 11,17 8,12 11,7"  fill="#C04820" style="mix-blend-mode:multiply"/>
+              <polygon points="24,7 27,12 24,17 18,17 15,12 18,7" fill="#E07038" style="mix-blend-mode:multiply"/>
+            </g>
+          </svg>
+          <div class="ind-name">Relief</div>
+        </div>
+        <div class="ind-tagline">Market Profile · 1m · TPO A–Z · Zigzag</div>
+        <p class="ind-desc">
+          Полноценный Market Profile на 1m. TPO-профиль из 30-минутных периодов A–Z,
+          POC / VA по алгоритму TV TPO, nPOC до 60 дней. Raid, EQH/EQL, IB с расширениями и OD,
+          балльный Bias, инфо-панель, Zigzag + BOS + CHoCH.
+        </p>
+        <div class="ind-feats">
+          <span class="ind-feat">POC / VAH / VAL</span>
+          <span class="ind-feat">TPO пресеты FDAX/NQ/YM</span>
+          <span class="ind-feat">Raid G / Raid S · HL Sweep</span>
+          <span class="ind-feat">IB Ext 0.5–2× · A-HL · OD</span>
+          <span class="ind-feat">Bias ▲ L n/5 · VWAP ★</span>
+          <span class="ind-feat">Инфо-панель</span>
+          <span class="ind-feat">EQH / EQL + магнит</span>
+          <span class="ind-feat">Zigzag + BOS + CHoCH</span>
+        </div>
+        <a class="ind-link" href="relief.html">
+          Подробнее
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <div class="ind-card reveal" style="
+        --ind-c: #1A9E78;
+        --ind-border: rgba(26,158,120,0.28);
+        --ind-spot: rgba(26,158,120,0.06);
+        --ind-feat-bg: rgba(26,158,120,0.07);
+        --ind-feat-border: rgba(26,158,120,0.18);
+        transition-delay: 0.08s;
+      ">
+        <div class="ind-header">
+          <!-- Meridian: 3-hex upright triangle — shadow below, signal emerging top -->
+          <svg class="ind-hex-svg" width="35" height="40" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
+            <g style="isolation:isolate">
+              <polygon points="12,10 15,15 12,20 6,20 3,15 6,10"   fill="#083528" style="mix-blend-mode:multiply"/>
+              <polygon points="22,10 25,15 22,20 16,20 13,15 16,10" fill="#0E6B52" style="mix-blend-mode:multiply"/>
+              <polygon points="17,1 20,6 17,11 11,11 8,6 11,1"     fill="#1A9E78" style="mix-blend-mode:multiply"/>
+            </g>
+          </svg>
+          <div class="ind-name">Meridian</div>
+        </div>
+        <div class="ind-tagline">Сетапы структуры + Undertow · Resonance</div>
+        <p class="ind-desc">
+          Четыре паттерна структуры (Transit, Fulcrum, Needle, Volatile Bar) вместе с фирменным
+          сигнальным слоем Undertow в одном движке. Когда сетап и Undertow совпадают в общем окне —
+          Resonance с усиленной меткой. Плюс зоны Undertow старшего таймфрейма и Zigzag с BOS.
+        </p>
+        <div class="ind-feats">
+          <span class="ind-feat">Transit · Fulcrum · Needle · VB</span>
+          <span class="ind-feat">Undertow · Standard/Precision</span>
+          <span class="ind-feat">Resonance-подтверждение</span>
+          <span class="ind-feat">Undertow HTF зоны</span>
+          <span class="ind-feat">Zigzag + BOS</span>
+        </div>
+        <a class="ind-link" href="meridian.html">
+          Подробнее
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <div class="ind-card reveal" style="
+        --ind-c: #7B5EA7;
+        --ind-border: rgba(123,94,167,0.28);
+        --ind-spot: rgba(123,94,167,0.06);
+        --ind-feat-bg: rgba(123,94,167,0.07);
+        --ind-feat-border: rgba(123,94,167,0.18);
+        transition-delay: 0.14s;
+      ">
+        <div class="ind-header">
+          <!-- Contour: 4-hex diamond — crystal lattice, structural pattern -->
+          <svg class="ind-hex-svg" width="35" height="40" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
+            <g style="isolation:isolate">
+              <polygon points="17,-1 20,4 17,9 11,9 8,4 11,-1"    fill="#3B1E7A" style="mix-blend-mode:multiply"/>
+              <polygon points="11,6 14,11 11,16 5,16 2,11 5,6"    fill="#5B3A9A" style="mix-blend-mode:multiply"/>
+              <polygon points="23,6 26,11 23,16 17,16 14,11 17,6" fill="#7B5EA7" style="mix-blend-mode:multiply"/>
+              <polygon points="17,13 20,18 17,23 11,23 8,18 11,13" fill="#9B7EC8" style="mix-blend-mode:multiply"/>
+            </g>
+          </svg>
+          <div class="ind-name">Contour</div>
+        </div>
+        <div class="ind-tagline">6-state аукцион по 30m-периодам · Undertow</div>
+        <p class="ind-desc">
+          Классифицирует каждый закрытый 30m-период по собственной 6-ступенчатой шкале
+          аукциона и пропускает сигнал Undertow только через разрешённые состояния.
+          Плюс Fulcrum и фильтр ликвидности. Пара к Relief.
+        </p>
+        <div class="ind-feats">
+          <span class="ind-feat">6 состояний аукциона</span>
+          <span class="ind-feat">Undertow · state-filtered</span>
+          <span class="ind-feat">Liquidity bypass</span>
+          <span class="ind-feat">Fulcrum</span>
+          <span class="ind-feat">Standard · Precision</span>
+        </div>
+        <a class="ind-link" href="contour.html">
+          Подробнее
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── TPO PERIODS ── -->
+<section class="tpo-section">
+  <div class="wrap">
+    <div class="tpo-card reveal">
+      <div class="tpo-strip" id="tpoPeriods"></div>
+      <div class="tpo-body">
+        <div class="tpo-head">
+          <div class="tpo-free-badge">
+            <span class="tpo-free-dot"></span>
+            Бесплатно
+          </div>
+          <a class="tpo-link" href="https://ru.tradingview.com/script/iEBE9mSm-tpo-periods/" target="_blank" rel="noopener">
+            TradingView
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+        <div class="tpo-name">TPO Periods</div>
+        <p class="tpo-desc">Публичный индикатор — только суть TPO без лишних модулей. Для тех, кто хочет начать работать с Market Profile.</p>
+        <ul class="tpo-features">
+          <li>Периоды A–Z · 30 мин</li>
+          <li>Цветовая маркировка</li>
+          <li>Любой инструмент</li>
+          <li>Без Premium</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── FAQ ── -->
+<section id="faq">
+  <div class="wrap faq-wrap" style="padding-top:80px">
+
+    <div class="reveal" style="margin-bottom:48px">
+      <div class="section-label">faq</div>
+      <h2 class="section-title">Частые вопросы</h2>
+      <p class="section-sub">Ответы по работе с индикаторами и условиям доступа.</p>
+    </div>
+
+    <div class="faq-section-block reveal">
+      <div class="faq-section-header">
+        <span class="faq-section-tag tag-blue">начало работы</span>
+        <div class="faq-section-line"></div>
+      </div>
+      <div class="faq-grid" style="--item-ac:#C85A20;--item-border:rgba(200,90,32,0.12);--item-border-open:rgba(200,90,32,0.28)">
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Какой таймфрейм нужен и почему именно 1m?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p>Relief работает только на <strong>1-минутном</strong> графике. TPO-периоды длятся 30 минут каждый, и для точного построения кубиков нужны 1m-свечи. На более старших ТФ кубики будут неточными или не появятся вовсе.</p>
+            <p>Убедись, что в параметрах <code>Старт сессии</code> указано правильное время для твоего инструмента — например, 8:00 CET для GER40 или 15:30 CET для NY-сессии.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Что такое «Ticks per row» и как его настроить?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p>Параметр определяет размер одного TPO-ряда в тиках. Он должен совпадать с настройкой <strong>«Ticks per row»</strong> в стандартном TPO-индикаторе TradingView, чтобы профили были согласованы.</p>
+            <p>Как проверить: открой стандартный TPO TradingView на 1m, посмотри его «Ticks per row» и выставь то же значение в Relief.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Нужна ли подписка TradingView Premium?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p><strong>Да, для части функций — обязательно.</strong> Данные индексов (GER40, S&amp;P 500 и др.) доступны только на Premium+. Режим Precision сигнала Undertow в Meridian использует внутренние API TradingView для младших таймфреймов и bid/ask — нужен Premium или выше.</p>
+            <p>Основной TPO-профиль Relief и Contour работают на любом плане. Ограничение бесплатного плана — глубина истории 1m-баров (~1 500 свечей).</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Как получить доступ к индикаторам?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p>Индикаторы закрытые. Чтобы получить доступ — свяжись с автором.</p>
+          </div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="faq-section-block reveal">
+      <div class="faq-section-header">
+        <span class="faq-section-tag tag-teal">уровни и зоны</span>
+        <div class="faq-section-line"></div>
+      </div>
+      <div class="faq-grid" style="--item-ac:#1A9E78;--item-border:rgba(26,158,120,0.12);--item-border-open:rgba(26,158,120,0.28)">
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Что такое Poor High / Poor Low?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p><strong>Poor High/Low</strong> — экстремум сессии, на котором присутствует менее двух TPO-периодов. Признак незавершённого аукциона: рынок не успел «протестировать» уровень.</p>
+            <p>Такие зоны часто переписываются в будущем — цена возвращается завершить аукцион. Используй как цель или зону разворота.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>nPOC — что это и 3 состояния уровня?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p><strong>nPOC</strong> (naked Point of Control) — POC предыдущего дня, до которого цена ещё не добралась. Сильный магнит. Три состояния:</p>
+            <p><span class="chip chip-blue">синий</span> — нетронутый, продолжает рисоваться вправо.<br>
+            <span class="chip chip-red">красный</span> — тест фитилём, остаётся активным.<br>
+            <span class="chip chip-gray">серый</span> — закрыт телом: заморожен на баре пробоя.</p>
+            <p>Глубина задаётся в настройках (по умолчанию 20 дней, максимум 60).</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Как читать pVAH / pVAL и тип открытия?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p><strong>pVAH</strong> и <strong>pVAL</strong> — границы Value Area вчерашнего дня (зона 68% объёма).</p>
+            <p><span class="chip chip-green">Outside above</span> — открытие выше pVAH: бычий контекст.<br>
+            <span class="chip chip-red">Outside below</span> — ниже pVAL: медвежий контекст.<br>
+            <span class="chip chip-amber">Inside (danger)</span> — внутри VA: двусторонний аукцион, осторожнее.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Что такое EQH / EQL и магнит 🧲?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p><strong>Equal Highs / Equal Lows</strong> — уровни, куда цена касалась несколько раз без пробоя. За каждым стоят стоп-лоссы — рынок часто выбивает их перед разворотом.</p>
+            <p>Когда несколько EQ-уровней кластеризуются, индикатор ставит метку <strong>🧲</strong> — зона повышенного притяжения.</p>
+          </div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="faq-section-block reveal">
+      <div class="faq-section-header">
+        <span class="faq-section-tag tag-amber">VWAP и сигналы</span>
+        <div class="faq-section-line"></div>
+      </div>
+      <div class="faq-grid" style="--item-ac:#B8861E;--item-border:rgba(184,134,30,0.12);--item-border-open:rgba(184,134,30,0.28)">
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Что означает ★ на графике Relief?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p><span class="chip chip-amber">★ оранжевая</span> — первый тест VWAP за сессию фитилём после периода B. Самый значимый тест: рынок впервые возвращается к session VWAP после формирования bias. Остальные тесты VWAP — обычные кружки.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Что такое Raid G и Raid S? В чём разница?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p>Оба сигнала — снятие ликвидности с экстремумов предыдущего периода.</p>
+            <p><span class="chip chip-green">Raid G</span> (Grab) — цена вышла за уровень и <strong>быстро вернулась</strong>. Ложный пробой, вероятный разворот.</p>
+            <p><span class="chip chip-red">Raid S</span> (Sweep) — цена <strong>задержалась за уровнем</strong> N баров. Возможно продолжение.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Что означает HL Sweep (▲×3 и т.п.)?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p><strong>HL Sweep</strong> появляется после серии N периодов с одинаковым направлением (▲ или ▼), когда следующий период выходит за последний экстремум и быстро возвращается.</p>
+            <p>Число в метке — длина серии (▲×3 = три периода ▲). Признак истощения тренда. Чем длиннее серия — тем значимее сигнал.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Как работает Bias на периоде B?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p>В конце периода B Relief считает балльный bias ▲ L n/5 или ▼ S n/5:</p>
+            <p><span class="chip chip-green">▲ L n/5</span> — бычий уклон: close выше VWAP плюс до 4 дополнительных баллов (направление A/B, пробой IBH/IBL, позиция vs IB Mid).<br>
+            <span class="chip chip-red">▼ S n/5</span> — медвежий уклон по тем же критериям.</p>
+            <p>Bias — самостоятельная метка на графике, контекст для входа вместе с другими сигналами (Raid, BOS/CHoCH). В таблицу инфо-панели не выводится.</p>
+          </div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="faq-section-block reveal">
+      <div class="faq-section-header">
+        <span class="faq-section-tag tag-purple">дополнительно</span>
+        <div class="faq-section-line"></div>
+      </div>
+      <div class="faq-grid" style="--item-ac:#7B5EA7;--item-border:rgba(123,94,167,0.12);--item-border-open:rgba(123,94,167,0.28)">
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Можно ли использовать индикаторы на других инструментах кроме GER40?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p>Да. Индикаторы работают на любом инструменте TradingView. Главное — правильно настроить:</p>
+            <p>1. <strong>Старт сессии</strong> (час и минуты CET) под твой рынок.<br>
+            2. <strong>Ticks per row</strong> — согласовать со стандартным TPO TV.<br>
+            3. <strong>VA %</strong> (обычно 68% — стандарт Market Profile).</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Сколько периодов хранится в истории?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p>nPOC хранятся до 60 дней (задаётся в настройках). Ограничение — глубина 1m-данных TradingView. На бесплатном плане это 1 500–5 000 баров. Если ранние периоды не отображаются — это ограничение платформы, не индикатора.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Почему некоторые сигналы исчезают через несколько свечей?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p>Это механизм <strong>подтверждения Raid</strong>. После появления Grab или Sweep индикатор ждёт N свечей (по умолчанию 3). Если цена не развернулась — сигнал признаётся ложным и удаляется.</p>
+            <p>Чтобы отключить — выставь параметр подтверждения в 0.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggle(this)">
+            <div class="faq-q-left"><div class="faq-cat-dot"></div>
+            <span>Можно ли торговать только по одному сигналу?</span></div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">
+            <p>Технически — можно. Но без понимания контекста (тип открытия, Bias, VWAP) эффективность будет значительно ниже.</p>
+            <p>Самые сильные сетапы появляются при совпадении нескольких сигналов: например, Raid G в сторону Bias на уровне pVAH при Outside-открытии.</p>
+          </div></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="wrap">
+    <p>Surface Tension · PineScript v6</p>
+    <div class="footer-links">
+      <a href="pricing.html">Цены</a>
+      <a href="about.html">О нас</a>
+      <a href="legacy.html">Архив</a>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+</body>
+</html>

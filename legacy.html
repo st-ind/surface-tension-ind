@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Архив Surface Tension — предыдущие версии индикаторов: Penumbra и Scaffold. Их функции продолжают жить в Meridian и Contour.">
+<title>Архив — Surface Tension</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.legacy-hero { padding: 140px 0 40px; }
+.legacy-map {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  font-family: var(--mono); font-size: 0.85rem; color: var(--muted);
+  margin-top: 28px; padding: 16px 18px; border-radius: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+}
+.legacy-map .arrow { color: var(--dim); }
+.legacy-map strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="crt-vignette"></div>
+<div class="scanlines"></div>
+<div class="vhs-line"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="wrap">
+    <a class="nav-logo" href="index.html">
+      <div class="nav-logo-mark">
+        <svg class="hex-logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+          <g style="isolation:isolate">
+            <polygon id="hh-ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#2E96B0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#5BBFCE" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#154E62" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="nav-logo-lockup">
+        <span class="nav-logo-l1">Surface</span>
+        <span class="nav-logo-l2">Tension</span>
+        <span class="nav-logo-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <ul class="nav-links" id="nav-menu">
+      <li><a href="relief.html">Relief</a></li>
+      <li><a href="meridian.html">Meridian</a></li>
+      <li><a href="contour.html">Contour</a></li>
+      <li><a class="active" href="legacy.html">Архив</a></li>
+      <li><a href="free.html">Free</a></li>
+      <li><a href="pricing.html">Цены</a></li>
+      <li><a class="nav-cta" href="https://ru.tradingview.com/script/zW96uPe2-relief-by-robotlegs/" target="_blank" rel="noopener">TradingView →</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="legacy-hero">
+  <div class="wrap">
+    <div class="hero-eyebrow">Archive · Не развиваются</div>
+    <h1 style="margin-top:16px">Предыдущие<br><span class="anim-grad">версии</span></h1>
+    <p class="hero-lead" style="max-width:640px;margin-top:20px">
+      Penumbra и Scaffold остаются рабочими и доступны на TradingView, но их функции
+      перенесены и развиваются дальше в составе новых индикаторов — Meridian и Contour.
+      Держим страницы здесь для тех, кто уже на них подключён.
+    </p>
+    <div class="legacy-map">
+      <span>Penumbra</span><span class="arrow">→</span><strong>Meridian</strong>
+      <span style="width:1px;height:16px;background:var(--border)"></span>
+      <span>Scaffold</span><span class="arrow">→</span><strong>Contour</strong>
+    </div>
+  </div>
+</section>
+
+<!-- ── LEGACY CARDS ── -->
+<section id="legacy-indicators">
+  <div class="wrap">
+    <div class="indicator-grid">
+
+      <div class="ind-card reveal" style="
+        --ind-c: #1A9E78;
+        --ind-border: rgba(26,158,120,0.28);
+        --ind-spot: rgba(26,158,120,0.06);
+        --ind-feat-bg: rgba(26,158,120,0.07);
+        --ind-feat-border: rgba(26,158,120,0.18);
+      ">
+        <div class="ind-header">
+          <svg class="ind-hex-svg" width="35" height="40" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
+            <g style="isolation:isolate">
+              <polygon points="12,10 15,15 12,20 6,20 3,15 6,10"   fill="#083528" style="mix-blend-mode:multiply"/>
+              <polygon points="22,10 25,15 22,20 16,20 13,15 16,10" fill="#0E6B52" style="mix-blend-mode:multiply"/>
+              <polygon points="17,1 20,6 17,11 11,11 8,6 11,1"     fill="#1A9E78" style="mix-blend-mode:multiply"/>
+            </g>
+          </svg>
+          <div class="ind-name">Penumbra</div>
+        </div>
+        <div class="ind-tagline">Ранняя версия сигнального слоя</div>
+        <p class="ind-desc">
+          Находит скрытый дисбаланс в структуре бара и подтверждает его собственной зоной на следующих барах.
+          Логика легла в основу сигнального движка Undertow в составе Meridian.
+        </p>
+        <a class="ind-link" href="legacy/penumbra.html">
+          Открыть страницу
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <div class="ind-card reveal" style="
+        --ind-c: #7B5EA7;
+        --ind-border: rgba(123,94,167,0.28);
+        --ind-spot: rgba(123,94,167,0.06);
+        --ind-feat-bg: rgba(123,94,167,0.07);
+        --ind-feat-border: rgba(123,94,167,0.18);
+        transition-delay: 0.08s;
+      ">
+        <div class="ind-header">
+          <svg class="ind-hex-svg" width="35" height="40" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
+            <g style="isolation:isolate">
+              <polygon points="17,-1 20,4 17,9 11,9 8,4 11,-1"    fill="#3B1E7A" style="mix-blend-mode:multiply"/>
+              <polygon points="11,6 14,11 11,16 5,16 2,11 5,6"    fill="#5B3A9A" style="mix-blend-mode:multiply"/>
+              <polygon points="23,6 26,11 23,16 17,16 14,11 17,6" fill="#7B5EA7" style="mix-blend-mode:multiply"/>
+              <polygon points="17,13 20,18 17,23 11,23 8,18 11,13" fill="#9B7EC8" style="mix-blend-mode:multiply"/>
+            </g>
+          </svg>
+          <div class="ind-name">Scaffold</div>
+        </div>
+        <div class="ind-tagline">4 паттерна разворота · любой таймфрейм</div>
+        <p class="ind-desc">
+          Четыре независимых паттерна по структуре свечей: Transit, Fulcrum, Needle и Volatile Bar.
+          Fulcrum и движок распознавания легли в основу Contour.
+        </p>
+        <a class="ind-link" href="legacy/scaffold.html">
+          Открыть страницу
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="wrap">
+    <p>Surface Tension · PineScript v6</p>
+    <div class="footer-links">
+      <a href="pricing.html">Цены</a>
+      <a href="about.html">О нас</a>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+</body>
+</html>

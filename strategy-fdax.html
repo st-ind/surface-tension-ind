@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Пошаговая торговая методология FDAX (GER40) на TPO / Market Profile с индикатором Relief — от overnight-контекста до входа и управления позицией.">
+<title>Стратегия FDAX — TPO / Market Profile · Surface Tension</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* ── STRATEGY DOC PAGE ── */
+.nav-links a.active { color: var(--text); }
+
+/* Copied table primitives (see relief.html) */
+.settings-table-wrap { overflow-x: auto; margin-top: 0; border-radius: var(--r); border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(30,20,10,0.05); }
+.settings-table { width: 100%; border-collapse: collapse; background: var(--surface2); min-width: 480px; }
+.settings-table th { text-align: left; padding: 11px 18px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); border-bottom: 1px solid var(--border); background: var(--bg2); font-family: var(--mono); }
+.settings-table td { padding: 11px 18px; font-size: 0.84rem; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: top; transition: background 0.15s; }
+.settings-table tr:last-child td { border-bottom: none; }
+.settings-table tr:hover td { background: rgba(30,20,10,0.025); }
+.settings-table td:first-child { color: var(--text); font-family: var(--mono); font-size: 0.82rem; font-weight: 500; }
+.settings-table .def { font-family: var(--mono); color: var(--orange); font-size: 0.8rem; font-weight: 500; }
+.sg-row td { padding: 18px 18px 8px; background: rgba(30,20,10,0.03); border-bottom: 1px solid var(--border); }
+.sg-row:hover td { background: rgba(30,20,10,0.03) !important; }
+.sg-tag { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; border: 1px solid; }
+.tag-red { color: var(--red); border-color: rgba(200,64,64,0.28); background: rgba(200,64,64,0.06); }
+
+/* Copied feat-card primitive (see relief.html) */
+.feat-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 22px 22px; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; box-shadow: 0 1px 6px rgba(30,20,10,0.04); }
+.feat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ac, rgba(200,90,32,0.45)), transparent); }
+.feat-card::after  { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), var(--ac-spot, rgba(200,90,32,0.06)) 0%, transparent 65%); pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+.feat-card:hover::after { opacity: 1; }
+.feat-card:hover { border-color: var(--ac-border, rgba(200,90,32,0.22)); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(30,20,10,0.09); }
+.feat-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; margin-bottom: 12px; }
+.feat-card h3 { font-family: var(--mono); font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+.feat-card p  { font-size: 0.81rem; color: var(--muted); line-height: 1.6; }
+.ic-b { background: rgba(46,150,176,0.10); }
+.ic-p { background: rgba(123,94,167,0.10); }
+.ic-t { background: rgba(26,158,120,0.10); }
+.ic-o { background: rgba(184,134,30,0.10); }
+.ic-r { background: rgba(200,64,64,0.10);  }
+.ic-gray { background: rgba(30,20,10,0.06); }
+
+/* ── Doc hero ── */
+.doc-hero { padding: 132px 0 32px; }
+.doc-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(2rem, 4vw, 2.7rem); letter-spacing: 0.02em; margin-bottom: 14px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.doc-hero-badge { font-family: var(--mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; color: var(--orange); background: rgba(200,90,32,0.08); border: 1px solid rgba(200,90,32,0.22); padding: 5px 12px; border-radius: 100px; vertical-align: middle; }
+.doc-hero p.lead { font-size: 1rem; color: var(--muted); max-width: 700px; line-height: 1.75; }
+.doc-hero-meta { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 26px; }
+
+.term-footnotes { margin: 20px 0 0; padding: 16px 18px; background: rgba(30,20,10,0.04); border: 1px solid var(--border); border-radius: var(--r); font-size: 0.82rem; color: var(--muted); line-height: 1.65; }
+.term-footnotes dt { font-family: var(--mono); font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.term-footnotes dt a { color: inherit; text-decoration: none; }
+.term-footnotes dd { margin: 0; }
+.term-note { color: inherit; text-decoration: none; border-bottom: 1px dashed rgba(30,20,10,0.28); cursor: help; }
+.term-note:hover { color: var(--text); border-bottom-color: var(--orange); }
+
+/* ── Doc grid / sidebar ── */
+.doc-wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+.doc-grid { display: grid; grid-template-columns: 216px 1fr; gap: 52px; align-items: start; padding-bottom: 110px; }
+
+.doc-sidebar { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 1px; width: 216px; flex-shrink: 0; max-height: calc(100vh - 108px); overflow-y: auto; padding-right: 6px; }
+.doc-sidebar-label { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; padding: 0 12px 10px; }
+.doc-sidebar a { font-size: 0.82rem; font-weight: 500; color: var(--muted); padding: 8px 12px; border-radius: 8px; text-decoration: none; border-left: 2px solid transparent; transition: color 0.15s, background 0.15s, border-color 0.15s; }
+.doc-sidebar a:hover { color: var(--text); background: var(--border); }
+.doc-sidebar a.active { color: var(--orange); border-left-color: var(--orange); background: rgba(200,90,32,0.07); font-weight: 600; }
+
+@media (max-width: 980px) {
+  .doc-grid { grid-template-columns: 1fr; }
+  .doc-sidebar { display: none; }
+}
+
+.doc-content { min-width: 0; }
+.doc-content [id] { scroll-margin-top: 92px; }
+.doc-section { margin-bottom: 68px; }
+.doc-section:last-child { margin-bottom: 0; }
+.doc-section-head { margin-bottom: 22px; }
+.doc-section-num { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--orange); letter-spacing: 0.1em; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 8px; }
+.doc-section-num::before { content: ''; width: 16px; height: 1px; background: var(--orange); }
+.doc-section-head h2 { font-family: var(--display); font-weight: 400; font-size: 1.55rem; letter-spacing: 0.02em; margin-bottom: 8px; }
+.doc-section-head p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; max-width: 660px; }
+.doc-sub-h { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--text); margin: 26px 0 4px; }
+.doc-sub-h:first-child { margin-top: 0; }
+
+/* ── Timeline ── */
+.tl-list { display: flex; flex-direction: column; margin: 8px 0 0; }
+.tl-item { display: grid; grid-template-columns: 112px 22px 1fr; gap: 0 16px; }
+.tl-time { font-family: var(--mono); font-size: 0.75rem; font-weight: 600; color: var(--text); padding-top: 14px; }
+.tl-dot-col { display: flex; flex-direction: column; align-items: center; }
+.tl-dot { width: 11px; height: 11px; border-radius: 50%; margin-top: 18px; flex-shrink: 0; background: var(--seg-c, var(--orange)); box-shadow: 0 0 0 4px var(--seg-bg, rgba(200,90,32,0.12)); }
+.tl-line { flex: 1; width: 2px; background: var(--border2); margin: 4px 0; }
+.tl-item:last-child .tl-line { display: none; }
+.tl-body { background: var(--seg-bg, rgba(200,90,32,0.05)); border: 1px solid var(--seg-border, rgba(200,90,32,0.16)); border-radius: 12px; padding: 12px 16px; margin: 10px 0 16px; }
+.tl-label { font-weight: 600; font-size: 0.9rem; color: var(--text); margin-bottom: 3px; }
+.tl-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+/* ── Checklist cards ── */
+.check-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 28px 0 0; }
+@media (max-width: 860px) { .check-grid { grid-template-columns: 1fr; } }
+.check-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 2px; padding: 0; }
+.check-list li { position: relative; padding-left: 22px; font-size: 0.83rem; color: var(--muted); line-height: 1.55; }
+.check-list li::before { content: '☐'; position: absolute; left: 0; top: 0; color: var(--ac-icon, var(--orange)); font-size: 0.9rem; line-height: 1.55; }
+.check-list li strong { color: var(--text); }
+
+/* ── OD / Bias cards ── */
+.od-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 28px 0 0; }
+@media (max-width: 640px) { .od-grid { grid-template-columns: 1fr; } }
+.od-card { border-radius: var(--r); padding: 20px 22px; border: 1px solid; box-shadow: 0 1px 6px rgba(30,20,10,0.04); }
+.od-long  { background: rgba(26,158,120,0.05); border-color: rgba(26,158,120,0.22); }
+.od-short { background: rgba(200,64,64,0.05); border-color: rgba(200,64,64,0.22); }
+.od-card h4 { font-family: var(--mono); font-size: 0.92rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.od-long h4 { color: var(--teal); }
+.od-short h4 { color: var(--red); }
+.od-card ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.od-card li { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
+.od-card li strong { color: var(--text); }
+
+/* ── Setup blocks ── */
+.setup-block { border: 1px solid var(--border); border-radius: 18px; overflow: hidden; margin: 24px 0; box-shadow: 0 2px 14px rgba(30,20,10,0.06); background: var(--surface2); }
+.setup-head { padding: 16px 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--bg2); border-bottom: 1px solid var(--border); }
+.setup-head h3 { font-family: var(--display); font-weight: 400; font-size: 1.1rem; letter-spacing: 0.02em; }
+.setup-head .sg-tag { margin-left: auto; }
+.setup-body { padding: 22px 24px; }
+.step-list { list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 14px; width: 100%; margin: 0; padding: 0; }
+.step-list li { counter-increment: step; position: relative; padding-left: 40px; font-size: 0.86rem; color: var(--muted); line-height: 1.65; }
+.step-list li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 8px; background: rgba(200,90,32,0.1); color: var(--orange); font-family: var(--mono); font-weight: 700; font-size: 0.76rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-list li strong { color: var(--text); }
+
+/* ── Level cards ── */
+.level-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin: 28px 0 0; }
+
+/* ── Exit / info lists ── */
+.exit-list, .info-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.exit-list li, .info-list li { font-size: 0.85rem; color: var(--muted); line-height: 1.6; display: flex; gap: 10px; }
+.exit-list li::before { content: '⛔'; flex-shrink: 0; }
+.info-list li::before { content: '▸'; color: var(--orange); flex-shrink: 0; font-weight: 700; }
+.exit-list li strong, .info-list li strong { color: var(--text); }
+
+/* ── Day type cards ── */
+.daytype-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 28px 0 0; }
+@media (max-width: 860px) { .daytype-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .daytype-grid { grid-template-columns: 1fr; } }
+.daytype-card { border-radius: var(--r); padding: 18px 20px; border: 1px solid; box-shadow: 0 1px 6px rgba(30,20,10,0.04); }
+.dt-badge { font-family: var(--mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; display: inline-block; margin-bottom: 12px; }
+.daytype-card h4 { font-family: var(--display); font-weight: 400; font-size: 1.05rem; margin-bottom: 4px; }
+.daytype-card .dt-row-lbl { font-family: var(--mono); font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--dim); margin-bottom: 3px; margin-top: 12px; }
+.daytype-card .dt-row-lbl:first-of-type { margin-top: 12px; }
+.daytype-card p { font-size: 0.79rem; color: var(--muted); line-height: 1.55; }
+.dt-trend   { background: rgba(26,158,120,0.055); border-color: rgba(26,158,120,0.25); }
+.dt-trend .dt-badge { background: rgba(26,158,120,0.16); color: var(--teal); }
+.dt-normal  { background: rgba(46,150,176,0.055); border-color: rgba(46,150,176,0.25); }
+.dt-normal .dt-badge { background: rgba(46,150,176,0.16); color: #2E8CB8; }
+.dt-neutral { background: rgba(30,20,10,0.035); border-color: var(--border2); }
+.dt-neutral .dt-badge { background: rgba(30,20,10,0.08); color: var(--muted); }
+.dt-orr     { background: rgba(184,134,30,0.06); border-color: rgba(184,134,30,0.28); }
+.dt-orr .dt-badge { background: rgba(184,134,30,0.17); color: var(--amber); }
+
+/* ── Warning block ── */
+.warn-block { background: rgba(200,64,64,0.05); border: 1px solid rgba(200,64,64,0.25); border-radius: var(--r); padding: 22px 24px; margin: 28px 0 0; }
+.warn-block h3 { font-family: var(--mono); color: var(--red); font-size: 0.92rem; margin-bottom: 14px; display: flex; align-items: center; gap: 9px; }
+.warn-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+.warn-list li { font-size: 0.85rem; color: var(--muted); line-height: 1.65; display: flex; gap: 11px; }
+.warn-list li::before { content: '⚠️'; flex-shrink: 0; }
+.warn-list li strong { color: var(--text); }
+
+@media (hover: none) { .feat-card:hover { transform: none; } }
+</style>
+</head>
+<body>
+
+<div class="crt-vignette"></div>
+<div class="scanlines"></div>
+<div class="vhs-line"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="wrap">
+    <a class="nav-logo" href="index.html">
+      <div class="nav-logo-mark">
+        <svg class="hex-logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+          <g style="isolation:isolate">
+            <polygon id="hh-ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#2E96B0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#5BBFCE" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#154E62" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="nav-logo-lockup">
+        <span class="nav-logo-l1">Surface</span>
+        <span class="nav-logo-l2">Tension</span>
+        <span class="nav-logo-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <ul class="nav-links" id="nav-menu">
+      <li><a class="nav-link" href="index.html">← Индикаторы</a></li>
+      <li><a class="nav-link active" href="strategy-fdax.html">FDAX</a></li>
+      <li><a class="nav-link" href="strategy-nq.html">NQ</a></li>
+      <li class="nav-divider" aria-hidden="true"></li>
+      <li class="nav-dropdown">
+        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-haspopup="true">
+          На странице <span class="nav-drop-chevron" aria-hidden="true">▾</span>
+        </button>
+        <ul class="nav-drop-menu">
+          <li><a href="#overview">Обзор инструмента</a></li>
+          <li><a href="#schedule">Расписание</a></li>
+          <li><a href="#prep">Подготовка</a></li>
+          <li><a href="#period-a">Период A</a></li>
+          <li><a href="#period-b">Период B</a></li>
+          <li><a href="#period-c">Период C</a></li>
+          <li><a href="#signal">◆ + FVG</a></li>
+          <li><a href="#management">Управление позицией</a></li>
+          <li><a href="#second-window">Второе окно</a></li>
+          <li><a href="#day-types">Типы дней</a></li>
+          <li><a href="#avoid">Когда не торговать</a></li>
+        </ul>
+      </li>
+      <li><a class="nav-cta" href="relief.html">Relief →</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="doc-hero">
+  <div class="wrap">
+    <div class="hero-eyebrow">Торговая методология · TPO / Market Profile</div>
+    <h1>Стратегия FDAX <span class="doc-hero-badge">GER40 · Eurex</span></h1>
+    <p class="lead">
+      Пошаговая методология торговли FDAX по TPO/Market Profile на индикаторе
+      <a href="relief.html" style="color:var(--orange);font-weight:600">Relief</a> —
+      от анализа <a href="#fn-overnight" class="term-note" title="Overnight — торговля до RTH Open">overnight</a>-контекста до входа по сигналу ◆ + FVG, управления позицией и второго окна US Open overlap.
+      Практический разбор без воды: что смотреть, когда входить, где стоп и цель.
+    </p>
+    <div class="doc-hero-meta">
+      <div class="stat"><span class="val">80–200</span><span class="lbl">ATR, пунктов</span></div>
+      <div class="stat"><span class="val">09:00</span><span class="lbl">старт сессии CET</span></div>
+      <div class="stat"><span class="val">€25</span><span class="lbl">1 пункт</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DOC BODY ── -->
+<div class="doc-wrap">
+  <div class="doc-grid">
+
+    <!-- SIDEBAR -->
+    <aside class="doc-sidebar" id="docSidebar">
+      <div class="doc-sidebar-label">Разделы</div>
+      <a href="#overview">1. Обзор инструмента</a>
+      <a href="#schedule">2. Расписание сессии</a>
+      <a href="#prep">3. Подготовка до открытия</a>
+      <a href="#period-a">4. Период A</a>
+      <a href="#period-b">5. Период B</a>
+      <a href="#period-c">6. Период C — окно</a>
+      <a href="#signal">7. ◆ + FVG</a>
+      <a href="#management">8. Управление позицией</a>
+      <a href="#second-window">9. Второе окно</a>
+      <a href="#day-types">10. Типы дней</a>
+      <a href="#avoid">11. Когда не торговать</a>
+    </aside>
+
+    <!-- CONTENT -->
+    <div class="doc-content">
+
+      <!-- 1. OVERVIEW -->
+      <div class="doc-section" id="overview">
+        <div class="doc-section-head">
+          <span class="doc-section-num">01 / обзор</span>
+          <h2>Обзор инструмента</h2>
+          <p>Параметры контракта, которые нужно держать в голове перед тем как ставить стоп в пунктах.</p>
+        </div>
+        <div class="settings-table-wrap">
+          <table class="settings-table">
+            <thead><tr><th>Параметр</th><th>Значение</th></tr></thead>
+            <tbody>
+              <tr class="sg-row"><td colspan="2"><span class="sg-tag tag-blue">Контракт</span></td></tr>
+              <tr><td>Тикер</td><td>FDAX / GER40 (Eurex)</td></tr>
+              <tr><td>1 тик</td><td class="def">0.5 пункта = €12.50</td></tr>
+              <tr><td>1 пункт</td><td class="def">€25</td></tr>
+
+              <tr class="sg-row"><td colspan="2"><span class="sg-tag tag-teal">Волатильность</span></td></tr>
+              <tr><td>Типичный ATR (день)</td><td class="def">80–200 пунктов</td></tr>
+
+              <tr class="sg-row"><td colspan="2"><span class="sg-tag tag-amber">Initial Balance</span></td></tr>
+              <tr><td>Узкий IB</td><td class="def">&lt; 30 пунктов</td></tr>
+              <tr><td>Нормальный IB</td><td class="def">30–80 пунктов</td></tr>
+              <tr><td>Широкий IB</td><td class="def">&gt; 100 пунктов</td></tr>
+
+              <tr class="sg-row"><td colspan="2"><span class="sg-tag tag-purple">Сессия</span></td></tr>
+              <tr><td>График</td><td class="def">1m</td></tr>
+              <tr><td>Старт сессии</td><td class="def">09:00 CET</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. SCHEDULE -->
+      <div class="doc-section" id="schedule">
+        <div class="doc-section-head">
+          <span class="doc-section-num">02 / расписание</span>
+          <h2>Расписание торговой сессии</h2>
+          <p>Три 30-минутных блока в начале дня — периоды A, B и C. На них строится вся логика входов.</p>
+        </div>
+        <div class="tl-list">
+
+          <div class="tl-item" style="--seg-c:var(--dim);--seg-bg:rgba(30,20,10,0.06);--seg-border:var(--border2)">
+            <div class="tl-time">08:00–09:00</div>
+            <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+            <div class="tl-body">
+              <div class="tl-label">Pre-market / <a href="#fn-overnight" class="term-note">Overnight</a> анализ</div>
+              <div class="tl-desc">Оценка ночного диапазона, gap, контекста относительно вчерашней Value Area.</div>
+            </div>
+          </div>
+
+          <div class="tl-item" style="--seg-c:#2E8CB8;--seg-bg:rgba(46,150,176,0.06);--seg-border:rgba(46,150,176,0.22)">
+            <div class="tl-time">09:00–09:30</div>
+            <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+            <div class="tl-body">
+              <div class="tl-label">Период A — читаем открытие</div>
+              <div class="tl-desc">Первый получас. Где открылись относительно вчерашнего диапазона? Есть ли одностороннее движение?</div>
+            </div>
+          </div>
+
+          <div class="tl-item" style="--seg-c:var(--purple);--seg-bg:rgba(123,94,167,0.06);--seg-border:rgba(123,94,167,0.22)">
+            <div class="tl-time">09:30–10:00</div>
+            <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+            <div class="tl-body">
+              <div class="tl-label">Период B — уклон дня</div>
+              <div class="tl-desc">Второй получас IB. К концу блока понятно, куда рынок склоняется — в лонг или шорт.</div>
+            </div>
+          </div>
+
+          <div class="tl-item" style="--seg-c:var(--teal);--seg-bg:rgba(26,158,120,0.07);--seg-border:rgba(26,158,120,0.28)">
+            <div class="tl-time">10:00–10:30</div>
+            <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+            <div class="tl-body">
+              <div class="tl-label">Период C — ГЛАВНОЕ ОКНО <span class="chip chip-green" style="margin-left:6px">лонг</span> <span class="chip chip-red">шорт</span></div>
+              <div class="tl-desc">IB сформирован, уклон дня ясен. Три основных сетапа: пробой IB, снятие ликвидности, неудачный аукцион.</div>
+            </div>
+          </div>
+
+          <div class="tl-item" style="--seg-c:var(--dim);--seg-bg:rgba(30,20,10,0.06);--seg-border:var(--border2)">
+            <div class="tl-time">10:30–15:30</div>
+            <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+            <div class="tl-body">
+              <div class="tl-label">Середина дня</div>
+              <div class="tl-desc">Управление открытой позицией, частичная фиксация на магнитах, ожидание нового сетапа.</div>
+            </div>
+          </div>
+
+          <div class="tl-item" style="--seg-c:var(--amber);--seg-bg:rgba(184,134,30,0.07);--seg-border:rgba(184,134,30,0.25)">
+            <div class="tl-time">15:30–17:00</div>
+            <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+            <div class="tl-body">
+              <div class="tl-label">US Open overlap — второе окно входа</div>
+              <div class="tl-desc">Приток ликвидности с открытием NY. Второй шанс войти в направлении дневного тренда.</div>
+            </div>
+          </div>
+
+          <div class="tl-item" style="--seg-c:var(--dim);--seg-bg:rgba(30,20,10,0.06);--seg-border:var(--border2)">
+            <div class="tl-time">17:00–17:30</div>
+            <div class="tl-dot-col"><div class="tl-dot"></div></div>
+            <div class="tl-body">
+              <div class="tl-label">Закрытие Xetra</div>
+              <div class="tl-desc">Снижение ликвидности перед закрытием немецкой сессии. Новые входы не открываются.</div>
+            </div>
+          </div>
+
+        </div>
+        <dl class="term-footnotes" id="fn-overnight">
+          <dt><a href="#fn-overnight">Overnight (ON)</a></dt>
+          <dd>Торговля до официального открытия сессии — до <strong>09:00</strong> по берлинскому времени. За ночь цена проходит свой <strong>ночной максимум и минимум</strong>. Когда в 9:00 открывается GER40, рынок часто сначала проверяет эти уровни — там бывают ложные пробои и быстрые развороты.</dd>
+        </dl>
+      </div>
+
+      <!-- 3. PREP -->
+      <div class="doc-section" id="prep">
+        <div class="doc-section-head">
+          <span class="doc-section-num">03 / подготовка</span>
+          <h2>Подготовка до открытия (08:00–08:59)</h2>
+          <p>Три блока, которые нужно пройти до старта периода A. Без контекста входы в C будут случайными.</p>
+        </div>
+        <div class="check-grid">
+
+          <div class="feat-card reveal" style="--ac:rgba(46,150,176,0.5);--ac-border:rgba(46,150,176,0.22);--ac-spot:rgba(46,150,176,0.06);--ac-icon:#2E8CB8">
+            <div class="feat-icon ic-b">🧭</div>
+            <h3>Контекст</h3>
+            <ul class="check-list">
+              <li>Где цена относительно PDVAH/PDVAL? Outside Above / Inside / Outside Below</li>
+              <li>Есть ли Naked POC рядом? → магнит, не торгуй против него</li>
+              <li>Каким был вчерашний день — Poor H/L? Возврат к нему сегодня вероятен (≈70%)</li>
+            </ul>
+          </div>
+
+          <div class="feat-card reveal" style="--ac:rgba(184,134,30,0.5);--ac-border:rgba(184,134,30,0.22);--ac-spot:rgba(184,134,30,0.06);--ac-icon:var(--amber)">
+            <div class="feat-icon ic-o">🌙</div>
+            <h3><a href="#fn-overnight" class="term-note">Overnight</a></h3>
+            <ul class="check-list">
+              <li>Ночной максимум и минимум — ключевые уровни для раннего пробоя</li>
+              <li>Большой gap при открытии → чаще бывает сильный трендовый старт</li>
+            </ul>
+          </div>
+
+          <div class="feat-card reveal" style="--ac:rgba(200,64,64,0.5);--ac-border:rgba(200,64,64,0.22);--ac-spot:rgba(200,64,64,0.06);--ac-icon:var(--red)">
+            <div class="feat-icon ic-r">📰</div>
+            <h3>Новости</h3>
+            <ul class="check-list">
+              <li>Нет важных новостей в 09:00–11:00? → всё ок, работаем по плану</li>
+              <li>Есть новости в окне → уменьши размер позиции или пропусти первое окно</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 4. PERIOD A -->
+      <div class="doc-section" id="period-a">
+        <div class="doc-section-head">
+          <span class="doc-section-num">04 / период A</span>
+          <h2>Период A (09:00–09:30) — читаем открытие</h2>
+          <p>Первые 30 минут задают тип дня: открылись выше/ниже/внутри вчерашнего диапазона и пошли ли в одну сторону без откатов.</p>
+        </div>
+
+        <div class="doc-sub-h">Тип открытия</div>
+        <div class="settings-table-wrap">
+          <table class="settings-table">
+            <thead><tr><th>Ситуация</th><th>Что это значит</th><th>Действие</th></tr></thead>
+            <tbody>
+              <tr><td><span class="chip chip-green">Выше вчерашнего диапазона</span></td><td>Бычий контекст</td><td>Жди принятия или возврата внутрь value area</td></tr>
+              <tr><td><span class="chip chip-red">Ниже вчерашнего диапазона</span></td><td>Медвежий контекст</td><td>Зеркально — жди принятия или возврата внутрь</td></tr>
+              <tr><td><span class="chip chip-amber">Внутри диапазона</span></td><td>Двусторонний аукцион</td><td>Осторожно — торгуй от краёв, не от середины</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="doc-sub-h">Сильное открытие (односторонний старт)</div>
+        <div class="od-grid">
+          <div class="od-card od-long">
+            <h4>↑ Лонг-открытие</h4>
+            <ul>
+              <li>Весь период A — движение вверх без откатов → вероятен трендовый день</li>
+              <li>Вход: первый откат к зоне периода A</li>
+              <li>Стоп: за экстремум периода A (или 10–12 пунктов)</li>
+              <li>Цели: вчерашний POC → край вчерашней value area</li>
+            </ul>
+          </div>
+          <div class="od-card od-short">
+            <h4>↓ Шорт-открытие</h4>
+            <ul>
+              <li>Весь период A — движение вниз без откатов → вероятен трендовый день</li>
+              <li>Вход: первый откат к зоне периода A</li>
+              <li>Стоп: за экстремум периода A (или 10–12 пунктов)</li>
+              <li>Цели: вчерашний POC → край вчерашней value area</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. PERIOD B -->
+      <div class="doc-section" id="period-b">
+        <div class="doc-section-head">
+          <span class="doc-section-num">05 / период B</span>
+          <h2>Период B (09:30–10:00) — уклон дня</h2>
+          <p>К концу второго получаса понятен уклон сессии: рынок тянет в лонг, шорт или балансирует. Чем сильнее картина — тем увереннее входы в период C.</p>
+        </div>
+
+        <div class="doc-sub-h">Сила уклона</div>
+        <div class="settings-table-wrap">
+          <table class="settings-table">
+            <thead><tr><th>Уклон</th><th>Значение</th><th>Действие</th></tr></thead>
+            <tbody>
+              <tr><td><span class="chip chip-green">Сильный</span></td><td>VWAP, периоды A и B, IB — всё в одну сторону</td><td>Торгуй продолжение, полный размер</td></tr>
+              <tr><td><span class="chip chip-amber">Умеренный</span></td><td>Картина есть, но не идеальная</td><td>Торгуй, но уменьши размер</td></tr>
+              <tr><td><span class="chip chip-gray">Слабый</span></td><td>Направления расходятся</td><td>Жди более чистый сетап</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="doc-sub-h">Что искать на периоде C</div>
+        <div class="od-grid">
+          <div class="od-card od-long">
+            <h4>Уклон в лонг</h4>
+            <ul>
+              <li>Пробой верхней границы IB — приоритетное направление</li>
+              <li>Снятие ликвидности снизу с возвратом вверх — валидный вход</li>
+              <li>Неудачный пробой нижней границы IB → разворот в лонг</li>
+            </ul>
+          </div>
+          <div class="od-card od-short">
+            <h4>Уклон в шорт</h4>
+            <ul>
+              <li>Пробой нижней границы IB — приоритетное направление</li>
+              <li>Снятие ликвидности сверху с возвратом вниз — валидный вход</li>
+              <li>Неудачный пробой верхней границы IB → разворот в шорт</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. PERIOD C -->
+      <div class="doc-section" id="period-c">
+        <div class="doc-section-head">
+          <span class="doc-section-num">06 / период C</span>
+          <h2>Период C (10:00–10:30) — главное окно</h2>
+          <p>IB сформирован, уклон дня ясен. Три основных сетапа — здесь проходит большинство входов.</p>
+        </div>
+
+        <div class="setup-block reveal">
+          <div class="setup-head">
+            <h3>Сетап 1 · Пробой IB</h3>
+            <span class="sg-tag tag-blue">Normal Day</span>
+          </div>
+          <div class="setup-body">
+            <ol class="step-list">
+              <li>IB закрыт, уклон дня умеренный или сильный</li>
+              <li>Цена вышла за верхнюю или нижнюю границу IB и закрепилась</li>
+              <li>Вход: откат к краю IB — в идеале с сигналом <strong>◆ + FVG</strong> в сторону пробоя (<a href="#signal">см. раздел 7</a>)</li>
+              <li>Стоп: возврат глубоко внутрь IB (5+ пунктов)</li>
+              <li>Цели: расширения IB — 0.5×, затем 1× от края пробоя</li>
+              <li>На трендовом дне — цель до 1.5–2× IB</li>
+              <li>Не торгуй пробой, если вчера был нейтральный день</li>
+              <li>Осторожно, если первый пробой — ложный: цена вышла и сразу вернулась</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="setup-block reveal">
+          <div class="setup-head">
+            <h3>Сетап 2 · Снятие ликвидности</h3>
+            <span class="sg-tag tag-teal">Raid</span>
+          </div>
+          <div class="setup-body">
+            <ol class="step-list">
+              <li>Цена вышла за экстремум предыдущего периода и вернулась</li>
+              <li>Направление совпадает с уклоном дня</li>
+              <li>Вход на откате после возврата</li>
+              <li>Стоп: за уровень снятия</li>
+              <li>Цель: непротестированный POC → вчерашний POC → противоположный край value area</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="setup-block reveal">
+          <div class="setup-head">
+            <h3>Сетап 3 · Неудачный аукцион</h3>
+            <span class="sg-tag tag-purple">Failed Auction</span>
+          </div>
+          <div class="setup-body">
+            <ol class="step-list">
+              <li>IB пробит, но цена закрылась обратно внутрь — рынок не принял уровень</li>
+              <li>Уклон дня против пробоя — подтверждает разворот</li>
+              <li>Вход внутрь IB, в сторону уклона</li>
+              <li>Цель: середина IB → непротестированный POC → вчерашний POC</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. SIGNAL ◆ + FVG -->
+      <div class="doc-section" id="signal">
+        <div class="doc-section-head">
+          <span class="doc-section-num">07 / подтверждение входа</span>
+          <h2>◆ + FVG — точка входа</h2>
+          <p>Сетапы A–C дают контекст. Сигнал <strong>◆ + FVG</strong> в Relief — конкретный бар для входа, когда картина дня уже сложилась. Алерт приходит на закрытии бара.</p>
+        </div>
+
+        <div class="setup-block reveal">
+          <div class="setup-head">
+            <h3>◆ + FVG</h3>
+            <span class="sg-tag tag-teal">Alert</span>
+          </div>
+          <div class="setup-body">
+            <ol class="step-list">
+              <li>Контекст готов: период C, IB закрыт, <strong>уклон дня</strong> ясен</li>
+              <li>Сетап из периода C уже на экране — ◆ + FVG <strong>подтверждает вход</strong>, а не заменяет сетап</li>
+              <li>Только в сторону уклона — Relief не покажет сигнал против направления дня</li>
+              <li>Вход: <strong>закрытие сигнального бара</strong> или откат к зоне на графике</li>
+              <li>Стоп: за <strong>экстремум бара с ◆</strong></li>
+              <li>Цели: ближайшие уровни дня — POC, середина IB, расширения IB</li>
+              <li>Цена пробила зону и закрепилась за ней — <strong>идея отменена</strong>, не усредняйся</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. MANAGEMENT -->
+      <div class="doc-section" id="management">
+        <div class="doc-section-head">
+          <span class="doc-section-num">08 / управление</span>
+          <h2>Управление позицией</h2>
+          <p>Ключевые уровни дня для частичной фиксации и ситуации, когда позицию закрывают принудительно.</p>
+        </div>
+
+        <div class="level-grid">
+          <div class="feat-card reveal" style="--ac:rgba(46,150,176,0.5);--ac-border:rgba(46,150,176,0.22);--ac-spot:rgba(46,150,176,0.06)">
+            <div class="feat-icon ic-b">🔵</div>
+            <h3>Непротестированный POC</h3>
+            <p>Первая частичная фиксация. Уровень с прошлых дней, куда цена часто возвращается.</p>
+          </div>
+          <div class="feat-card reveal" style="--ac:rgba(184,134,30,0.5);--ac-border:rgba(184,134,30,0.22);--ac-spot:rgba(184,134,30,0.06)">
+            <div class="feat-icon ic-o">🟡</div>
+            <h3>VWAP</h3>
+            <p>Первая остановка в направлении сделки. Средневзвешенная цена сессии.</p>
+          </div>
+          <div class="feat-card reveal" style="--ac:rgba(123,94,167,0.5);--ac-border:rgba(123,94,167,0.22);--ac-spot:rgba(123,94,167,0.06)">
+            <div class="feat-icon ic-p">🧲</div>
+            <h3>Равные highs/lows</h3>
+            <p>Зоны скопления стопов. Цель для второй частичной фиксации.</p>
+          </div>
+          <div class="feat-card reveal" style="--ac:rgba(200,64,64,0.5);--ac-border:rgba(200,64,64,0.22);--ac-spot:rgba(200,64,64,0.06)">
+            <div class="feat-icon ic-r">🔁</div>
+            <h3>Незавершённые экстремумы</h3>
+            <p>Рынок часто возвращается закрыть незавершённый аукцион в течение 1–3 дней.</p>
+          </div>
+        </div>
+
+        <div class="doc-sub-h">Принудительные выходы</div>
+        <ul class="exit-list">
+          <li><strong>Снятие ликвидности против позиции</strong> — выход немедленно</li>
+          <li><strong>Длинная серия периодов в одну сторону против тебя</strong> — закрывай позицию</li>
+          <li><strong>3+ периода боковика подряд</strong> — движение выдохлось, смысла держать нет</li>
+        </ul>
+      </div>
+
+      <!-- 9. SECOND WINDOW -->
+      <div class="doc-section" id="second-window">
+        <div class="doc-section-head">
+          <span class="doc-section-num">09 / второе окно</span>
+          <h2>Второе окно (15:30–17:00) — US Open overlap</h2>
+          <p>Приток ликвидности с открытием американской сессии даёт второй шанс войти в дневной тренд.</p>
+        </div>
+        <ul class="info-list">
+          <li>Действуют те же принципы, что утром — уклон дня, ключевые уровни, подтверждённый вход</li>
+          <li>Смотри текущую value area и положение цены относительно VWAP</li>
+          <li>Лучший вход — сигнал <strong>◆ + FVG</strong> в сторону уклона дня, когда контекст уже сложился</li>
+          <li>Стопы жёстче обычных — день заканчивается, времени на отработку меньше</li>
+        </ul>
+      </div>
+
+      <!-- 10. DAY TYPES -->
+      <div class="doc-section" id="day-types">
+        <div class="doc-section-head">
+          <span class="doc-section-num">10 / типы дней</span>
+          <h2>Типы дней и тактика</h2>
+          <p>Тип дня определяется к середине сессии и задаёт тактику до закрытия.</p>
+        </div>
+        <div class="daytype-grid">
+          <div class="daytype-card dt-trend">
+            <span class="dt-badge">Trend</span>
+            <h4>Трендовый день</h4>
+            <div class="dt-row-lbl">Признаки</div>
+            <p>Узкий IB + одностороннее открытие + сильный уклон</p>
+            <div class="dt-row-lbl">Тактика</div>
+            <p>Входи на pullback, не фади движение, трейли стоп за периодами</p>
+          </div>
+          <div class="daytype-card dt-normal">
+            <span class="dt-badge">Normal</span>
+            <h4>Normal Day</h4>
+            <div class="dt-row-lbl">Признаки</div>
+            <p>Один пробой IB, умеренный уклон</p>
+            <div class="dt-row-lbl">Тактика</div>
+            <p>Сетап пробоя IB, частичная фиксация на 1× IB</p>
+          </div>
+          <div class="daytype-card dt-neutral">
+            <span class="dt-badge">Neutral</span>
+            <h4>Neutral Day</h4>
+            <div class="dt-row-lbl">Признаки</div>
+            <p>Оба края IB пробиты в течение дня</p>
+            <div class="dt-row-lbl">Тактика</div>
+            <p>Fade второго пробоя, цель — IB Mid</p>
+          </div>
+          <div class="daytype-card dt-orr">
+            <span class="dt-badge">ORR</span>
+            <h4>Open-Rejection-Reverse</h4>
+            <div class="dt-row-lbl">Признаки</div>
+            <p>Открытие снаружи VA + быстрый возврат внутрь</p>
+            <div class="dt-row-lbl">Тактика</div>
+            <p>Вход на ретесте края VA изнутри, цель — PDPOC</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. AVOID -->
+      <div class="doc-section" id="avoid">
+        <div class="doc-section-head">
+          <span class="doc-section-num">11 / стоп-лист</span>
+          <h2>Когда НЕ торговать</h2>
+        </div>
+        <div class="warn-block">
+          <h3>⚠️ Красные флаги</h3>
+          <ul class="warn-list">
+            <li><strong>Слабый уклон и нет одностороннего открытия</strong> — нарратива дня нет</li>
+            <li><strong>Нейтральный день вчера + открытие внутри диапазона</strong> — ловушка у края IB</li>
+            <li><strong>Важные новости в окне 09:00–11:00</strong> — пропусти или уменьши размер</li>
+            <li><strong>POC прямо у края IB</strong> — движение туда магнитное, не торговое</li>
+            <li><strong>IB &gt; 120 пунктов</strong> — тренд уже начался без тебя, момент упущен</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="wrap">
+    <p>Surface Tension · PineScript v6 · Стратегия FDAX</p>
+    <div class="footer-links">
+      <a href="strategy-nq.html">Стратегия NQ</a>
+      <a href="relief.html">Relief</a>
+      <a href="index.html">Индикаторы</a>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+<script>
+// ── Sidebar scroll-spy ──
+(function () {
+  const sidebar = document.getElementById('docSidebar');
+  if (!sidebar) return;
+  const links = Array.from(sidebar.querySelectorAll('a'));
+  const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if (!sections.length) return;
+
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      const link = sidebar.querySelector(`a[href="#${e.target.id}"]`);
+      if (!link) return;
+      if (e.isIntersecting) {
+        links.forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+  sections.forEach(s => spy.observe(s));
+})();
+</script>
+</body>
+</html>

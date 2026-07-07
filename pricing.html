@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Цены · Surface Tension</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* ── PRICING PAGE OVERRIDES ── */
+
+/* Amber eyebrow (default anim-grad from styles.css is already amber/orange — no override needed) */
+
+/* Page header — tighter */
+.page-header { padding: 130px 0 32px; text-align: center; position: relative; overflow: hidden; }
+.page-header h1 {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  line-height: 1.1; letter-spacing: 0.02em;
+  margin-bottom: 14px;
+}
+.page-header p { color: var(--muted); font-size: 1rem; max-width: 440px; margin: 0 auto; }
+
+/* ── PRICING SECTION ── */
+.pricing-section { padding: 48px 0 80px; }
+
+.tiers-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start;
+}
+@media (max-width: 680px) { .tiers-grid { grid-template-columns: 1fr; } }
+
+.tier-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; }
+.tier-title { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--text); }
+.tier-badge {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  padding: 3px 10px; border-radius: 6px; white-space: nowrap;
+}
+.tier-badge.allin { background: rgba(184,134,30,0.10); color: var(--amber); border: 1px solid rgba(184,134,30,0.25); }
+.tier-badge.lite  { background: rgba(30,20,10,0.06);  color: var(--muted); border: 1px solid var(--border); }
+
+/* ── PRICE ROWS ── */
+.price-rows { display: flex; flex-direction: column; gap: 8px; }
+
+.price-row {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  cursor: default; position: relative; overflow: hidden;
+}
+.price-row:hover { border-color: var(--border2); box-shadow: 0 4px 16px rgba(30,20,10,0.07); }
+
+/* shimmer sweep on hover */
+.price-row::after {
+  content: ''; position: absolute; top: 0; left: -80%; width: 55%; height: 100%;
+  background: linear-gradient(105deg, transparent 25%, rgba(255,255,255,0.22) 50%, transparent 75%);
+  transform: skewX(-15deg); pointer-events: none;
+}
+.price-row:hover::after { animation: rowShimmer 0.55s ease forwards; }
+@keyframes rowShimmer { from { left: -80%; } to { left: 130%; } }
+
+/* ── BEST ROW — animated gradient border ── */
+.price-row.best {
+  background: transparent; border: none; padding: 0;
+  position: relative; overflow: visible; margin-top: 6px;
+}
+/* rotating gradient border via pseudo inset */
+.price-row.best::before {
+  content: ''; position: absolute; inset: -1.5px; border-radius: 14px; z-index: 0;
+  background: linear-gradient(135deg, var(--orange), var(--amber), #E07040, #C85A20, var(--amber), var(--orange));
+  background-size: 400% 400%;
+  animation: gradBorderPulse 3s ease infinite;
+}
+@keyframes gradBorderPulse {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+/* glow under best row */
+.price-row.best::after {
+  content: ''; position: absolute; inset: -6px; border-radius: 18px; z-index: -1;
+  background: radial-gradient(ellipse at 50% 100%, rgba(200,90,32,0.18) 0%, transparent 70%);
+  animation: glowPulse 3s ease infinite;
+}
+@keyframes glowPulse {
+  0%,100% { opacity: 0.6; } 50% { opacity: 1; }
+}
+.best-inner {
+  position: relative; z-index: 1;
+  background: var(--surface2); border-radius: 13px;
+  padding: 16px 20px; overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
+}
+/* shimmer on best hover too */
+.best-inner::before {
+  content: ''; position: absolute; top: 0; left: -80%; width: 55%; height: 100%;
+  background: linear-gradient(105deg, transparent 25%, rgba(255,255,255,0.22) 50%, transparent 75%);
+  transform: skewX(-15deg); pointer-events: none;
+}
+.price-row.best:hover .best-inner::before { animation: rowShimmer 0.55s ease forwards; }
+
+/* Best badge */
+.best-badge {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%); z-index: 10;
+  display: flex; align-items: center; gap: 5px; padding: 4px 14px; border-radius: 100px;
+  background: linear-gradient(135deg, var(--orange), var(--amber));
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  color: #fff; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(200,90,32,0.4), 0 0 0 2px rgba(255,255,255,0.9);
+  pointer-events: none;
+}
+
+/* Row content */
+.row-left { display: flex; align-items: center; gap: 10px; }
+.row-period { font-size: 0.88rem; color: var(--muted); min-width: 82px; }
+.price-row.best .row-period { color: var(--text); font-weight: 500; }
+.row-disc { font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+.row-disc.none { visibility: hidden; }
+.row-disc.d1 { color: var(--teal);  background: rgba(26,158,120,0.10); border: 1px solid rgba(26,158,120,0.2); }
+.row-disc.d2 { color: #2E8CB8;       background: rgba(46,140,184,0.10); border: 1px solid rgba(46,140,184,0.2); }
+.row-disc.d3 { color: var(--amber); background: rgba(184,134,30,0.10);  border: 1px solid rgba(184,134,30,0.25); }
+.row-right { display: flex; align-items: baseline; gap: 8px; flex-direction: row-reverse; min-width: 140px; justify-content: flex-start; }
+.row-total { font-family: var(--display); font-size: 1.6rem; font-weight: 400; letter-spacing: 0.01em; color: var(--text); min-width: 62px; text-align: right; }
+.price-row.best .row-total { color: var(--orange); }
+.row-eff { font-family: var(--mono); font-size: 11px; color: var(--dim); white-space: nowrap; }
+.price-row.best .row-eff { color: var(--muted); }
+
+/* ── PERKS ── */
+.perks-row { display: flex; justify-content: center; gap: 28px; margin-top: 48px; flex-wrap: wrap; }
+.perk { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); }
+.perk-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: var(--surface2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+  flex-shrink: 0; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+}
+.perk:hover .perk-icon { transform: scale(1.2) rotate(-5deg); }
+
+/* ── INCLUDES ── */
+.includes-section { padding: 0 0 80px; }
+.section-lbl { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.12em; text-align: center; margin-bottom: 28px; }
+.section-lbl::before { content: '// '; }
+
+.includes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 680px) { .includes-grid { grid-template-columns: 1fr; } }
+
+.inc-card {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 24px 22px; text-decoration: none; display: block;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 6px rgba(30,20,10,0.04);
+  /* spotlight css vars */
+  --mx: 50%; --my: 50%;
+}
+.inc-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ic, rgba(200,90,32,0.5)), transparent); }
+/* spotlight overlay */
+.inc-card::after {
+  content: ''; position: absolute; inset: 0; opacity: 0; pointer-events: none; border-radius: var(--r);
+  background: radial-gradient(circle at var(--mx) var(--my), var(--ic-spot, rgba(200,90,32,0.06)) 0%, transparent 60%);
+  transition: opacity 0.2s;
+}
+.inc-card:hover::after { opacity: 1; }
+.inc-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(30,20,10,0.09); border-color: var(--ic-border, rgba(200,90,32,0.25)); }
+.inc-title { font-family: var(--mono); font-size: 13px; font-weight: 700; margin-bottom: 8px; position: relative; z-index: 1; }
+.inc-card.relief   { --ic: rgba(200,90,32,0.5);   --ic-border: rgba(200,90,32,0.28);   --ic-spot: rgba(200,90,32,0.06); }
+.inc-card.relief   .inc-title { color: var(--orange); }
+.inc-card.scaffold { --ic: rgba(123,94,167,0.5);  --ic-border: rgba(123,94,167,0.28);  --ic-spot: rgba(123,94,167,0.06); }
+.inc-card.scaffold .inc-title { color: var(--purple); }
+.inc-card.penumbra { --ic: rgba(26,158,120,0.5);  --ic-border: rgba(26,158,120,0.28);  --ic-spot: rgba(26,158,120,0.06); }
+.inc-card.penumbra .inc-title { color: var(--teal); }
+.inc-card p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; position: relative; z-index: 1; }
+.inc-link {
+  display: inline-flex; align-items: center; gap: 4px; font-family: var(--mono); font-size: 11px;
+  margin-top: 14px; opacity: 0; transform: translateX(-4px);
+  transition: opacity 0.2s, transform 0.2s; position: relative; z-index: 1;
+}
+.inc-card:hover .inc-link { opacity: 1; transform: translateX(0); }
+.inc-card.relief   .inc-link { color: var(--orange); }
+.inc-card.scaffold .inc-link { color: var(--purple); }
+.inc-card.penumbra .inc-link { color: var(--teal); }
+
+@media (hover: none) {
+  .inc-link { opacity: 1; transform: none; }
+  .inc-card:hover { transform: none; }
+}
+
+/* ── PAGE FOOTER ── */
+.page-footer { text-align: center; padding: 0 0 60px; }
+.page-footer p { font-size: 0.82rem; color: var(--dim); font-family: var(--mono); }
+.page-footer a { color: var(--muted); text-decoration: none; }
+.page-footer a:hover { color: var(--text); }
+
+@media (max-width: 600px) {
+  .nav-links .nav-cta { font-size: 0.78rem; padding: 6px 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="crt-vignette"></div>
+<div class="scanlines"></div>
+<div class="vhs-line"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="wrap">
+    <a class="nav-logo" href="index.html">
+      <div class="nav-logo-mark">
+        <svg class="hex-logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+          <g style="isolation:isolate">
+            <polygon id="hh-ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#2E96B0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#5BBFCE" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#154E62" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="nav-logo-lockup">
+        <span class="nav-logo-l1">Surface</span>
+        <span class="nav-logo-l2">Tension</span>
+        <span class="nav-logo-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <ul class="nav-links" id="nav-menu">
+      <li><a class="nav-link" href="relief.html">Relief</a></li>
+      <li><a class="nav-link" href="meridian.html">Meridian</a></li>
+      <li><a class="nav-link" href="contour.html">Contour</a></li>
+      <li><a class="nav-link" href="free.html">Free</a></li>
+      <li><a class="nav-link active" href="pricing.html">Цены</a></li>
+      <li><a class="nav-cta" href="index.html">← Главная</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+
+  <div class="hero-hex-deco" aria-hidden="true">
+    <svg viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="hex-outer" opacity="0.055" stroke="#3D2A0A" stroke-width="1.2" stroke-dasharray="9 6">
+        <polygon points="536,140 502,81 434,81 400,140 434,199 502,199"/>
+        <polygon points="328,20 294,-39 226,-39 192,20 226,79 294,79"/>
+        <polygon points="120,140 86,81 18,81 -16,140 18,199 86,199"/>
+        <polygon points="120,380 86,321 18,321 -16,380 18,439 86,439"/>
+        <polygon points="328,500 294,441 226,441 192,500 226,559 294,559"/>
+        <polygon points="536,380 502,321 434,321 400,380 434,439 502,439"/>
+      </g>
+      <g class="hex-mid" opacity="0.1" stroke="#8A6010" stroke-width="1.3">
+        <polygon points="462,260 436,215 384,215 358,260 384,305 436,305"/>
+        <polygon points="387,130 361,85 309,85 283,130 309,175 361,175"/>
+        <polygon points="237,130 211,85 159,85 133,130 159,175 211,175"/>
+        <polygon points="162,260 136,215 84,215 58,260 84,305 136,305"/>
+        <polygon points="237,390 211,345 159,345 133,390 159,435 211,435"/>
+        <polygon points="387,390 361,345 309,345 283,390 309,435 361,435"/>
+      </g>
+      <g class="hex-inner" opacity="0.19" stroke="#B8861E" stroke-width="1.6">
+        <polygon points="298,260 279,227 241,227 222,260 241,293 279,293" fill="#7A5A0A" fill-opacity="0.12"/>
+        <polygon points="364,260 345,227 307,227 288,260 307,293 345,293" fill="#D4A030" fill-opacity="0.07"/>
+        <polygon points="331,203 312,170 274,170 255,203 274,236 312,236"/>
+        <polygon points="265,203 246,170 208,170 189,203 208,236 246,236" fill="#D4A030" fill-opacity="0.07"/>
+        <polygon points="232,260 213,227 175,227 156,260 175,293 213,293"/>
+        <polygon points="265,317 246,284 208,284 189,317 208,350 246,350" fill="#D4A030" fill-opacity="0.07"/>
+        <polygon points="331,317 312,284 274,284 255,317 274,350 312,350"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="wrap" style="display:flex;flex-direction:column;align-items:center;">
+    <div class="hero-eyebrow" style="margin-bottom:28px">Тарифы · Surface Tension</div>
+    <h1 class="reveal">Гибкий выбор.<br><span class="anim-grad">Под твои задачи.</span></h1>
+    <p class="reveal" style="transition-delay:.08s">Возьми полный пакет или только нужные инструменты —<br>доступ открывается сразу после оплаты.</p>
+  </div>
+</div>
+
+<!-- ── PRICING ── -->
+<section class="pricing-section">
+  <div class="wrap">
+    <div class="tiers-grid">
+
+      <!-- ALL-IN -->
+      <div class="tier-col reveal">
+        <div class="tier-header">
+          <span class="tier-title">All-in</span>
+          <span class="tier-badge allin">Relief + Meridian + Contour</span>
+        </div>
+        <div class="price-rows">
+          <div class="price-row">
+            <div class="row-left">
+              <span class="row-period">1 месяц</span>
+              <span class="row-disc none">—</span>
+            </div>
+            <div class="row-right">
+              <span class="row-total" data-val="59">$59</span>
+              <span class="row-eff">$59 / мес</span>
+            </div>
+          </div>
+          <div class="price-row">
+            <div class="row-left">
+              <span class="row-period">3 месяца</span>
+              <span class="row-disc d1">−16%</span>
+            </div>
+            <div class="row-right">
+              <span class="row-total" data-val="149">$149</span>
+              <span class="row-eff">$49.70 / мес</span>
+            </div>
+          </div>
+          <div class="price-row">
+            <div class="row-left">
+              <span class="row-period">6 месяцев</span>
+              <span class="row-disc d2">−24%</span>
+            </div>
+            <div class="row-right">
+              <span class="row-total" data-val="269">$269</span>
+              <span class="row-eff">$44.80 / мес</span>
+            </div>
+          </div>
+          <div class="price-row best">
+            <div class="best-inner">
+              <div class="row-left">
+                <span class="row-period">12 месяцев</span>
+                <span class="row-disc d3">−37%</span>
+              </div>
+              <div class="row-right">
+                <span class="row-total" data-val="449">$449</span>
+                <span class="row-eff">$37.40 / мес</span>
+              </div>
+            </div>
+            <span class="best-badge">★ Лучшая цена</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- БЕЗ RELIEF -->
+      <div class="tier-col reveal" style="transition-delay:.1s">
+        <div class="tier-header">
+          <span class="tier-title">Без Relief</span>
+          <span class="tier-badge lite">Meridian + Contour</span>
+        </div>
+        <div class="price-rows">
+          <div class="price-row">
+            <div class="row-left">
+              <span class="row-period">1 месяц</span>
+              <span class="row-disc none">—</span>
+            </div>
+            <div class="row-right">
+              <span class="row-total" data-val="44">$44</span>
+              <span class="row-eff">$44 / мес</span>
+            </div>
+          </div>
+          <div class="price-row">
+            <div class="row-left">
+              <span class="row-period">3 месяца</span>
+              <span class="row-disc d1">−16%</span>
+            </div>
+            <div class="row-right">
+              <span class="row-total" data-val="110">$110</span>
+              <span class="row-eff">$36.70 / мес</span>
+            </div>
+          </div>
+          <div class="price-row">
+            <div class="row-left">
+              <span class="row-period">6 месяцев</span>
+              <span class="row-disc d2">−24%</span>
+            </div>
+            <div class="row-right">
+              <span class="row-total" data-val="199">$199</span>
+              <span class="row-eff">$33.20 / мес</span>
+            </div>
+          </div>
+          <div class="price-row best">
+            <div class="best-inner">
+              <div class="row-left">
+                <span class="row-period">12 месяцев</span>
+                <span class="row-disc d3">−37%</span>
+              </div>
+              <div class="row-right">
+                <span class="row-total" data-val="329">$329</span>
+                <span class="row-eff">$27.40 / мес</span>
+              </div>
+            </div>
+            <span class="best-badge">★ Лучшая цена</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Perks -->
+    <div class="perks-row reveal" style="transition-delay:.2s">
+      <div class="perk"><div class="perk-icon">🔑</div><span>Мгновенный доступ через TradingView</span></div>
+      <div class="perk"><div class="perk-icon">🔄</div><span>Все обновления включены</span></div>
+      <div class="perk"><div class="perk-icon">💬</div><span>Поддержка в Telegram</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── INCLUDES ── -->
+<section class="includes-section">
+  <div class="wrap">
+    <div class="section-lbl reveal">Что входит в подписку</div>
+    <div class="includes-grid">
+      <a class="inc-card relief reveal" href="relief.html">
+        <div class="inc-title">Relief</div>
+        <p>Полный TPO / Market Profile — периоды A–Z, POC, VAH/VAL, nPOC, IB, VWAP, Raid/Sweep, Zigzag + BOS + CHoCH и сетапы.</p>
+        <span class="inc-link">Подробнее →</span>
+      </a>
+      <a class="inc-card scaffold reveal" href="contour.html" style="transition-delay:.08s">
+        <div class="inc-title">Contour</div>
+        <p>6-state аукцион по 30m-периодам: собственная шкала состояний, сигнал Undertow фильтруется по состоянию. Плюс Fulcrum и фильтр ликвидности.</p>
+        <span class="inc-link">Подробнее →</span>
+      </a>
+      <a class="inc-card penumbra reveal" href="meridian.html" style="transition-delay:.14s">
+        <div class="inc-title">Meridian</div>
+        <p>Сетапы структуры (Transit, Fulcrum, Needle, Volatile Bar) вместе с сигналом Undertow, Resonance-подтверждением и зонами Undertow HTF.</p>
+        <span class="inc-link">Подробнее →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="wrap">
+    <p>© 2024 Surface Tension Indicators</p>
+    <div class="footer-links">
+      <a href="pricing.html">Цены</a>
+      <a href="about.html">О нас</a>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+<script>
+// ── Price counter animation on reveal ──
+function animatePrice(el) {
+  const target = parseInt(el.dataset.val, 10);
+  if (!target) return;
+  const dur = 700;
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min((now - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = '$' + Math.round(target * eased);
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = '$' + target;
+  }
+  requestAnimationFrame(tick);
+}
+
+// Stagger price rows on first reveal of each tier-col
+const priceObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const rows = e.target.querySelectorAll('.price-row');
+    rows.forEach((row, i) => {
+      setTimeout(() => {
+        row.style.opacity = '1';
+        row.style.transform = 'translateY(0)';
+        // trigger counter for prices in this row
+        row.querySelectorAll('.row-total[data-val]').forEach(el => animatePrice(el));
+      }, i * 90);
+    });
+    priceObs.unobserve(e.target);
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.tier-col').forEach(col => {
+  // pre-hide rows for stagger
+  col.querySelectorAll('.price-row').forEach(row => {
+    row.style.opacity = '0';
+    row.style.transform = 'translateY(12px)';
+    row.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+  });
+  priceObs.observe(col);
+});
+</script>
+</body>
+</html>

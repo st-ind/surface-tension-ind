@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>О нас · Surface Tension</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Rubik:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+body { overflow-x: hidden; }
+
+.about-hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 100px 40px 60px;
+}
+
+/* ── TV FLASH ── */
+.tv-flash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #fff;
+  pointer-events: none;
+  animation: tvFlash 0.5s ease-out forwards;
+}
+@keyframes tvFlash {
+  0%   { opacity: 0; }
+  12%  { opacity: 0.92; }
+  100% { opacity: 0; }
+}
+
+/* ── HEX DECO — центрирован в hero (переопределяем styles.css) ── */
+.about-hero .hero-hex-deco {
+  position: absolute;
+  right: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px;
+  height: 900px;
+  opacity: 0;
+  animation: bgFade 1.8s ease 0.8s forwards;
+}
+@keyframes bgFade { to { opacity: 1; } }
+
+/* ── LOGO IDENT ── */
+.logo-ident {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(20px, 3.5vw, 56px);
+  position: relative;
+  z-index: 3;
+}
+
+/* Wrapper — drop-анимация + glow */
+.ident-mark-wrap {
+  flex-shrink: 0;
+  width: clamp(140px, 22vw, 280px);
+  opacity: 0;
+  animation: markDrop 0.72s cubic-bezier(0.18, 1.25, 0.4, 1) 0.22s forwards;
+  filter:
+    drop-shadow(0 0 20px rgba(46,150,176,0.42))
+    drop-shadow(0 0 55px rgba(46,150,176,0.14));
+}
+@keyframes markDrop {
+  0%   { opacity:0; transform: translateY(-150px) scale(0.5) rotate(-20deg); }
+  65%  { opacity:1; transform: translateY(9px)   scale(1.06) rotate(2.5deg); }
+  100% { opacity:1; transform: translateY(0)     scale(1)    rotate(0deg); }
+}
+
+/* Spin-враппер — вращает содержимое независимо от bocDrift на SVG */
+.ident-spin-wrap {
+  width: 100%;
+  animation: hexSpin 28s linear infinite;
+}
+@keyframes hexSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* SVG — только размер, bocDrift приходит из styles.css по классу hex-logo-svg */
+.ident-mark {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Lockup — точь-в-точь как nav-logo-lockup */
+.ident-lockup {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.ident-l1, .ident-l2 {
+  font-family: 'Nunito', var(--sans);
+  font-weight: 900;
+  font-size: clamp(2.8rem, 8.5vw, 6.8rem);
+  color: var(--text);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  display: block;
+  width: 100%;
+  opacity: 0;
+}
+.ident-sep {
+  width: 100%;
+  height: 0;
+  border-top: 1px solid var(--border);
+  margin: clamp(5px, 0.9vw, 14px) 0 clamp(4px, 0.7vw, 10px);
+  opacity: 0;
+  animation: fadeUp 0.4s ease 0.8s forwards;
+}
+.ident-l3 {
+  font-family: 'Nunito', var(--sans);
+  font-weight: 700;
+  /* 70% от l1/l2: 10 букв × 70% ≈ 7 букв × 100% → одинаковая ширина */
+  font-size: clamp(1.96rem, 5.95vw, 4.76rem);
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  display: block;
+  width: 100%;
+  opacity: 0;
+}
+
+.ident-l1 {
+  animation:
+    flyFromLeft 0.57s cubic-bezier(0.18, 1.1, 0.4, 1) 0.42s forwards,
+    chromaFix   0.45s ease 0.95s both;
+}
+.ident-l2 {
+  animation:
+    flyFromRight 0.57s cubic-bezier(0.18, 1.1, 0.4, 1) 0.58s forwards,
+    chromaFix    0.45s ease 1.12s both;
+}
+.ident-l3 { animation: flyFromBelow 0.5s cubic-bezier(0.18, 1.1, 0.4, 1) 0.74s forwards; }
+
+@keyframes flyFromLeft {
+  0%   { opacity:0; transform:translateX(-110vw) skewX(5deg); filter:blur(5px); }
+  55%  { opacity:1; filter:blur(0); }
+  78%  { transform:translateX(4px) skewX(-0.5deg); }
+  100% { opacity:1; transform:translateX(0) skewX(0); filter:blur(0); }
+}
+@keyframes flyFromRight {
+  0%   { opacity:0; transform:translateX(110vw) skewX(-5deg); filter:blur(5px); }
+  55%  { opacity:1; filter:blur(0); }
+  78%  { transform:translateX(-4px) skewX(0.5deg); }
+  100% { opacity:1; transform:translateX(0) skewX(0); filter:blur(0); }
+}
+@keyframes flyFromBelow {
+  0%   { opacity:0; transform:translateY(28px); filter:blur(2px); }
+  68%  { opacity:1; filter:blur(0); transform:translateY(-3px); }
+  100% { opacity:1; transform:translateY(0); filter:blur(0); }
+}
+@keyframes chromaFix {
+  0%   { text-shadow: -6px 0 rgba(200,64,64,0.48), 6px 0 rgba(46,150,176,0.48); }
+  100% { text-shadow: none; }
+}
+@keyframes fadeUp {
+  0%   { opacity:0; transform:translateY(8px); }
+  100% { opacity:1; transform:translateY(0); }
+}
+
+/* ── РАЗДЕЛИТЕЛЬ ── */
+.about-divider {
+  width: 1px; height: 72px;
+  background: linear-gradient(to bottom, var(--border2), transparent);
+  margin: 0 auto 56px;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 1.5s forwards;
+}
+
+/* ── МИССИЯ ── */
+.mission-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 24px 120px;
+  position: relative; z-index: 2;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 1.6s forwards;
+}
+.mission-lead {
+  font-family: 'Syne', var(--sans);
+  font-weight: 800;
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: clamp(24px, 4vw, 40px);
+}
+.mission-body {
+  font-family: 'Rubik', var(--sans);
+  font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+  color: var(--muted);
+  line-height: 1.85;
+  margin-bottom: clamp(28px, 4vw, 44px);
+}
+.mission-tags {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.mission-tag {
+  font-family: var(--mono); font-size: 0.7rem; font-weight: 600;
+  padding: 5px 14px; border-radius: 100px;
+  border: 1px solid var(--border2);
+  color: var(--muted); background: var(--surface2);
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 600px) {
+  .nav-links .nav-cta  { font-size: 0.78rem; padding: 6px 12px; }
+  .logo-ident { gap: 14px; }
+  .about-hero { padding: 100px 20px 40px; }
+}
+@media (hover: none) { .ident-mark { filter: none; } }
+</style>
+</head>
+<body>
+
+<div class="tv-flash"></div>
+<div class="crt-vignette"></div>
+<div class="scanlines"></div>
+<div class="vhs-line"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="wrap">
+    <a class="nav-logo" href="index.html">
+      <div class="nav-logo-mark">
+        <svg class="hex-logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+          <g style="isolation:isolate">
+            <polygon id="hh-ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#2E96B0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#5BBFCE" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#154E62" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="nav-logo-lockup">
+        <span class="nav-logo-l1">Surface</span>
+        <span class="nav-logo-l2">Tension</span>
+        <span class="nav-logo-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <ul class="nav-links" id="nav-menu">
+      <li><a class="nav-link" href="relief.html">Relief</a></li>
+      <li><a class="nav-link" href="meridian.html">Meridian</a></li>
+      <li><a class="nav-link" href="contour.html">Contour</a></li>
+      <li><a class="nav-link" href="free.html">Free</a></li>
+      <li><a class="nav-link" href="pricing.html">Цены</a></li>
+      <li><a class="nav-cta" href="index.html">← Главная</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="about-hero">
+
+  <!-- Те же три вращающихся кольца гексов что на главной странице -->
+  <div class="hero-hex-deco" aria-hidden="true">
+    <svg viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="hex-outer" opacity="0.055" stroke="#0D3A4A" stroke-width="1.2" stroke-dasharray="9 6">
+        <polygon points="536,140 502,81 434,81 400,140 434,199 502,199"/>
+        <polygon points="328,20 294,-39 226,-39 192,20 226,79 294,79"/>
+        <polygon points="120,140 86,81 18,81 -16,140 18,199 86,199"/>
+        <polygon points="120,380 86,321 18,321 -16,380 18,439 86,439"/>
+        <polygon points="328,500 294,441 226,441 192,500 226,559 294,559"/>
+        <polygon points="536,380 502,321 434,321 400,380 434,439 502,439"/>
+      </g>
+      <g class="hex-mid" opacity="0.1" stroke="#154E62" stroke-width="1.3">
+        <polygon points="462,260 436,215 384,215 358,260 384,305 436,305"/>
+        <polygon points="387,130 361,85 309,85 283,130 309,175 361,175"/>
+        <polygon points="237,130 211,85 159,85 133,130 159,175 211,175"/>
+        <polygon points="162,260 136,215 84,215 58,260 84,305 136,305"/>
+        <polygon points="237,390 211,345 159,345 133,390 159,435 211,435"/>
+        <polygon points="387,390 361,345 309,345 283,390 309,435 361,435"/>
+      </g>
+      <g class="hex-inner" opacity="0.19" stroke="#2E96B0" stroke-width="1.6">
+        <polygon points="298,260 279,227 241,227 222,260 241,293 279,293" fill="#1A9E78" fill-opacity="0.12"/>
+        <polygon points="364,260 345,227 307,227 288,260 307,293 345,293" fill="#2E96B0" fill-opacity="0.07"/>
+        <polygon points="331,203 312,170 274,170 255,203 274,236 312,236"/>
+        <polygon points="265,203 246,170 208,170 189,203 208,236 246,236" fill="#2E96B0" fill-opacity="0.07"/>
+        <polygon points="232,260 213,227 175,227 156,260 175,293 213,293"/>
+        <polygon points="265,317 246,284 208,284 189,317 208,350 246,350" fill="#2E96B0" fill-opacity="0.07"/>
+        <polygon points="331,317 312,284 274,284 255,317 274,350 312,350"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="logo-ident">
+
+    <div class="ident-mark-wrap">
+      <div class="ident-spin-wrap">
+        <svg class="ident-mark"
+             viewBox="-130 -130 260 260"
+             xmlns="http://www.w3.org/2000/svg"
+             style="overflow:visible">
+          <g style="isolation:isolate">
+            <!-- Center -->
+            <polygon points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"
+              fill="#2E96B0" style="mix-blend-mode:multiply"/>
+            <!-- Top -->
+            <polygon points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3"
+              fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <!-- Upper-Right -->
+            <polygon points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"
+              fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <!-- Lower-Right -->
+            <polygon points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"
+              fill="#5BBFCE" style="mix-blend-mode:multiply"/>
+            <!-- Bottom -->
+            <polygon points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"
+              fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <!-- Lower-Left -->
+            <polygon points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"
+              fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <!-- Upper-Left -->
+            <polygon points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"
+              fill="#154E62" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Текстовый блок -->
+    <div class="ident-lockup" id="identLockup">
+      <span class="ident-l1">Surface</span>
+      <span class="ident-l2">Tension</span>
+      <div class="ident-sep"></div>
+      <span class="ident-l3">Indicators</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── РАЗДЕЛИТЕЛЬ → МИССИЯ ── -->
+<div class="about-divider"></div>
+
+<div class="mission-wrap">
+  <h2 class="mission-lead">
+    Рынок говорит.<br>
+    Мы помогаем его слышать.
+  </h2>
+
+  <p class="mission-body">
+    За каждым движением цены стоит аукцион — борьба за справедливую стоимость
+    между покупателем и продавцом. Market Profile, дельта-дисбаланс,
+    структурные паттерны — это не сигналы.<br><br>
+    Это язык, на котором рынок описывает себя сам.
+    Surface Tension — три инструмента, чтобы читать его точнее.
+  </p>
+
+  <div class="mission-tags">
+    <span class="mission-tag">Market Profile</span>
+    <span class="mission-tag">Undertow Signal</span>
+    <span class="mission-tag">Structure Patterns</span>
+    <span class="mission-tag">PineScript v6</span>
+    <span class="mission-tag">TradingView</span>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="wrap">
+    <p>Surface Tension · PineScript v6</p>
+    <div class="footer-links">
+      <a href="pricing.html">Цены</a>
+      <a href="about.html">О нас</a>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+<script>
+// ── ВЫРАВНИВАНИЕ ШИРИНЫ ТЕКСТА (Surface = Tension = Indicators) ──
+(function () {
+  var lockup = document.getElementById('identLockup');
+  if (!lockup) return;
+  var lines = [
+    lockup.querySelector('.ident-l1'),
+    lockup.querySelector('.ident-l2'),
+    lockup.querySelector('.ident-l3'),
+  ].filter(Boolean);
+
+  function equalize() {
+    // 1. Сброс предыдущих значений
+    lockup.style.width = '';
+    lines.forEach(function(el) {
+      el.style.letterSpacing = '';
+      // width: auto — чтобы измерить РЕАЛЬНУЮ ширину текста,
+      // а не унаследованную ширину контейнера (width: 100%)
+      el.style.width = 'auto';
+    });
+
+    // 2. Принудительный reflow, затем измеряем float-точные значения
+    void lockup.offsetWidth;
+    var ws   = lines.map(function(el) { return el.getBoundingClientRect().width; });
+    var maxW = Math.max.apply(null, ws);
+
+    // 3. Восстанавливаем width: 100%
+    lines.forEach(function(el) { el.style.width = ''; });
+
+    if (!maxW) return;
+
+    // 4. Добавляем letter-spacing коротким словам чтобы догнать самое широкое
+    lines.forEach(function(el, i) {
+      if (ws[i] >= maxW - 0.5) return;
+      var n    = el.textContent.trim().length;
+      var base = parseFloat(getComputedStyle(el).letterSpacing) || 0;
+      el.style.letterSpacing = (base + (maxW - ws[i]) / n) + 'px';
+    });
+
+    // 5. Фиксируем ширину контейнера (теперь дети 100% от этого)
+    void lockup.offsetWidth;
+    lines.forEach(function(el) { el.style.width = 'auto'; });
+    void lockup.offsetWidth;
+    var finalW = Math.max.apply(null, lines.map(function(el) { return el.getBoundingClientRect().width; }));
+    lines.forEach(function(el) { el.style.width = ''; });
+    lockup.style.width = Math.ceil(finalW) + 'px';
+  }
+
+  document.fonts.ready.then(function() { requestAnimationFrame(equalize); });
+  window.addEventListener('load',   function() { requestAnimationFrame(equalize); });
+  window.addEventListener('resize', function() { requestAnimationFrame(equalize); }, { passive: true });
+})();
+</script>
+</body>
+</html>

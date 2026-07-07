@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Penumbra — Undertow (legacy) · Surface Tension</title>
+<link rel="icon" href="../favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<style>
+/* ── PENUMBRA OVERRIDES ── */
+
+.hero-eyebrow {
+  color: var(--teal);
+  border-color: rgba(26,158,120,0.25);
+  background: rgba(26,158,120,0.06);
+}
+.hero-eyebrow::before { background: var(--teal); }
+
+.anim-teal {
+  background: linear-gradient(270deg, #1A9E78, #2E96B0, #5BBFCE, #1A9E78);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradShift 4.5s ease infinite;
+}
+
+.nav-links a.active { color: var(--text); }
+
+.hero-lead { margin-bottom: 36px; }
+.hero-lead-kicker {
+  font-size: 1.05rem; font-weight: 600; color: var(--text);
+  line-height: 1.45; margin-bottom: 10px;
+}
+.hero-lead-text {
+  font-size: 0.95rem; color: var(--muted); line-height: 1.72; margin-bottom: 18px;
+}
+.hero-lead-groups {
+  list-style: none; display: flex; flex-direction: column; gap: 9px;
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(26,158,120,0.05); border: 1px solid rgba(26,158,120,0.16);
+}
+.hero-lead-groups li {
+  display: grid; grid-template-columns: 108px 1fr; gap: 10px; align-items: baseline;
+}
+.hero-lead-lbl {
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal);
+}
+.hero-lead-val { font-size: 0.86rem; color: var(--muted); line-height: 1.55; }
+@media (max-width: 600px) {
+  .hero-lead-groups li { grid-template-columns: 1fr; gap: 3px; }
+}
+
+/* ── LIGHT HERO CARD ── */
+.hero-card {
+  background: var(--surface2);
+  border: 1px solid rgba(26,158,120,0.2);
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  animation: heroFloat 6s ease-in-out infinite;
+  box-shadow:
+    0 4px 24px rgba(30,20,10,0.08),
+    0 1px 3px rgba(30,20,10,0.05),
+    0 0 40px rgba(26,158,120,0.06);
+}
+.hero-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(26,158,120,0.55), rgba(46,150,176,0.35), transparent);
+}
+.hc-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+.hc-live {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  color: var(--teal); letter-spacing: 0.1em;
+}
+.hc-live-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--teal);
+  animation: hcPulse 1.5s ease-in-out infinite;
+}
+@keyframes hcPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.hc-name { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--text); margin-left: 4px; }
+.hc-inst { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-left: auto; }
+.hc-body { padding: 14px 16px; }
+.hc-section-lbl {
+  font-family: var(--mono); font-size: 9px; font-weight: 600;
+  color: var(--dim); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 8px; margin-top: 12px;
+}
+.hc-section-lbl:first-child { margin-top: 0; }
+.hc-mode-row {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(26,158,120,0.05); border-radius: 8px;
+  border: 1px solid rgba(26,158,120,0.1);
+  padding: 7px 10px; margin-bottom: 10px;
+}
+.hc-mode-lbl { font-family: var(--mono); font-size: 10px; color: var(--muted); width: 52px; flex-shrink: 0; }
+.hc-mode-val { font-family: var(--mono); font-size: 11px; font-weight: 600; }
+.hc-sigs { display: flex; flex-direction: column; gap: 6px; }
+.hc-sig {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  padding: 7px 10px; border-radius: 8px;
+  opacity: 0; transform: translateX(-10px);
+  transition: opacity 0.4s, transform 0.4s;
+  border-left: 2px solid; display: flex; align-items: center; gap: 8px;
+}
+.hc-sig.show { opacity: 1; transform: translateX(0); }
+.hc-sig-badge {
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  padding: 2px 6px; border-radius: 4px; flex-shrink: 0;
+}
+.hc-sig-text { flex: 1; }
+.sig-bull     { background: rgba(26,158,120,0.08);  border-color: var(--teal);   color: var(--teal); }
+.sig-bull     .hc-sig-badge { background: rgba(26,158,120,0.15); color: var(--teal); }
+.sig-confirm  { background: rgba(46,140,184,0.08);  border-color: #2E8CB8;        color: #2E8CB8; }
+.sig-confirm  .hc-sig-badge { background: rgba(46,140,184,0.15); color: #2E8CB8; }
+.sig-bear     { background: rgba(200,64,64,0.08);   border-color: var(--red);    color: var(--red); }
+.sig-bear     .hc-sig-badge { background: rgba(200,64,64,0.15);  color: var(--red); }
+.sig-fvg      { background: rgba(123,94,167,0.08);  border-color: var(--purple); color: var(--purple); }
+.sig-fvg      .hc-sig-badge { background: rgba(123,94,167,0.15); color: var(--purple); }
+.hc-fvg-track { display: flex; gap: 4px; margin-top: 10px; }
+.hc-fvg-state {
+  flex: 1; text-align: center;
+  font-family: var(--mono); font-size: 8px; font-weight: 600;
+  padding: 5px 4px; border-radius: 6px;
+  opacity: 0.35; transition: opacity 0.35s; letter-spacing: 0.04em;
+}
+.hc-fvg-state.active { opacity: 1; }
+.fvg-active { background: rgba(26,158,120,0.09);  color: var(--teal);  border: 1px solid rgba(26,158,120,0.22); }
+.fvg-tested { background: rgba(184,134,30,0.09);  color: var(--amber); border: 1px solid rgba(184,134,30,0.22); }
+
+/* ── FEATURE GRID ── */
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 48px; }
+@media (max-width: 640px) { .feature-grid { grid-template-columns: 1fr; } }
+
+.feat-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 24px 26px;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  position: relative; overflow: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 0 1px 6px rgba(30,20,10,0.04);
+}
+.feat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--fc, rgba(26,158,120,0.45)), transparent);
+}
+.feat-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), var(--fc-spot, rgba(26,158,120,0.06)) 0%, transparent 65%);
+  pointer-events: none; opacity: 0; transition: opacity 0.2s;
+}
+.feat-card:hover::after { opacity: 1; }
+.feat-card:hover {
+  border-color: var(--fc-border, rgba(26,158,120,0.22));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(30,20,10,0.09);
+}
+.feat-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; margin-bottom: 16px;
+}
+.feat-card h3 { font-family: var(--mono); font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+.feat-card p  { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+.feat-card strong { color: var(--text); }
+
+.ic-t { background: rgba(26,158,120,0.10); }
+.ic-b { background: rgba(46,150,176,0.10); }
+.ic-p { background: rgba(123,94,167,0.10); }
+.ic-o { background: rgba(184,134,30,0.10); }
+.ic-r { background: rgba(200,64,64,0.10);  }
+
+/* ── REQUIREMENTS CARD ── */
+.req-card {
+  background: var(--surface2);
+  border: 1px solid rgba(184,134,30,0.2);
+  border-radius: var(--r);
+  padding: 28px 32px;
+  margin-top: 48px;
+  position: relative; overflow: hidden;
+}
+.req-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184,134,30,0.28), transparent);
+}
+.req-title {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 14px;
+}
+.req-rows { display: flex; flex-direction: column; gap: 10px; }
+.req-row  { display: flex; align-items: flex-start; gap: 12px; font-size: 0.87rem; }
+.req-badge {
+  font-family: var(--mono); font-size: 0.7rem; font-weight: 700;
+  padding: 3px 9px; border-radius: 5px; flex-shrink: 0; margin-top: 1px;
+}
+.req-essential { background: rgba(26,158,120,0.1); color: var(--teal); }
+.req-premium   { background: rgba(184,134,30,0.1); color: var(--amber); }
+.req-row p { color: var(--muted); line-height: 1.6; }
+.req-row strong { color: var(--text); }
+@media (hover: none) {
+  .feat-card:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="crt-vignette"></div>
+<div class="scanlines"></div>
+<div class="vhs-line"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="wrap">
+    <a class="nav-logo" href="../index.html">
+      <div class="nav-logo-mark">
+        <svg class="hex-logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+          <g style="isolation:isolate">
+            <polygon id="hh-ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#2E96B0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#5BBFCE" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#154E62" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="nav-logo-lockup">
+        <span class="nav-logo-l1">Surface</span>
+        <span class="nav-logo-l2">Tension</span>
+        <span class="nav-logo-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <ul class="nav-links" id="nav-menu">
+      <li><a href="../relief.html">Relief</a></li>
+      <li><a href="../meridian.html">Meridian</a></li>
+      <li><a href="../contour.html">Contour</a></li>
+      <li><a href="../legacy.html">Архив</a></li>
+      <li><a href="../free.html">Free</a></li>
+      <li><a href="../pricing.html">Цены</a></li>
+      <li><a class="nav-cta" href="https://ru.tradingview.com/script/624kAJlh-penumbra-by-robotlegs/" target="_blank" rel="noopener">TradingView →</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── LEGACY NOTICE ── -->
+<div class="wrap" style="padding-top:100px">
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:rgba(184,134,30,0.08);border:1px solid rgba(184,134,30,0.25);font-family:var(--mono);font-size:0.8rem;color:var(--amber)">
+    <span>⚠</span>
+    <span>Legacy-индикатор. Сигнал Undertow теперь развивается в составе <a href="../meridian.html" style="color:inherit;text-decoration:underline">Meridian</a>. Penumbra остаётся доступна, но новые функции сюда не добавляются.</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+
+  <div class="hero-hex-deco" aria-hidden="true">
+    <svg viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="hex-outer" opacity="0.055" stroke="#0D3A4A" stroke-width="1.2" stroke-dasharray="9 6">
+        <polygon points="536,140 502,81 434,81 400,140 434,199 502,199"/>
+        <polygon points="328,20 294,-39 226,-39 192,20 226,79 294,79"/>
+        <polygon points="120,140 86,81 18,81 -16,140 18,199 86,199"/>
+        <polygon points="120,380 86,321 18,321 -16,380 18,439 86,439"/>
+        <polygon points="328,500 294,441 226,441 192,500 226,559 294,559"/>
+        <polygon points="536,380 502,321 434,321 400,380 434,439 502,439"/>
+      </g>
+      <g class="hex-mid" opacity="0.1" stroke="#154E62" stroke-width="1.3">
+        <polygon points="462,260 436,215 384,215 358,260 384,305 436,305"/>
+        <polygon points="387,130 361,85 309,85 283,130 309,175 361,175"/>
+        <polygon points="237,130 211,85 159,85 133,130 159,175 211,175"/>
+        <polygon points="162,260 136,215 84,215 58,260 84,305 136,305"/>
+        <polygon points="237,390 211,345 159,345 133,390 159,435 211,435"/>
+        <polygon points="387,390 361,345 309,345 283,390 309,435 361,435"/>
+      </g>
+      <g class="hex-inner" opacity="0.19" stroke="#2E96B0" stroke-width="1.6">
+        <polygon points="298,260 279,227 241,227 222,260 241,293 279,293" fill="#1A9E78" fill-opacity="0.12"/>
+        <polygon points="364,260 345,227 307,227 288,260 307,293 345,293" fill="#2E96B0" fill-opacity="0.07"/>
+        <polygon points="331,203 312,170 274,170 255,203 274,236 312,236"/>
+        <polygon points="265,203 246,170 208,170 189,203 208,236 246,236" fill="#2E96B0" fill-opacity="0.07"/>
+        <polygon points="232,260 213,227 175,227 156,260 175,293 213,293"/>
+        <polygon points="265,317 246,284 208,284 189,317 208,350 246,350" fill="#2E96B0" fill-opacity="0.07"/>
+        <polygon points="331,317 312,284 274,284 255,317 274,350 312,350"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="wrap">
+    <div class="hero-split">
+
+      <!-- LEFT -->
+      <div class="hero-left">
+        <div class="hero-eyebrow">PineScript v6 · Undertow (legacy)</div>
+        <h1 class="hero-ind-h1">
+          <svg aria-hidden="true" width="44" height="50" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+            <g style="isolation:isolate">
+              <polygon points="12,10 15,15 12,20 6,20 3,15 6,10"   fill="#083528" style="mix-blend-mode:multiply"/>
+              <polygon points="22,10 25,15 22,20 16,20 13,15 16,10" fill="#0E6B52" style="mix-blend-mode:multiply"/>
+              <polygon points="17,1 20,6 17,11 11,11 8,6 11,1"     fill="#1A9E78" style="mix-blend-mode:multiply"/>
+            </g>
+          </svg>
+          <span class="anim-teal">Penumbra</span>
+        </h1>
+        <div class="hero-lead">
+          <p class="hero-lead-kicker">Undertow — сигнал поглощения агрессии</p>
+          <p class="hero-lead-text">
+            Penumbra находит пик дельты в зоне фитиля и подтверждает его Fair Value Gap на следующих барах.
+            Сигнал появляется там, где рынок оставил след — раньше, чем это видно по обычным свечам.
+          </p>
+          <ul class="hero-lead-groups">
+            <li>
+              <span class="hero-lead-lbl">Undertow-сигнал</span>
+              <span class="hero-lead-val">скрытый дисбаланс в структуре бара · swing</span>
+            </li>
+            <li>
+              <span class="hero-lead-lbl">Undertow</span>
+              <span class="hero-lead-val">1–3 бара · strong/weak</span>
+            </li>
+            <li>
+              <span class="hero-lead-lbl">Источники</span>
+              <span class="hero-lead-val">Standard · Precision</span>
+            </li>
+          </ul>
+        </div>
+        <div class="hero-actions">
+          <a class="btn-primary" href="https://ru.tradingview.com/script/624kAJlh-penumbra-by-robotlegs/" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Открыть на TradingView
+          </a>
+          <a class="btn-secondary" href="../index.html">← Назад</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><span class="val">Undertow</span><span class="lbl">момент поглощения</span></div>
+          <div class="stat"><span class="val">Undertow</span><span class="lbl">подтверждение</span></div>
+          <div class="stat"><span class="val">Undertow</span><span class="lbl">составной сигнал</span></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: animated dark card (TradingView UI simulation) -->
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hc-bar">
+            <span class="hc-live"><span class="hc-live-dot"></span>LIVE</span>
+            <span class="hc-name">Penumbra</span>
+            <span class="hc-inst">GER40 · 1m</span>
+          </div>
+          <div class="hc-body">
+            <div class="hc-section-lbl">Signal Source</div>
+            <div class="hc-mode-row">
+              <span class="hc-mode-lbl">Mode</span>
+              <span class="hc-mode-val" style="color:var(--teal)" id="pmDeltaMode">Precision</span>
+            </div>
+            <div class="hc-section-lbl">Signals</div>
+            <div class="hc-sigs">
+              <div class="hc-sig sig-bull">
+                <span class="hc-sig-badge">◆ BULL</span>
+                <span class="hc-sig-text">Поглощение агрессии ↑</span>
+              </div>
+              <div class="hc-sig sig-confirm">
+                <span class="hc-sig-badge">◆ Undertow</span>
+                <span class="hc-sig-text">Confirmed ↑ Strong</span>
+              </div>
+              <div class="hc-sig sig-bear">
+                <span class="hc-sig-badge">◆ BEAR</span>
+                <span class="hc-sig-text">Поглощение агрессии ↓</span>
+              </div>
+              <div class="hc-sig sig-fvg">
+                <span class="hc-sig-badge">Undertow</span>
+                <span class="hc-sig-text" id="pmFvgState">Active</span>
+              </div>
+            </div>
+            <div class="hc-section-lbl">Zone State</div>
+            <div class="hc-fvg-track">
+              <div class="hc-fvg-state fvg-active active" id="fvgA">Active</div>
+              <div class="hc-fvg-state fvg-tested" id="fvgT">Tested</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section id="features">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-label">how it works</div>
+      <h2 class="section-title">Как работает Penumbra</h2>
+      <p class="section-sub">Шесть элементов — от сигнала до отслеживания зоны.</p>
+    </div>
+    <div class="feature-grid">
+
+      <div class="feat-card reveal" style="--fc:rgba(26,158,120,0.5);--fc-bg:rgba(26,158,120,0.025);--fc-border:rgba(26,158,120,0.22);--fc-spot:rgba(26,158,120,0.06)">
+        <div class="feat-icon ic-t">◆</div>
+        <h3>◆ — точка поглощения</h3>
+        <p>◆ фиксирует момент поглощения агрессии — до того как это становится очевидным на графике. Работает в обе стороны рынка.</p>
+      </div>
+
+      <div class="feat-card reveal" style="--fc:rgba(46,150,176,0.5);--fc-bg:rgba(46,150,176,0.025);--fc-border:rgba(46,150,176,0.22);--fc-spot:rgba(46,150,176,0.06)">
+        <div class="feat-icon ic-b">⬜</div>
+        <h3>Zone-подтверждение</h3>
+        <p>Структурное подтверждение — ◆ не появляется в составном сигнале без рыночного следа. ◆ Undertow означает, что рынок сам подтвердил точку.</p>
+      </div>
+
+      <div class="feat-card reveal" style="--fc:rgba(123,94,167,0.5);--fc-bg:rgba(123,94,167,0.025);--fc-border:rgba(123,94,167,0.22);--fc-spot:rgba(123,94,167,0.06)">
+        <div class="feat-icon ic-p">⏱</div>
+        <h3>Отложенное подтверждение</h3>
+        <p>Сигнал не спешит. ◆ появляется только когда рынок сам подтвердил точку — не раньше. Это не задержка, это условие.</p>
+      </div>
+
+      <div class="feat-card reveal" style="--fc:rgba(184,134,30,0.5);--fc-bg:rgba(184,134,30,0.025);--fc-border:rgba(184,134,30,0.22);--fc-spot:rgba(184,134,30,0.06)">
+        <div class="feat-icon ic-o">📐</div>
+        <h3>Zone Tracking</h3>
+        <p>◆ оставляет зону на графике. Два состояния: <strong style="color:var(--teal)">Active</strong> — зона нетронута, <strong style="color:var(--amber)">Tested</strong> — рынок заходил внутрь. На баре теста появляется маркер ▲/▼.</p>
+      </div>
+
+      <div class="feat-card reveal" style="--fc:rgba(46,150,176,0.5);--fc-bg:rgba(46,150,176,0.025);--fc-border:rgba(46,150,176,0.22);--fc-spot:rgba(46,150,176,0.06)">
+        <div class="feat-icon ic-b">⚙️</div>
+        <h3>Четыре режима дельты</h3>
+        <p>Standard — повышенная точность по данным младшего таймфрейма. Precision — по реальным данным bid/ask, максимальная точность. Оба требуют Premium.</p>
+      </div>
+
+      <div class="feat-card reveal" style="--fc:rgba(123,94,167,0.5);--fc-bg:rgba(123,94,167,0.025);--fc-border:rgba(123,94,167,0.22);--fc-spot:rgba(123,94,167,0.06)">
+        <div class="feat-icon ic-p">⚖</div>
+        <h3>Relative Strength</h3>
+        <p>Сравнивает текущий инструмент с референсом — NQ, ES, VIX, DXY. Опционально фильтрует сигналы ◆ Undertow по относительной силе за N баров.</p>
+      </div>
+
+    </div>
+
+    <div class="req-card reveal">
+      <div class="req-title">// Требования к подписке TradingView</div>
+      <div class="req-rows">
+        <div class="req-row">
+          <span class="req-badge req-premium">Premium</span>
+          <p>Режимы <strong>Standard и Precision</strong> требуют Premium. Дефолтный режим индикатора — Standard. Также нужен для данных индексов (GER40, S&amp;P 500 и др.).</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="wrap">
+    <p>© 2024 Surface Tension Indicators · Penumbra · PineScript v6</p>
+    <div class="footer-links">
+      <a href="../pricing.html">Цены</a>
+      <a href="../about.html">О нас</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../scripts.js"></script>
+<script>
+// Signals stagger animation
+document.querySelectorAll('.hc-sig').forEach((el, i) => {
+  setTimeout(() => el.classList.add('show'), 900 + i * 320);
+});
+
+// Zone state cycling
+const fvgA = document.getElementById('fvgA');
+const fvgT = document.getElementById('fvgT');
+const fvgText = document.getElementById('pmFvgState');
+const fvgStates = [
+  { el: fvgA, label: 'Active' },
+  { el: fvgT, label: 'Tested' },
+];
+let fvgIdx = 0;
+setInterval(() => {
+  fvgStates.forEach(s => s.el.classList.remove('active'));
+  fvgIdx = (fvgIdx + 1) % fvgStates.length;
+  fvgStates[fvgIdx].el.classList.add('active');
+  if (fvgText) fvgText.textContent = fvgStates[fvgIdx].label;
+}, 2800);
+
+// Delta mode cycling
+const deltaModes = ['Precision', 'Standard'];
+const deltaColors = ['#1A9E78', '#2E8CB8'];
+const deltaModeEl = document.getElementById('pmDeltaMode');
+let dmIdx = 0;
+if (deltaModeEl) {
+  setInterval(() => {
+    dmIdx = (dmIdx + 1) % deltaModes.length;
+    deltaModeEl.style.opacity = '0';
+    setTimeout(() => {
+      deltaModeEl.textContent = deltaModes[dmIdx];
+      deltaModeEl.style.color = deltaColors[dmIdx];
+      deltaModeEl.style.transition = 'opacity 0.3s';
+      deltaModeEl.style.opacity = '1';
+    }, 200);
+  }, 3200);
+}
+
+</script>
+</body>
+</html>

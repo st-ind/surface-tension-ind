@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relief — Market Profile · Surface Tension</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* ── RELIEF PAGE OVERRIDES ── */
+
+.nav-links a.active { color: var(--text); }
+
+/* Typewriter row */
+.hero-type-row { font-family: var(--mono); font-size: 0.82rem; color: var(--muted); margin-bottom: 24px; min-height: 20px; }
+#tw { color: var(--orange); }
+.tw-cur { color: var(--orange); animation: blink 1s step-end infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+.hero-lead { margin-bottom: 36px; }
+.hero-lead-kicker {
+  font-size: 1.05rem; font-weight: 600; color: var(--text);
+  line-height: 1.45; margin-bottom: 10px;
+}
+.hero-lead-text {
+  font-size: 0.95rem; color: var(--muted); line-height: 1.72; margin-bottom: 18px;
+}
+.hero-lead-groups {
+  list-style: none; display: flex; flex-direction: column; gap: 9px;
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(200,90,32,0.05); border: 1px solid rgba(200,90,32,0.14);
+}
+.hero-lead-groups li {
+  display: grid; grid-template-columns: 88px 1fr; gap: 10px; align-items: baseline;
+}
+.hero-lead-lbl {
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange);
+}
+.hero-lead-val { font-size: 0.86rem; color: var(--muted); line-height: 1.55; }
+@media (max-width: 600px) {
+  .hero-lead-groups li { grid-template-columns: 1fr; gap: 3px; }
+}
+
+/* ── LIGHT HERO CARD ── */
+.hero-card {
+  background: var(--surface2);
+  border: 1px solid rgba(200,90,32,0.18);
+  border-radius: 18px; overflow: hidden; position: relative;
+  animation: heroFloat 6s ease-in-out infinite;
+  box-shadow: 0 4px 24px rgba(30,20,10,0.08), 0 0 40px rgba(200,90,32,0.05);
+}
+.hero-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(200,90,32,0.5), rgba(224,112,64,0.35), transparent);
+}
+.hero-card::after {
+  content: ''; position: absolute; inset: 0; border-radius: 18px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(200,90,32,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hc-bar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-bottom: 1px solid var(--border); background: var(--bg2); }
+.hc-live { display: flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--teal); letter-spacing: 0.1em; }
+.hc-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 1.5s ease-in-out infinite; }
+.hc-name { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--text); margin-left: 4px; }
+.hc-inst { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-left: auto; }
+.hc-body { padding: 14px 16px; }
+.hc-section-lbl { font-family: var(--mono); font-size: 9px; font-weight: 600; color: var(--dim); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+.hc-periods { display: flex; gap: 5px; margin-bottom: 16px; flex-wrap: wrap; }
+.hc-pd {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.35s, transform 0.35s;
+}
+.hc-pd.show { opacity: 1; transform: translateY(0); }
+.hc-pd.active { box-shadow: 0 0 12px currentColor; }
+.hc-pd.dim { opacity: 0.28 !important; }
+.hc-metrics { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.hc-metric { display: flex; align-items: center; gap: 10px; background: rgba(30,20,10,0.04); border-radius: 8px; border: 1px solid var(--border); padding: 7px 10px; }
+.hc-mk { font-family: var(--mono); font-size: 10px; color: var(--muted); width: 52px; flex-shrink: 0; }
+.hc-mv { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--text); }
+.hc-mv.c-teal  { color: var(--teal); }
+.hc-mv.c-amber { color: var(--amber); }
+.hc-mv.c-red   { color: var(--red); }
+.hc-vbar { flex: 1; height: 3px; background: rgba(30,20,10,0.1); border-radius: 2px; overflow: hidden; }
+.hc-vfill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--orange)); border-radius: 2px; width: 0; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+.hc-sigs { display: flex; flex-direction: column; gap: 5px; }
+.hc-sig { font-family: var(--mono); font-size: 10px; font-weight: 500; padding: 6px 10px; border-radius: 7px; opacity: 0; transform: translateX(-10px); transition: opacity 0.4s, transform 0.4s; border-left: 2px solid; }
+.hc-sig.show { opacity: 1; transform: translateX(0); }
+.sig-amber  { background: rgba(184,134,30,0.09); color: var(--amber);  border-color: var(--amber); }
+.sig-teal   { background: rgba(26,158,120,0.09);  color: var(--teal);   border-color: var(--teal); }
+.sig-blue   { background: rgba(46,140,184,0.09);  color: #2E8CB8;       border-color: #2E8CB8; }
+.sig-purple { background: rgba(123,94,167,0.09);  color: var(--purple); border-color: var(--purple); }
+.hc-mini-bars { display: flex; align-items: flex-end; gap: 2px; height: 32px; margin-top: 14px; padding-top: 4px; border-top: 1px solid var(--border); }
+.hc-bar-item { flex: 1; border-radius: 2px 2px 0 0; transform-origin: bottom; transform: scaleY(0); transition: transform 0.5s cubic-bezier(.4,0,.2,1); opacity: 0.75; }
+.hc-bar-item.show { transform: scaleY(1); }
+
+/* Chart preview */
+.chart-preview-wrap { padding: 0 0 60px; position: relative; z-index: 1; }
+.chart-preview { border: 1px solid var(--border); border-radius: var(--r); background: var(--surface2); overflow: hidden; box-shadow: 0 2px 12px rgba(30,20,10,0.06); }
+.chart-preview-header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2); }
+.chart-preview-tag { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--dim); }
+.chart-preview-hint { font-size: 0.75rem; color: var(--dim); }
+
+/* Feature grid */
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 48px; }
+@media (max-width: 640px) { .feature-grid { grid-template-columns: 1fr; } }
+.feat-card {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 24px 26px;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  position: relative; overflow: hidden; transform-style: preserve-3d;
+  box-shadow: 0 1px 6px rgba(30,20,10,0.04);
+}
+.feat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ac, rgba(200,90,32,0.45)), transparent); }
+.feat-card::after  { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), var(--ac-spot, rgba(200,90,32,0.06)) 0%, transparent 65%); pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+.feat-card:hover::after { opacity: 1; }
+.feat-card:hover { border-color: var(--ac-border, rgba(200,90,32,0.22)); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(30,20,10,0.09); }
+.feat-icon { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1rem; margin-bottom: 16px; }
+.feat-card h3 { font-family: var(--mono); font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+.feat-card p  { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+.ic-b { background: rgba(46,150,176,0.10); }
+.ic-p { background: rgba(123,94,167,0.10); }
+.ic-t { background: rgba(26,158,120,0.10); }
+.ic-o { background: rgba(184,134,30,0.10); }
+.ic-r { background: rgba(200,64,64,0.10);  }
+.ic-g { background: rgba(26,158,120,0.10); }
+.feat-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 14px; }
+.fc-tag { font-family: var(--mono); font-size: 0.68rem; font-weight: 600; padding: 3px 9px; border-radius: 5px; background: rgba(30,20,10,0.06); color: var(--muted); border: 1px solid var(--border); }
+
+/* Signals list */
+.signals-list { display: flex; flex-direction: column; gap: 12px; margin-top: 48px; }
+.sig-row { display: flex; align-items: flex-start; gap: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 20px 22px; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: 0 1px 4px rgba(30,20,10,0.04); }
+.sig-row:hover { border-color: var(--border2); box-shadow: 0 4px 16px rgba(30,20,10,0.07); }
+.sig-badge { flex-shrink: 0; font-family: var(--mono); font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+.sg   { background: rgba(26,158,120,0.10); color: var(--teal); }
+.sr   { background: rgba(200,64,64,0.10);  color: var(--red); }
+.sb   { background: rgba(46,150,176,0.10); color: #2E8CB8; }
+.sam  { background: rgba(184,134,30,0.10); color: var(--amber); }
+.sp   { background: rgba(123,94,167,0.10); color: var(--purple); }
+.smut { background: rgba(30,20,10,0.06);   color: var(--muted); }
+.sig-row h3 { font-family: var(--mono); font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+.sig-row p  { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
+
+/* How-to grid */
+.how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 48px; }
+@media (max-width: 640px) { .how-grid { grid-template-columns: 1fr; } }
+.how-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 22px 24px; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; box-shadow: 0 1px 4px rgba(30,20,10,0.04); position: relative; overflow: hidden; }
+.how-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(200,90,32,0.35), transparent); }
+.how-card::after { content: ''; position: absolute; inset: 0; border-radius: var(--r); background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(200,90,32,0.06) 0%, transparent 65%); pointer-events: none; opacity: 0; transition: opacity 0.4s ease-out; }
+.how-card:hover::after { opacity: 1; }
+.how-card:hover { border-color: rgba(200,90,32,0.25); box-shadow: 0 8px 28px rgba(30,20,10,0.09); transform: translateY(-2px); }
+.how-num { font-family: var(--mono); font-size: 0.7rem; font-weight: 600; color: var(--orange); background: rgba(200,90,32,0.08); padding: 3px 8px; border-radius: 5px; display: inline-block; margin-bottom: 12px; border: 1px solid rgba(200,90,32,0.15); }
+.how-card h3 { font-family: var(--mono); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+.how-card p  { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
+
+/* Strategy guide cards */
+.guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 48px; }
+@media (max-width: 640px) { .guide-grid { grid-template-columns: 1fr; } }
+.guide-card {
+  display: block; text-decoration: none; color: inherit;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 26px 28px; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 1px 6px rgba(30,20,10,0.04); position: relative; overflow: hidden;
+}
+.guide-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gc, rgba(200,90,32,0.45)), transparent);
+}
+.guide-card:hover { border-color: var(--gc-border, rgba(200,90,32,0.22)); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(30,20,10,0.09); }
+.guide-card-badge {
+  font-family: var(--mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 100px; display: inline-block;
+  margin-bottom: 14px; border: 1px solid; color: var(--gc-text); background: var(--gc-bg); border-color: var(--gc-border);
+}
+.guide-card h3 { font-family: var(--display); font-weight: 400; font-size: 1.35rem; letter-spacing: 0.02em; margin-bottom: 8px; color: var(--text); }
+.guide-card p { font-size: 0.86rem; color: var(--muted); line-height: 1.65; margin-bottom: 16px; }
+.guide-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+.guide-card-tags span {
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 600; padding: 3px 9px; border-radius: 5px;
+  background: rgba(30,20,10,0.05); color: var(--muted); border: 1px solid var(--border);
+}
+.guide-card-cta {
+  font-family: var(--mono); font-size: 0.78rem; font-weight: 600; color: var(--gc-text);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+
+/* Settings table */
+.settings-table-wrap { overflow-x: auto; margin-top: 48px; border-radius: var(--r); border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(30,20,10,0.05); }
+.settings-table { width: 100%; border-collapse: collapse; background: var(--surface2); min-width: 520px; }
+.settings-table th { text-align: left; padding: 11px 18px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); border-bottom: 1px solid var(--border); background: var(--bg2); font-family: var(--mono); }
+.settings-table td { padding: 11px 18px; font-size: 0.84rem; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: top; transition: background 0.15s; }
+.settings-table tr:last-child td { border-bottom: none; }
+.settings-table tr:hover td { background: rgba(30,20,10,0.025); }
+.settings-table td:first-child { color: var(--text); font-family: var(--mono); font-size: 0.82rem; font-weight: 500; }
+.settings-table .def { font-family: var(--mono); color: var(--orange); font-size: 0.8rem; font-weight: 500; }
+.sg-row td { padding: 18px 18px 8px; background: rgba(30,20,10,0.03); border-bottom: 1px solid var(--border); }
+.sg-row:hover td { background: rgba(30,20,10,0.03) !important; }
+.sg-tag { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; border: 1px solid; }
+.tag-red { color: var(--red); border-color: rgba(200,64,64,0.28); background: rgba(200,64,64,0.06); }
+
+@media (max-width: 600px) {
+  .nav-links .nav-cta { font-size: 0.78rem; padding: 6px 12px; }
+}
+@media (hover: none) {
+  .feat-card:hover, .how-card:hover, .guide-card:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="crt-vignette"></div>
+<div class="scanlines"></div>
+<div class="vhs-line"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="wrap">
+    <a class="nav-logo" href="index.html">
+      <div class="nav-logo-mark">
+        <svg class="hex-logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+          <g style="isolation:isolate">
+            <polygon id="hh-ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#2E96B0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#5BBFCE" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon id="hh-ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#154E62" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="nav-logo-lockup">
+        <span class="nav-logo-l1">Surface</span>
+        <span class="nav-logo-l2">Tension</span>
+        <span class="nav-logo-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <ul class="nav-links" id="nav-menu">
+      <li><a class="nav-link active" href="relief.html">Relief</a></li>
+      <li><a class="nav-link" href="meridian.html">Meridian</a></li>
+      <li><a class="nav-link" href="contour.html">Contour</a></li>
+      <li><a class="nav-link" href="free.html">Free</a></li>
+      <li><a class="nav-link" href="pricing.html">Цены</a></li>
+      <li class="nav-divider" aria-hidden="true"></li>
+      <li><a class="nav-link" href="strategy-fdax.html">FDAX</a></li>
+      <li><a class="nav-link" href="strategy-nq.html">NQ</a></li>
+      <li class="nav-divider" aria-hidden="true"></li>
+      <li class="nav-dropdown">
+        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-haspopup="true">
+          На странице <span class="nav-drop-chevron" aria-hidden="true">▾</span>
+        </button>
+        <ul class="nav-drop-menu">
+          <li><a href="#features">Функции</a></li>
+          <li><a href="#signals">Сигналы</a></li>
+          <li><a href="#how">Алгоритм дня</a></li>
+          <li><a href="#guides">Стратегии</a></li>
+          <li><a href="#settings">Настройки</a></li>
+        </ul>
+      </li>
+      <li><a class="nav-cta" href="https://ru.tradingview.com/script/zW96uPe2-relief-by-robotlegs/" target="_blank" rel="noopener">TradingView →</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+
+  <div class="hero-hex-deco" aria-hidden="true">
+    <svg viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="hex-outer" opacity="0.055" stroke="#3D1A0A" stroke-width="1.2" stroke-dasharray="9 6">
+        <polygon points="536,140 502,81 434,81 400,140 434,199 502,199"/>
+        <polygon points="328,20 294,-39 226,-39 192,20 226,79 294,79"/>
+        <polygon points="120,140 86,81 18,81 -16,140 18,199 86,199"/>
+        <polygon points="120,380 86,321 18,321 -16,380 18,439 86,439"/>
+        <polygon points="328,500 294,441 226,441 192,500 226,559 294,559"/>
+        <polygon points="536,380 502,321 434,321 400,380 434,439 502,439"/>
+      </g>
+      <g class="hex-mid" opacity="0.1" stroke="#8A2E10" stroke-width="1.3">
+        <polygon points="462,260 436,215 384,215 358,260 384,305 436,305"/>
+        <polygon points="387,130 361,85 309,85 283,130 309,175 361,175"/>
+        <polygon points="237,130 211,85 159,85 133,130 159,175 211,175"/>
+        <polygon points="162,260 136,215 84,215 58,260 84,305 136,305"/>
+        <polygon points="237,390 211,345 159,345 133,390 159,435 211,435"/>
+        <polygon points="387,390 361,345 309,345 283,390 309,435 361,435"/>
+      </g>
+      <g class="hex-inner" opacity="0.19" stroke="#C85A20" stroke-width="1.6">
+        <polygon points="298,260 279,227 241,227 222,260 241,293 279,293" fill="#8A2E10" fill-opacity="0.12"/>
+        <polygon points="364,260 345,227 307,227 288,260 307,293 345,293" fill="#E07040" fill-opacity="0.07"/>
+        <polygon points="331,203 312,170 274,170 255,203 274,236 312,236"/>
+        <polygon points="265,203 246,170 208,170 189,203 208,236 246,236" fill="#E07040" fill-opacity="0.07"/>
+        <polygon points="232,260 213,227 175,227 156,260 175,293 213,293"/>
+        <polygon points="265,317 246,284 208,284 189,317 208,350 246,350" fill="#E07040" fill-opacity="0.07"/>
+        <polygon points="331,317 312,284 274,284 255,317 274,350 312,350"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="wrap">
+    <div class="hero-split">
+
+      <!-- LEFT -->
+      <div class="hero-left">
+        <div class="hero-eyebrow">PineScript v6 · 1m Chart</div>
+        <h1 class="hero-ind-h1">
+          <svg aria-hidden="true" width="72" height="32" viewBox="0 6 28 12" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+            <g style="isolation:isolate">
+              <polygon points="10,7 13,12 10,17 4,17 1,12 4,7"   fill="#9A2808" style="mix-blend-mode:multiply"/>
+              <polygon points="17,7 20,12 17,17 11,17 8,12 11,7"  fill="#C04820" style="mix-blend-mode:multiply"/>
+              <polygon points="24,7 27,12 24,17 18,17 15,12 18,7" fill="#E07038" style="mix-blend-mode:multiply"/>
+            </g>
+          </svg>
+          <span class="anim-grad">Relief</span>
+        </h1>
+        <div class="hero-type-row">Анализируй: <span id="tw"></span><span class="tw-cur">_</span></div>
+        <div class="hero-lead">
+          <p class="hero-lead-kicker">Market Profile на 1m — вся сессия в одном индикаторе</p>
+          <p class="hero-lead-text">
+            Relief строит TPO-профиль из 30-минутных периодов&nbsp;A–Z на графике TradingView.
+            Не нужно собирать картину из десятка скриптов — уровни, ликвидность и сигналы уже здесь.
+          </p>
+          <ul class="hero-lead-groups">
+            <li>
+              <span class="hero-lead-lbl">Профиль</span>
+              <span class="hero-lead-val">POC · Value Area · nPOC · Poor H/L</span>
+            </li>
+            <li>
+              <span class="hero-lead-lbl">Уровни</span>
+              <span class="hero-lead-val">IB и расширения · Raid G/S · EQH/EQL</span>
+            </li>
+            <li>
+              <span class="hero-lead-lbl">Сигналы</span>
+              <span class="hero-lead-val">VWAP · Bias 1–5/5 · Zigzag + BOS</span>
+            </li>
+            <li>
+              <span class="hero-lead-lbl">Структура</span>
+              <span class="hero-lead-val">Zigzag · BOS · CHoCH</span>
+            </li>
+          </ul>
+        </div>
+        <div class="hero-actions">
+          <a class="btn-primary" href="https://ru.tradingview.com/script/zW96uPe2-relief-by-robotlegs/" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Открыть на TradingView
+          </a>
+          <a class="btn-secondary" href="#guides">Торговые гайды</a>
+          <a class="btn-secondary" href="index.html">← Назад</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><span class="val" data-to="12">0</span><span class="lbl">модулей</span></div>
+          <div class="stat"><span class="val">1m</span><span class="lbl">таймфрейм</span></div>
+          <div class="stat"><span class="val" data-to="30">0</span><span class="lbl">мин / период</span></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: animated live card -->
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hc-bar">
+            <span class="hc-live"><span class="hc-live-dot"></span>LIVE</span>
+            <span class="hc-name">Relief</span>
+            <span class="hc-inst">GER40 · 1m</span>
+          </div>
+          <div class="hc-body">
+            <div class="hc-section-lbl">Periods</div>
+            <div class="hc-periods" id="hcPeriods"></div>
+
+            <div class="hc-metrics">
+              <div class="hc-metric">
+                <span class="hc-mk">VWAP</span>
+                <div class="hc-vbar"><div class="hc-vfill" id="hcVwap"></div></div>
+                <span class="hc-mv c-teal" style="font-size:9px;margin-left:6px">above</span>
+              </div>
+              <div class="hc-metric">
+                <span class="hc-mk">Bias</span>
+                <span class="hc-mv c-teal">▲ L 4/5</span>
+              </div>
+              <div class="hc-metric">
+                <span class="hc-mk">Day</span>
+                <span class="hc-mv c-teal">NV ↑</span>
+              </div>
+              <div class="hc-metric">
+                <span class="hc-mk">Period</span>
+                <span class="hc-mv" id="hcCurPeriod" style="color:#C85A20">C ▲↑</span>
+              </div>
+            </div>
+
+            <div class="hc-section-lbl">Signals</div>
+            <div class="hc-sigs">
+              <div class="hc-sig sig-amber">★ First VWAP test</div>
+              <div class="hc-sig sig-teal">↑ Raid G confirmed</div>
+              <div class="hc-sig sig-teal">BOS ↑ continuation</div>
+              <div class="hc-sig sig-purple">🧲 EQH magnet</div>
+            </div>
+
+            <div class="hc-mini-bars" id="hcMini"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CHART PREVIEW ── -->
+<div class="chart-preview-wrap">
+  <div class="wrap">
+    <div class="chart-preview reveal">
+      <div class="chart-preview-header">
+        <span class="chart-preview-tag">// preview</span>
+        <span class="chart-preview-hint">Схематичный вид индикатора на 1m-графике</span>
+      </div>
+      <img src="image.png" alt="Relief на графике" style="width:100%;display:block;border-radius:0 0 12px 12px;opacity:0.92">
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURES ── -->
+<section id="features">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-label">modules</div>
+      <h2 class="section-title">Что входит в индикатор</h2>
+      <p class="section-sub">Двенадцать модулей — каждый включается и выключается отдельно.</p>
+    </div>
+    <div class="feature-grid">
+
+      <div class="feat-card reveal" style="--ac:rgba(46,150,176,0.5);--ac-bg:rgba(46,150,176,0.025);--ac-border:rgba(46,150,176,0.22);--ac-spot:rgba(46,150,176,0.06)">
+        <div class="feat-icon ic-b">📊</div>
+        <h3>Периоды A–Z</h3>
+        <p>30-минутные блоки с двойной меткой: направление диапазона (▲/▼/◆) и направление свечи (↑/↓). В период A детектирует Open Drive — однонаправленное давление без контрдвижения.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">A–Z · 30 мин</span>
+          <span class="fc-tag">▲/▼/◆ диапазон</span>
+          <span class="fc-tag">↑/↓ свеча</span>
+          <span class="fc-tag">Open Drive</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(123,94,167,0.5);--ac-bg:rgba(123,94,167,0.025);--ac-border:rgba(123,94,167,0.22);--ac-spot:rgba(123,94,167,0.06)">
+        <div class="feat-icon ic-p">🔷</div>
+        <h3>TPO-профиль</h3>
+        <p>Вертикальные кубики по тикам по алгоритму TV TPO с tie-break по близости к центру. Совместим с настройкой «Ticks per row» стандартного индикатора TradingView.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">POC</span>
+          <span class="fc-tag">VAH / VAL</span>
+          <span class="fc-tag">Ticks per row</span>
+          <span class="fc-tag">Poor H/L · SP</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(26,158,120,0.5);--ac-bg:rgba(26,158,120,0.025);--ac-border:rgba(26,158,120,0.22);--ac-spot:rgba(26,158,120,0.06)">
+        <div class="feat-icon ic-t">〰️</div>
+        <h3>VWAP + Bias</h3>
+        <p>Session VWAP от старта сессии. Первый тест фитилём — ★, остальные — кружки. На периоде B — балльный bias ▲ L 1–5/5: VWAP, направление A/B, пробой IBH/IBL и позиция относительно IB Mid.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">First test ★</span>
+          <span class="fc-tag">Bias ▲ L n/5</span>
+          <span class="fc-tag">±σ полосы</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(184,134,30,0.5);--ac-bg:rgba(184,134,30,0.025);--ac-border:rgba(184,134,30,0.22);--ac-spot:rgba(184,134,30,0.06)">
+        <div class="feat-icon ic-o">📐</div>
+        <h3>Баланс (pVAH / pVAL)</h3>
+        <p>Уровни Value Area вчерашнего дня. Тип открытия (Outside/Inside) определяется автоматически. Тест фитилём и пробой телом — визуально различаются по силе сигнала.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">pVAH / pVAL</span>
+          <span class="fc-tag">Outside / Inside</span>
+          <span class="fc-tag">Тест · Пробой</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(46,150,176,0.5);--ac-bg:rgba(46,150,176,0.025);--ac-border:rgba(46,150,176,0.22);--ac-spot:rgba(46,150,176,0.06)">
+        <div class="feat-icon ic-b">🎯</div>
+        <h3>nPOC</h3>
+        <p>Непротестированные POC предыдущих дней — до 60 дней глубины. Три визуальных состояния: нетронутый, тест фитилём, пробой телом. Цвет меняется автоматически.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">до 60 дней</span>
+          <span class="fc-tag" style="color:#2E8CB8">Синий — нетронутый</span>
+          <span class="fc-tag" style="color:var(--red)">Красный — тест</span>
+          <span class="fc-tag" style="color:var(--muted)">Серый — пробой</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(200,64,64,0.5);--ac-bg:rgba(200,64,64,0.025);--ac-border:rgba(200,64,64,0.22);--ac-spot:rgba(200,64,64,0.06)">
+        <div class="feat-icon ic-r">⚠️</div>
+        <h3>Poor H/L · Single Print</h3>
+        <p>Poor High/Low — экстремум с менее чем двумя TPO-периодами: незавершённый аукцион. Single Print — одиночные ценовые уровни профиля, выделяются фоновой зоной.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">Poor High / Low</span>
+          <span class="fc-tag">Single Print</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(26,158,120,0.5);--ac-bg:rgba(26,158,120,0.025);--ac-border:rgba(26,158,120,0.22);--ac-spot:rgba(26,158,120,0.06)">
+        <div class="feat-icon ic-g">⚡</div>
+        <h3>Raid / Ликвидность</h3>
+        <p>Raid G — ложный пробой экстремума с быстрым возвратом. Raid S — закрепление за уровнем N+ баров. Сигнал подтверждается или удаляется через N свечей.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">Raid G (Grab)</span>
+          <span class="fc-tag">Raid S (Sweep)</span>
+          <span class="fc-tag">Live-версия</span>
+          <span class="fc-tag">Подтверждение</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(123,94,167,0.5);--ac-bg:rgba(123,94,167,0.025);--ac-border:rgba(123,94,167,0.22);--ac-spot:rgba(123,94,167,0.06)">
+        <div class="feat-icon ic-p">🧲</div>
+        <h3>EQH / EQL</h3>
+        <p>Equal Highs/Lows — зоны скопления стопов за уровнями многократного касания. Кластер уровней в радиусе X пунктов помечается магнитом. HL Sweep после серий ▲/▼.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">EQH / EQL</span>
+          <span class="fc-tag">Магнит 🧲</span>
+          <span class="fc-tag">HL Sweep</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(184,134,30,0.5);--ac-bg:rgba(184,134,30,0.025);--ac-border:rgba(184,134,30,0.22);--ac-spot:rgba(184,134,30,0.06)">
+        <div class="feat-icon ic-o">📏</div>
+        <h3>Initial Balance и сетапы</h3>
+        <p>IB за периоды A+B с расширениями 0.5×, 1×, 1.5×, 2×. A-High/A-Low, IB Mid, Open Drive. Day Type в инфо-панели: Trend, NV, Tight, ORR.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">IB High / Low</span>
+          <span class="fc-tag">IB Ext 0.5–2×</span>
+          <span class="fc-tag">A-HL · IB Mid</span>
+          <span class="fc-tag">OD↑ / OD↓</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(26,158,120,0.5);--ac-bg:rgba(26,158,120,0.025);--ac-border:rgba(26,158,120,0.22);--ac-spot:rgba(26,158,120,0.06)">
+        <div class="feat-icon ic-t">▤</div>
+        <h3>TPO пресеты</h3>
+        <p>Готовые ticks-per-row для популярных контрактов — FDAX, NQ, YM — или ручная настройка под любой инструмент.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">FDAX · NQ · YM</span>
+          <span class="fc-tag">Ручной ввод</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(46,150,176,0.5);--ac-bg:rgba(46,150,176,0.025);--ac-border:rgba(46,150,176,0.22);--ac-spot:rgba(46,150,176,0.06)">
+        <div class="feat-icon ic-b">▦</div>
+        <h3>Инфо-панель</h3>
+        <p>Таблица в правом углу: Open Drive, Day Type, Open, B vs A, Struct — контекст сессии без переключения индикаторов.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">OD · Day Type</span>
+          <span class="fc-tag">Open · B vs A</span>
+          <span class="fc-tag">Struct</span>
+        </div>
+      </div>
+
+      <div class="feat-card reveal" style="--ac:rgba(123,94,167,0.5);--ac-bg:rgba(123,94,167,0.025);--ac-border:rgba(123,94,167,0.22);--ac-spot:rgba(123,94,167,0.06)">
+        <div class="feat-icon ic-p">〜</div>
+        <h3>Zigzag + BOS + CHoCH</h3>
+        <p>Свинговая структура на 1m — три режима чувствительности (3 / 5 / 8 TPO-строк). BOS — пробой в сторону предыдущего пробоя (продолжение). CHoCH — пробой в обратную сторону, первый сигнал смены тренда. Линии зигзага опциональны, BOS/CHoCH работают независимо от них.</p>
+        <div class="feat-tags">
+          <span class="fc-tag">Zigzag</span>
+          <span class="fc-tag">BOS↑ / BOS↓</span>
+          <span class="fc-tag">CHoCH</span>
+          <span class="fc-tag">3 · 5 · 8 строк</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── SIGNALS ── -->
+<section id="signals">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-label">signals</div>
+      <h2 class="section-title">Сигналы и метки</h2>
+      <p class="section-sub">Все метки появляются прямо на графике — без отдельного окна.</p>
+    </div>
+
+    <div class="signals-list">
+
+      <div class="sig-row reveal">
+        <div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <span class="sig-badge sg">▲↑ бычий</span>
+            <span class="sig-badge sr">▼↓ медвежий</span>
+            <span class="sig-badge smut">◆ inside</span>
+            <span class="sig-badge smut">– нейтральная OC</span>
+          </div>
+          <h3>Метки периода</h3>
+          <p>Первый символ — направление диапазона (H/L vs предыдущий). Второй — направление open→close. Серия ▲ или ▼ без прерываний учитывается в HL Sweep.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sg">Raid G ↑</span>
+        <div>
+          <h3>Grab — быстрое касание</h3>
+          <p>Цена вышла за экстремум предыдущего периода и закрылась обратно. Стопы собраны, вероятный разворот. Через N свечей подтверждается или удаляется.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sr">Raid S ↑</span>
+        <div>
+          <h3>Sweep — закрепление за уровнем</h3>
+          <p>Цена закрылась за экстремумом или провела N баров за ним. Сильное снятие с удержанием. Вероятное продолжение движения.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sg">▲ L 4/5</span>
+        <div>
+          <h3>Bias — балльный уклон сессии</h3>
+          <p>На периоде B — оценка ▲ L 1–5/5 или ▼ S 1–5/5: VWAP, направление A и B, пробой IBH/IBL, позиция относительно IB Mid. Самостоятельная метка на графике — контекст для входа, не фильтр других сигналов.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sb">▲×3 ↑</span>
+        <div>
+          <h3>HL Sweep — снятие серии</h3>
+          <p>После N периодов подряд ▲ или ▼ цена выходит за последний экстремум и быстро возвращается. Число = длина серии. Признак истощения тренда.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sam">Outside</span>
+        <div>
+          <h3>Тип открытия дня</h3>
+          <p><strong style="color:var(--teal)">Outside (above)</strong> — открытие выше pVAH, бычий контекст. <strong style="color:var(--red)">Outside (below)</strong> — ниже pVAL, медвежий контекст. <strong style="color:var(--amber)">Inside (danger)</strong> — внутри Value Area, двусторонний аукцион.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sp">🧲 EQH</span>
+        <div>
+          <h3>Equal Highs / Lows + Магнит</h3>
+          <p>Уровни многократного касания без пробоя — скопление стопов. Кластер из N таких уровней в радиусе X пунктов помечается 🧲 — сильная зона притяжения.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sam">OD↑ / OD↓</span>
+        <div>
+          <h3>Open Drive — трендовый старт</h3>
+          <p>В периоде A нет ни одного TPO-кубика против направления движения. <strong style="color:var(--teal)">OD↑</strong> — только бычьи кубики, <strong style="color:var(--red)">OD↓</strong> — только медвежьи. Самый сильный признак трендового дня с первых минут сессии.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sam">IB 1×</span>
+        <div>
+          <h3>IB расширения</h3>
+          <p>После выхода цены за Initial Balance уровни 0.5×, 1×, 1.5× и 2× становятся зонами реакции. Выход за IB × пороговое значение к концу сессии → <strong style="color:var(--text)">Trend Day</strong>.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sam">IBm</span>
+        <div>
+          <h3>IB Mid — тест уровня</h3>
+          <p>Маркер на первом касании середины IB в период C+. Главный магнит при балансирующем дне — появляется сразу после закрытия периода B.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sg">CHoCH↓</span>
+        <div>
+          <h3>Change of Character</h3>
+          <p>Пробой свинг-экстремума в сторону, противоположную предыдущему пробою, — первый сигнал смены тренда. В отличие от BOS (пробой по направлению предыдущего), CHoCH ловит именно разворот структуры.</p>
+        </div>
+      </div>
+
+      <div class="sig-row reveal">
+        <span class="sig-badge sp">BOS↑</span>
+        <div>
+          <h3>Break of Structure</h3>
+          <p>Пробой предыдущего свинг-максимума (<strong style="color:var(--teal)">BOS↑</strong>) или свинг-минимума (<strong style="color:var(--red)">BOS↓</strong>) в сторону предыдущего пробоя — продолжение тренда. Метка появляется на баре пробоя. Чувствительность свингов настраивается — от коротких 1m-волн до крупных структур.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── HOW TO READ ── -->
+<section id="how">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-label">workflow</div>
+      <h2 class="section-title">Алгоритм торгового дня</h2>
+      <p class="section-sub">Последовательность анализа от открытия до входа.</p>
+    </div>
+    <div class="how-grid">
+
+      <div class="how-card reveal">
+        <div class="how-num">step_01</div>
+        <h3>До открытия: контекст</h3>
+        <p>pVAH / pVAL — где вчерашняя Value Area? Открытые nPOC выше/ниже? Это магниты для сегодняшнего движения.</p>
+      </div>
+
+      <div class="how-card reveal">
+        <div class="how-num">step_02</div>
+        <h3>Период A: тип открытия</h3>
+        <p>Outside above/below — контекст трендового дня. Inside (danger) — двусторонний аукцион. Смотри Open Drive и тип открытия в инфо-панели.</p>
+      </div>
+
+      <div class="how-card reveal">
+        <div class="how-num">step_03</div>
+        <h3>Период B: Bias</h3>
+        <p>▲ L n/5 или ▼ S n/5 — балльная оценка по VWAP, A/B, IB и IB Mid. Торгуй в сторону bias, если нет сильного противоположного сетапа.</p>
+      </div>
+
+      <div class="how-card reveal">
+        <div class="how-num">step_04</div>
+        <h3>VWAP как фильтр</h3>
+        <p>Выше VWAP — лонги, ниже — шорты. Первый тест (★) особенно значим. Кружки — более слабые тесты фитилём.</p>
+      </div>
+
+      <div class="how-card reveal">
+        <div class="how-num">step_05</div>
+        <h3>Raid / HL Sweep</h3>
+        <p>Raid G/S и ▲×N/▼×N — снятие ликвидности после серии периодов. Направление стрелки = ожидаемое движение после подтверждения.</p>
+      </div>
+
+      <div class="how-card reveal">
+        <div class="how-num">step_06</div>
+        <h3>BOS / CHoCH: подтверждение структуры</h3>
+        <p>После Raid — проверяй структуру свингов. BOS в сторону bias подтверждает продолжение, CHoCH сигналит смену тренда раньше остальных. Комбинируй с Bias и типом открытия.</p>
+      </div>
+
+      <div class="how-card reveal">
+        <div class="how-num">step_07</div>
+        <h3>Цели: Poor H/L, nPOC, EQH</h3>
+        <p>Poor H/L, Single Print, nPOC и EQH/EQL — зоны куда цена стремится. Используй как тейк-профит или разворотные точки.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── STRATEGY GUIDES ── -->
+<section id="guides">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-label">playbooks</div>
+      <h2 class="section-title">Торговые гайды</h2>
+      <p class="section-sub">Пошаговая методология на Relief — от overnight-контекста до входа по структуре BOS/CHoCH и управления позицией.</p>
+    </div>
+    <div class="guide-grid">
+
+      <a class="guide-card reveal" href="strategy-fdax.html"
+         style="--gc:rgba(46,150,176,0.5);--gc-border:rgba(46,150,176,0.28);--gc-bg:rgba(46,150,176,0.08);--gc-text:#2E8CB8">
+        <span class="guide-card-badge">GER40 · Eurex</span>
+        <h3>Стратегия FDAX</h3>
+        <p>Расписание сессии CET, периоды A–C, три сетапа на IB, подтверждение BOS/CHoCH, второе окно US Open overlap.</p>
+        <div class="guide-card-tags">
+          <span>09:00 CET</span>
+          <span>IB Extension</span>
+          <span>Raid</span>
+          <span>BOS / CHoCH</span>
+        </div>
+        <span class="guide-card-cta">
+          Открыть гайд
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 6h7M6 2.5l3.5 3.5L6 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </a>
+
+      <a class="guide-card reveal" href="strategy-nq.html"
+         style="--gc:rgba(123,94,167,0.5);--gc-border:rgba(123,94,167,0.28);--gc-bg:rgba(123,94,167,0.08);--gc-text:var(--purple)">
+        <span class="guide-card-badge">E-mini NQ · CME</span>
+        <h3>Стратегия NQ</h3>
+        <p>Те же принципы с поправкой на волатильность NQ: шире стопы, 96% пробоев IB, вечернее MOC-окно 21:30–22:00.</p>
+        <div class="guide-card-tags">
+          <span>RTH 09:30</span>
+          <span>Bias ≥ 3/5</span>
+          <span>MOC window</span>
+          <span>BOS / CHoCH</span>
+        </div>
+        <span class="guide-card-cta">
+          Открыть гайд
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 6h7M6 2.5l3.5 3.5L6 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── SETTINGS ── -->
+<section id="settings">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-label">config</div>
+      <h2 class="section-title">Настройки</h2>
+      <p class="section-sub">Все параметры с описанием и значениями по умолчанию.</p>
+    </div>
+
+    <div class="settings-table-wrap reveal">
+    <table class="settings-table">
+      <thead>
+        <tr>
+          <th>Параметр</th>
+          <th>По умолч.</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr class="sg-row"><td colspan="3"><span class="sg-tag tag-blue">Сессия</span></td></tr>
+        <tr><td>Старт (час / мин)</td><td class="def">8:00 CET</td><td>Начало торговой сессии. GER40 — 8:00 CET, NY — 15:30 CET.</td></tr>
+        <tr><td>Периодов на графике</td><td class="def">15</td><td>Число 30m-блоков для отображения.</td></tr>
+
+        <tr class="sg-row"><td colspan="3"><span class="sg-tag tag-purple">TPO-профиль</span></td></tr>
+        <tr><td>Ticks per row</td><td class="def">40</td><td>Совпадает с «Ticks per row» стандартного TPO TradingView. Сверяйтесь со своей настройкой.</td></tr>
+        <tr><td>TPO-кубики / Poor H/L / SP</td><td class="def">Poor/SP вкл</td><td>Кубики опционально. Poor H/L и Single Print — зоны незавершённого аукциона.</td></tr>
+
+        <tr class="sg-row"><td colspan="3"><span class="sg-tag tag-teal">Баланс (VA / nPOC)</span></td></tr>
+        <tr><td>Процент VA %</td><td class="def">68%</td><td>Размер Value Area. Стандарт Market Profile. Совпадает с TV TPO.</td></tr>
+        <tr><td>Открытие дня</td><td class="def">Авто</td><td>Тип открытия по open периода A vs pVAH/pVAL. Можно задать вручную.</td></tr>
+        <tr><td>nPOC: история (дней)</td><td class="def">20</td><td>Сколько дней хранить непротестированные POC. Максимум 60.</td></tr>
+
+        <tr class="sg-row"><td colspan="3"><span class="sg-tag tag-teal">VWAP</span></td></tr>
+        <tr><td>Тесты / Bias</td><td class="def">вкл</td><td>Кружки тестов фитилём, первый тест ★, балльный Bias ▲ L n/5 на периоде B.</td></tr>
+        <tr><td>Bias: N баров периода B</td><td class="def">10</td><td>Последние N 1m-баров периода B для расчёта bias-score.</td></tr>
+
+        <tr class="sg-row"><td colspan="3"><span class="sg-tag tag-red">Raid / Ликвидность</span></td></tr>
+        <tr><td>Raid S: баров за уровнем</td><td class="def">5</td><td>Более N баров за уровнем → Sweep. Иначе Grab.</td></tr>
+        <tr><td>Подтверждение (свечей)</td><td class="def">3</td><td>Через N свечей сигнал проверяется и либо подтверждается, либо удаляется. 0 = выключено.</td></tr>
+        <tr><td>HL Sweep после серии ▲/▼</td><td class="def">вкл</td><td>Мин. 2 периода в серии, возврат за 3 бара.</td></tr>
+
+        <tr class="sg-row"><td colspan="3"><span class="sg-tag tag-amber">EQH / EQL</span></td></tr>
+        <tr><td>Магнит: мин. EQ / зона</td><td class="def">2 / 19pt</td><td>Кластер из N EQ-уровней в радиусе X пунктов → метка 🧲.</td></tr>
+
+        <tr class="sg-row"><td colspan="3"><span class="sg-tag tag-amber">Сетапы</span></td></tr>
+        <tr><td>IB Extension / Trend Day</td><td class="def">вкл</td><td>Расширения 0.5×, 1×, 1.5×, 2×. Trend Day при узком IB + пробой края.</td></tr>
+        <tr><td>A-HL / IB Mid / IBm entry</td><td class="def">вкл / выкл</td><td>Уровни периода A и середина IB. IBm entry — маркер первого касания IB Mid.</td></tr>
+        <tr><td>Open Drive (OD)</td><td class="def">вкл</td><td>OD↑/OD↓ на конце периода A, если нет TPO против направления движения.</td></tr>
+        <tr><td>Инфо-панель</td><td class="def">вкл</td><td>5 строк: Open Drive, Day Type, Open, B vs A, Struct.</td></tr>
+
+        <tr class="sg-row"><td colspan="3"><span class="sg-tag tag-purple">Zigzag + BOS + CHoCH</span></td></tr>
+        <tr><td>Зигзаг по структуре</td><td class="def">выкл</td><td>Визуальные линии свинг-структуры на 1m. Можно отключить линии — BOS/CHoCH при этом продолжают работать.</td></tr>
+        <tr><td>Break of Structure (BOS)</td><td class="def">вкл</td><td>Метка BOS↑/BOS↓ на баре пробоя предыдущего свинг-экстремума в сторону предыдущего пробоя (продолжение).</td></tr>
+        <tr><td>Change of Character (CHoCH)</td><td class="def">вкл</td><td>Пробой в сторону, противоположную предыдущему пробою, — первый сигнал смены тренда.</td></tr>
+        <tr><td>Чувствительность</td><td class="def">Средние (5)</td><td>Мелкие (3) — короткие свинги, Средние (5) — стандарт, Крупные (8) — крупные структуры. Число = откат в TPO-строках.</td></tr>
+
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="wrap">
+    <p>© 2024 Surface Tension Indicators · Relief · PineScript v6</p>
+    <div class="footer-links">
+      <a href="strategy-fdax.html">Стратегия FDAX</a>
+      <a href="strategy-nq.html">Стратегия NQ</a>
+      <a href="pricing.html">Цены</a>
+      <a href="about.html">О нас</a>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+<script>
+const twWords = ['TPO профиль', 'VWAP + Bias', 'Raid G / Sweep', 'CHoCH', 'nPOC уровни', 'EQH / EQL', 'IB сетапы', 'Инфо-панель', 'Zigzag + BOS'];
+let twIdx = 0, twPos = 0, twDel = false;
+const twEl = document.getElementById('tw');
+if (twEl) {
+  function typeStep() {
+    const w = twWords[twIdx];
+    if (!twDel) {
+      twEl.textContent = w.slice(0, ++twPos);
+      if (twPos === w.length) { twDel = true; setTimeout(typeStep, 1800); return; }
+    } else {
+      twEl.textContent = w.slice(0, --twPos);
+      if (twPos === 0) { twDel = false; twIdx = (twIdx + 1) % twWords.length; }
+    }
+    setTimeout(typeStep, twDel ? 45 : 85);
+  }
+  setTimeout(typeStep, 600);
+}
+
+document.querySelectorAll('.val[data-to]').forEach(el => {
+  const target = +el.dataset.to, steps = 35;
+  let i = 0;
+  const t = setInterval(() => {
+    el.textContent = Math.round(target * (++i / steps));
+    if (i >= steps) clearInterval(t);
+  }, 35);
+});
+
+const periods = [
+  {l:'A',c:'#29b6f6'},{l:'B',c:'#66d96b'},{l:'C',c:'#ff9800'},
+  {l:'D',c:'#ef5350'},{l:'E',c:'#ba55d3'},{l:'F',c:'#00bcd4'},
+  {l:'G',c:'#ff8a65'},{l:'H',c:'#ff5289'}
+];
+const hcPer = document.getElementById('hcPeriods');
+if (hcPer) {
+  periods.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'hc-pd' + (i === 2 ? ' active' : '') + (i > 4 ? ' dim' : '');
+    el.style.background = i > 4 ? p.c + '28' : p.c + 'cc';
+    el.style.color = i > 4 ? p.c : '#fff';
+    el.textContent = p.l;
+    hcPer.appendChild(el);
+    setTimeout(() => el.classList.add('show'), 400 + i * 110);
+  });
+}
+
+const vwapFill = document.getElementById('hcVwap');
+if (vwapFill) setTimeout(() => { vwapFill.style.width = '62%'; }, 700);
+
+document.querySelectorAll('.hc-sig').forEach((el, i) => {
+  setTimeout(() => el.classList.add('show'), 1000 + i * 280);
+});
+
+const miniData   = [55, 72, 88, 65, 90, 78, 60, 82, 70, 55, 45, 68, 74, 80, 62];
+const miniColors = ['#29b6f6','#29b6f6','#ff9800','#ff9800','#ff9800','#ef5350','#66d96b','#66d96b','#ba55d3','#ba55d3','#ba55d3','#00bcd4','#00bcd4','#ff8a65','#ff8a65'];
+const miniWrap = document.getElementById('hcMini');
+if (miniWrap) {
+  miniData.forEach((h, i) => {
+    const el = document.createElement('div');
+    el.className = 'hc-bar-item';
+    el.style.height = h + '%';
+    el.style.background = miniColors[i] + 'aa';
+    miniWrap.appendChild(el);
+    setTimeout(() => el.classList.add('show'), 1500 + i * 60);
+  });
+}
+
+const periodLabels = [
+  {t:'C ▲↑',c:'#ff9800'},{t:'D ♦↓',c:'#ef5350'},{t:'E ▼–',c:'#ba55d3'},
+  {t:'F ▲↑',c:'#00bcd4'},{t:'A ↑' ,c:'#29b6f6'},{t:'B ▲–',c:'#66d96b'}
+];
+const curPer = document.getElementById('hcCurPeriod');
+if (curPer) {
+  let pi = 0;
+  setInterval(() => {
+    pi = (pi + 1) % periodLabels.length;
+    curPer.style.opacity = '0';
+    curPer.style.transform = 'translateY(-6px)';
+    setTimeout(() => {
+      curPer.textContent = periodLabels[pi].t;
+      curPer.style.color = periodLabels[pi].c;
+      curPer.style.transition = 'opacity 0.3s, transform 0.3s';
+      curPer.style.opacity = '1';
+      curPer.style.transform = 'translateY(0)';
+    }, 200);
+  }, 2200);
+}
+
+</script>
+</body>
+</html>
