@@ -8,665 +8,399 @@
 <meta property="og:description" content="Fulcrum, Volatile Bar + Sweep, PD/PW levels, and structural zigzag. PineScript v6, any TradingView plan.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#E7DCC4">
 <title>Sentry — structural market watch</title>
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<style>
-/* ── SENTRY PAGE — steel-blue / orange (VB sweep) accent ── */
-:root { --sentry: #3B6EA5; }
-
-.hero-eyebrow {
-  color: var(--sentry);
-  border-color: rgba(59,110,165,0.3);
-  background: rgba(59,110,165,0.08);
-}
-.hero-eyebrow::before { background: var(--sentry); }
-
-.anim-grad {
-  background: linear-gradient(270deg, var(--sentry), #ff9800, #9C27B0, var(--sentry));
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradShift 4.5s ease infinite;
-}
-
-.hero-lead { margin-bottom: 36px; }
-.hero-lead-kicker { font-size: 1.05rem; font-weight: 600; color: var(--text); line-height: 1.45; margin-bottom: 10px; }
-.hero-lead-text { font-size: 0.95rem; color: var(--muted); line-height: 1.72; margin-bottom: 18px; }
-.hero-lead-groups {
-  list-style: none; display: flex; flex-direction: column; gap: 9px;
-  padding: 14px 16px; border-radius: 12px;
-  background: rgba(59,110,165,0.05); border: 1px solid rgba(59,110,165,0.16);
-}
-.hero-lead-groups li { display: grid; grid-template-columns: 88px 1fr; gap: 10px; align-items: baseline; }
-.hero-lead-lbl { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sentry); }
-.hero-lead-val { font-size: 0.86rem; color: var(--muted); line-height: 1.55; }
-@media (max-width: 600px) { .hero-lead-groups li { grid-template-columns: 1fr; gap: 3px; } }
-
-/* ── HERO CARD ── */
-.hero-card {
-  background: var(--surface2);
-  border: 1px solid rgba(59,110,165,0.18);
-  border-radius: 18px; overflow: hidden; position: relative;
-  animation: heroFloat 6s ease-in-out infinite;
-  box-shadow: 0 4px 24px rgba(30,20,10,0.08), 0 0 40px rgba(59,110,165,0.05);
-}
-.hero-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(59,110,165,0.5), rgba(255,152,0,0.35), transparent);
-}
-.hero-card::after {
-  content: ''; position: absolute; inset: 0; border-radius: 18px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(59,110,165,0.03) 0%, transparent 60%);
-  pointer-events: none;
-}
-.hc-bar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-bottom: 1px solid var(--border); background: var(--bg2); }
-.hc-live { display: flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--teal); letter-spacing: 0.1em; }
-.hc-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 1.5s ease-in-out infinite; }
-.hc-name { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--text); margin-left: 4px; }
-.hc-inst { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-left: auto; }
-.hc-body { padding: 14px 16px; }
-.hc-section-lbl { font-family: var(--mono); font-size: 9px; font-weight: 600; color: var(--dim); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; margin-top: 12px; }
-.hc-section-lbl:first-child { margin-top: 0; }
-.hc-metrics { display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
-.hc-metric { display: flex; align-items: center; gap: 10px; background: rgba(30,20,10,0.04); border-radius: 8px; border: 1px solid var(--border); padding: 7px 10px; }
-.hc-mk { font-family: var(--mono); font-size: 10px; color: var(--muted); width: 72px; flex-shrink: 0; }
-.hc-mv { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--text); margin-left: auto; }
-.hc-mv.c-teal   { color: var(--teal); }
-.hc-mv.c-amber  { color: #ff9800; }
-.hc-mv.c-purple { color: #9C27B0; }
-.hc-mv.c-blue   { color: var(--sentry); }
-.hc-sigs { display: flex; flex-direction: column; gap: 5px; }
-.hc-sig { font-family: var(--mono); font-size: 10px; font-weight: 500; padding: 6px 10px; border-radius: 7px; opacity: 0; transform: translateX(-10px); transition: opacity 0.4s, transform 0.4s; border-left: 2px solid; }
-.hc-sig.show { opacity: 1; transform: translateX(0); }
-.sig-blue   { background: rgba(59,110,165,0.09); color: var(--sentry); border-color: var(--sentry); }
-.sig-amber  { background: rgba(255,152,0,0.09);  color: #ff9800;       border-color: #ff9800; }
-.sig-purple { background: rgba(156,39,176,0.09); color: #9C27B0;       border-color: #9C27B0; }
-.hc-pat-track { display: flex; gap: 4px; flex-wrap: wrap; }
-.hc-pat-chip { font-family: var(--mono); font-size: 8px; font-weight: 600; padding: 5px 8px; border-radius: 6px; letter-spacing: 0.04em; background: rgba(30,20,10,0.04); color: var(--dim); border: 1px solid var(--border); }
-.hc-pat-chip.on { background: rgba(59,110,165,0.09); color: var(--sentry); border-color: rgba(59,110,165,0.22); }
-
-/* ── FEATURE GRID ── */
-.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
-@media (max-width: 640px) { .feature-grid { grid-template-columns: 1fr; } }
-.feat-card {
-  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r);
-  padding: 24px 26px; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  position: relative; overflow: hidden; transform-style: preserve-3d;
-  box-shadow: 0 1px 6px rgba(30,20,10,0.04);
-}
-.feat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--fc, rgba(59,110,165,0.45)), transparent); }
-.feat-card::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), var(--fc-spot, rgba(59,110,165,0.06)) 0%, transparent 65%); pointer-events: none; opacity: 0; transition: opacity 0.2s; }
-.feat-card:hover::after { opacity: 1; }
-.feat-card:hover { border-color: var(--fc-border, rgba(59,110,165,0.22)); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(30,20,10,0.09); }
-.feat-icon { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 16px; }
-.feat-card h3 { font-family: var(--mono); font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; color: var(--text); }
-.feat-card p  { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
-.feat-card strong { color: var(--text); }
-.ic-blue   { background: rgba(59,110,165,0.10); }
-.ic-amber  { background: rgba(255,152,0,0.10); }
-.ic-purple { background: rgba(156,39,176,0.10); }
-.ic-teal   { background: rgba(26,158,120,0.10); }
-
-/* ── REQUIREMENTS CARD ── */
-.req-card {
-  background: var(--surface2); border: 1px solid rgba(26,158,120,0.2);
-  border-radius: var(--r); padding: 28px 32px; margin-top: 48px;
-  position: relative; overflow: hidden;
-  box-shadow: 0 1px 6px rgba(30,20,10,0.04);
-}
-.req-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(26,158,120,0.4), transparent); }
-.req-title { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
-.req-rows { display: flex; flex-direction: column; gap: 10px; }
-.req-row { display: flex; align-items: flex-start; gap: 12px; font-size: 0.87rem; }
-.req-badge { font-family: var(--mono); font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 5px; flex-shrink: 0; margin-top: 1px; }
-.req-essential { background: rgba(26,158,120,0.10); color: var(--teal); }
-.req-row p { color: var(--muted); line-height: 1.6; }
-.req-row strong { color: var(--text); }
-
-/* ── PRICING (single indicator) ── */
-.pricing-section { padding: 8px 0 0; }
-.price-rows { display: flex; flex-direction: column; gap: 8px; max-width: 560px; margin: 0 auto; }
-.price-row {
-  background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
-  padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s; cursor: default; position: relative; overflow: hidden;
-}
-.price-row:hover { border-color: var(--border2); box-shadow: 0 4px 16px rgba(30,20,10,0.07); }
-.price-row::after {
-  content: ''; position: absolute; top: 0; left: -80%; width: 55%; height: 100%;
-  background: linear-gradient(105deg, transparent 25%, rgba(255,255,255,0.22) 50%, transparent 75%);
-  transform: skewX(-15deg); pointer-events: none;
-}
-.price-row:hover::after { animation: rowShimmer 0.55s ease forwards; }
-@keyframes rowShimmer { from { left: -80%; } to { left: 130%; } }
-.price-row.best { background: transparent; border: none; padding: 0; position: relative; overflow: visible; margin-top: 6px; }
-.price-row.best::before {
-  content: ''; position: absolute; inset: -1.5px; border-radius: 14px; z-index: 0;
-  background: linear-gradient(135deg, var(--sentry), #ff9800, #9C27B0, var(--sentry));
-  background-size: 400% 400%; animation: gradBorderPulse 3s ease infinite;
-}
-@keyframes gradBorderPulse { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-.price-row.best::after {
-  content: ''; position: absolute; inset: -6px; border-radius: 18px; z-index: -1;
-  background: radial-gradient(ellipse at 50% 100%, rgba(59,110,165,0.18) 0%, transparent 70%);
-  animation: glowPulse 3s ease infinite;
-}
-@keyframes glowPulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
-.best-inner {
-  position: relative; z-index: 1; background: var(--surface2); border-radius: 13px;
-  padding: 16px 20px; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
-}
-.best-inner::before {
-  content: ''; position: absolute; top: 0; left: -80%; width: 55%; height: 100%;
-  background: linear-gradient(105deg, transparent 25%, rgba(255,255,255,0.22) 50%, transparent 75%);
-  transform: skewX(-15deg); pointer-events: none;
-}
-.price-row.best:hover .best-inner::before { animation: rowShimmer 0.55s ease forwards; }
-.best-badge {
-  position: absolute; top: -12px; left: 50%; transform: translateX(-50%); z-index: 10;
-  display: flex; align-items: center; gap: 5px; padding: 4px 14px; border-radius: 100px;
-  background: linear-gradient(135deg, var(--sentry), #ff9800);
-  font-family: var(--mono); font-size: 11px; font-weight: 700;
-  color: #fff; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
-  box-shadow: 0 2px 12px rgba(59,110,165,0.4), 0 0 0 2px var(--bg);
-  pointer-events: none;
-}
-.row-left { display: flex; align-items: center; gap: 10px; }
-.row-period { font-size: 0.88rem; color: var(--muted); min-width: 82px; }
-.price-row.best .row-period { color: var(--text); font-weight: 500; }
-.row-disc { font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
-.row-disc.none { visibility: hidden; }
-.row-disc.d1 { color: var(--teal);  background: rgba(26,158,120,0.10); border: 1px solid rgba(26,158,120,0.2); }
-.row-disc.d2 { color: var(--sentry); background: rgba(59,110,165,0.10); border: 1px solid rgba(59,110,165,0.2); }
-.row-disc.d3 { color: #ff9800; background: rgba(255,152,0,0.10);  border: 1px solid rgba(255,152,0,0.25); }
-.row-right { display: flex; align-items: baseline; gap: 8px; flex-direction: row-reverse; min-width: 140px; justify-content: flex-start; }
-.row-total { font-family: var(--display); font-size: 1.6rem; font-weight: 400; letter-spacing: 0.01em; color: var(--text); min-width: 62px; text-align: right; }
-.price-row.best .row-total { color: var(--sentry); }
-.row-eff { font-family: var(--mono); font-size: 11px; color: var(--dim); white-space: nowrap; }
-.price-row.best .row-eff { color: var(--muted); }
-.price-note {
-  max-width: 560px; margin: 18px auto 0; text-align: center;
-  font-family: var(--mono); font-size: 11px; color: var(--dim);
-  padding: 8px 14px; border: 1px dashed var(--border); border-radius: 8px;
-}
-.perks-row { display: flex; justify-content: center; gap: 28px; margin-top: 40px; flex-wrap: wrap; }
-.perk { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); }
-.perk-icon {
-  width: 36px; height: 36px; border-radius: 9px; background: var(--surface2); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
-  transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
-}
-.perk:hover .perk-icon { transform: scale(1.2) rotate(-5deg); }
-
-/* ── FAQ (reuse suite styles) ── */
-.faq-wrap { max-width: 860px; margin: 0 auto; }
-
-@media (max-width: 600px) { .nav-links .nav-cta { font-size: 0.78rem; padding: 6px 12px; } }
-@media (hover: none) { .feat-card:hover { transform: none; } }
-</style>
 </head>
 <body>
 
-<div class="crt-vignette"></div>
-<div class="scanlines"></div>
-<div class="vhs-line"></div>
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
+<div class="atmosphere" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<a href="#main" class="skip-link">Skip to content</a>
 
 <!-- ── NAV ── -->
-<nav>
+<header class="runhead">
   <div class="wrap">
-    <a class="nav-logo" href="en.html">
-      <div class="nav-logo-mark">
-        <svg class="hex-logo-svg" width="40" height="40" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
-          <g style="isolation:isolate">
-            <polygon points="17,-1 20,4 17,9 11,9 8,4 11,-1"    fill="#1B3550" style="mix-blend-mode:screen"/>
-            <polygon points="11,6 14,11 11,16 5,16 2,11 5,6"    fill="#274A6E" style="mix-blend-mode:screen"/>
-            <polygon points="23,6 26,11 23,16 17,16 14,11 17,6" fill="#3B6EA5" style="mix-blend-mode:screen"/>
-            <polygon points="17,13 20,18 17,23 11,23 8,18 11,13" fill="#6E97C0" style="mix-blend-mode:screen"/>
-          </g>
-        </svg>
-      </div>
-      <div class="nav-logo-lockup">
-        <span class="nav-logo-l1">Sentry</span>
-      </div>
+    <a class="runhead__home" href="en.html">
+      <svg class="runhead__mark" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
+        <g style="isolation:isolate">
+          <polygon points="17,-1 20,4 17,9 11,9 8,4 11,-1"    fill="#2B2118" style="mix-blend-mode:multiply"/>
+          <polygon points="11,6 14,11 11,16 5,16 2,11 5,6"    fill="#97431F" style="mix-blend-mode:multiply"/>
+          <polygon points="23,6 26,11 23,16 17,16 14,11 17,6" fill="#B5532E" style="mix-blend-mode:multiply"/>
+          <polygon points="17,13 20,18 17,23 11,23 8,18 11,13" fill="#E08A2E" style="mix-blend-mode:multiply"/>
+        </g>
+      </svg>
+      <span class="runhead__name">Sentry</span>
     </a>
-    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
-      <span class="nav-toggle-bar"></span>
-      <span class="nav-toggle-bar"></span>
-      <span class="nav-toggle-bar"></span>
-    </button>
-    <ul class="nav-links" id="nav-menu">
-      <li class="nav-lang"><a href="index.html">RU</a><span class="nav-lang-sep">/</span><a href="en.html" class="active">EN</a></li>
-      <li><a class="nav-link" href="#features">Features</a></li>
-      <li><a class="nav-link" href="#requirements">Requirements</a></li>
-      <li><a class="nav-link" href="#pricing">Pricing</a></li>
-      <li><a class="nav-link" href="#faq">FAQ</a></li>
-      <li><a class="nav-cta" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">TradingView →</a></li>
-    </ul>
+    <nav class="runhead__nav" aria-label="Primary">
+      <span class="lang-switch"><a href="index.html">RU</a><span class="lang-switch__sep">/</span><a href="en.html" class="active">EN</a></span>
+      <a class="link" href="#modules">Modules</a>
+      <a class="link" href="#requirements">Requirements</a>
+      <a class="link" href="#pricing">Pricing</a>
+      <a class="link" href="#faq">FAQ</a>
+      <a class="button" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">
+        TradingView
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </nav>
   </div>
-</nav>
+</header>
 
-<!-- ── HERO ── -->
-<section class="hero">
+<main id="main" tabindex="-1">
 
-  <div class="hero-hex-deco" aria-hidden="true">
-    <svg viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g class="hex-outer" opacity="0.12" stroke="#3B6EA5" stroke-width="1.2" stroke-dasharray="9 6">
-        <polygon points="536,140 502,81 434,81 400,140 434,199 502,199"/>
-        <polygon points="328,20 294,-39 226,-39 192,20 226,79 294,79"/>
-        <polygon points="120,140 86,81 18,81 -16,140 18,199 86,199"/>
-        <polygon points="120,380 86,321 18,321 -16,380 18,439 86,439"/>
-        <polygon points="328,500 294,441 226,441 192,500 226,559 294,559"/>
-        <polygon points="536,380 502,321 434,321 400,380 434,439 502,439"/>
-      </g>
-      <g class="hex-mid" opacity="0.16" stroke="#6E97C0" stroke-width="1.3">
-        <polygon points="462,260 436,215 384,215 358,260 384,305 436,305"/>
-        <polygon points="387,130 361,85 309,85 283,130 309,175 361,175"/>
-        <polygon points="237,130 211,85 159,85 133,130 159,175 211,175"/>
-        <polygon points="162,260 136,215 84,215 58,260 84,305 136,305"/>
-        <polygon points="237,390 211,345 159,345 133,390 159,435 211,435"/>
-        <polygon points="387,390 361,345 309,345 283,390 309,435 361,435"/>
-      </g>
-      <g class="hex-inner" opacity="0.26" stroke="#9FC2E0" stroke-width="1.6">
-        <polygon points="298,260 279,227 241,227 222,260 241,293 279,293" fill="#3B6EA5" fill-opacity="0.16"/>
-        <polygon points="364,260 345,227 307,227 288,260 307,293 345,293" fill="#6E97C0" fill-opacity="0.1"/>
-        <polygon points="331,203 312,170 274,170 255,203 274,236 312,236"/>
-        <polygon points="265,203 246,170 208,170 189,203 208,236 246,236" fill="#6E97C0" fill-opacity="0.1"/>
-        <polygon points="232,260 213,227 175,227 156,260 175,293 213,293"/>
-        <polygon points="265,317 246,284 208,284 189,317 208,350 246,350" fill="#6E97C0" fill-opacity="0.1"/>
-        <polygon points="331,317 312,284 274,284 255,317 274,350 312,350"/>
-      </g>
-    </svg>
-  </div>
-
-  <div class="wrap">
-    <div class="hero-split">
-
-      <!-- LEFT -->
-      <div class="hero-left">
-        <div class="hero-eyebrow">PineScript v6 · Any TradingView plan</div>
-        <h1 class="hero-ind-h1">
-          <svg aria-hidden="true" width="44" height="50" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
-            <g style="isolation:isolate">
-              <polygon points="17,-1 20,4 17,9 11,9 8,4 11,-1"    fill="#1B3550" style="mix-blend-mode:screen"/>
-              <polygon points="11,6 14,11 11,16 5,16 2,11 5,6"    fill="#274A6E" style="mix-blend-mode:screen"/>
-              <polygon points="23,6 26,11 23,16 17,16 14,11 17,6" fill="#3B6EA5" style="mix-blend-mode:screen"/>
-              <polygon points="17,13 20,18 17,23 11,23 8,18 11,13" fill="#6E97C0" style="mix-blend-mode:screen"/>
-            </g>
-          </svg>
-          <span class="anim-grad">Sentry</span>
-        </h1>
-        <div class="hero-lead">
-          <p class="hero-lead-kicker">Structural watch: accumulation, impulse, level sweeps</p>
-          <p class="hero-lead-text">
-            Sentry tracks the market across three independent structural axes: the Fulcrum
-            accumulation setup, Volatile Bar spikes with Sweep detection of level breaks, and
-            a structural zigzag over swing highs/lows. No feature requires TradingView Premium —
-            it works on any plan, including the free one.
-          </p>
-          <ul class="hero-lead-groups">
-            <li>
-              <span class="hero-lead-lbl">Fulcrum</span>
-              <span class="hero-lead-val">accumulation → decisive response</span>
-            </li>
-            <li>
-              <span class="hero-lead-lbl">Volatile Bar</span>
-              <span class="hero-lead-val">impulse + level-sweep marker</span>
-            </li>
-            <li>
-              <span class="hero-lead-lbl">PD/PW Levels</span>
-              <span class="hero-lead-val">prior day/week high & low with sweep tag</span>
-            </li>
-            <li>
-              <span class="hero-lead-lbl">Zigzag</span>
-              <span class="hero-lead-val">market structure, flexible sensitivity</span>
-            </li>
-          </ul>
-        </div>
-        <div class="hero-actions">
-          <a class="btn-primary" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="wrap">
+    <div class="hero-hex-deco" aria-hidden="true">
+      <svg viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g class="hex-outer" opacity="0.06" stroke="#2B2118" stroke-width="1.2" stroke-dasharray="9 6">
+          <polygon points="536,140 502,81 434,81 400,140 434,199 502,199"/>
+          <polygon points="328,20 294,-39 226,-39 192,20 226,79 294,79"/>
+          <polygon points="120,140 86,81 18,81 -16,140 18,199 86,199"/>
+          <polygon points="120,380 86,321 18,321 -16,380 18,439 86,439"/>
+          <polygon points="328,500 294,441 226,441 192,500 226,559 294,559"/>
+          <polygon points="536,380 502,321 434,321 400,380 434,439 502,439"/>
+        </g>
+        <g class="hex-mid" opacity="0.1" stroke="#97431F" stroke-width="1.3">
+          <polygon points="462,260 436,215 384,215 358,260 384,305 436,305"/>
+          <polygon points="387,130 361,85 309,85 283,130 309,175 361,175"/>
+          <polygon points="237,130 211,85 159,85 133,130 159,175 211,175"/>
+          <polygon points="162,260 136,215 84,215 58,260 84,305 136,305"/>
+          <polygon points="237,390 211,345 159,345 133,390 159,435 211,435"/>
+          <polygon points="387,390 361,345 309,345 283,390 309,435 361,435"/>
+        </g>
+        <g class="hex-inner" opacity="0.18" stroke="#E08A2E" stroke-width="1.6">
+          <polygon points="298,260 279,227 241,227 222,260 241,293 279,293" fill="#97431F" fill-opacity="0.14"/>
+          <polygon points="364,260 345,227 307,227 288,260 307,293 345,293" fill="#E08A2E" fill-opacity="0.09"/>
+          <polygon points="331,203 312,170 274,170 255,203 274,236 312,236"/>
+          <polygon points="265,203 246,170 208,170 189,203 208,236 246,236" fill="#E08A2E" fill-opacity="0.09"/>
+          <polygon points="232,260 213,227 175,227 156,260 175,293 213,293"/>
+          <polygon points="265,317 246,284 208,284 189,317 208,350 246,350" fill="#E08A2E" fill-opacity="0.09"/>
+          <polygon points="331,317 312,284 274,284 255,317 274,350 312,350"/>
+        </g>
+      </svg>
+    </div>
+    <div class="hero__grid">
+      <div class="hero__left">
+        <p class="hero__eyebrow reveal" style="--i:0">
+          PineScript v6 <span class="accent-dot" aria-hidden="true">·</span> Any TradingView plan
+        </p>
+        <h1 class="hero__title reveal" style="--i:1">Sentry</h1>
+        <p class="hero__sub reveal" style="--i:2">
+          A structural watch on the market: the <span class="hero__term">Fulcrum</span> accumulation setup, <span class="hero__term">Volatile&nbsp;Bar</span> spikes
+          with <span class="hero__term">Sweep</span> detection of level breaks, and a structural zigzag over swing highs/lows.
+          No feature requires TradingView Premium — it works on any plan, including the free one.
+        </p>
+        <div class="hero__cta reveal" style="--i:3">
+          <a class="button" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">
             Open on TradingView
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
-          <a class="btn-secondary" href="#pricing">Pricing ↓</a>
+          <a class="link" href="#pricing">See pricing</a>
         </div>
       </div>
 
-      <!-- RIGHT: animated card -->
-      <div class="hero-right">
-        <div class="hero-card">
-          <div class="hc-bar">
-            <span class="hc-live"><span class="hc-live-dot"></span>LIVE</span>
-            <span class="hc-name">Sentry</span>
-            <span class="hc-inst">GER40 · 15m</span>
+      <div class="hero__right">
+        <div class="signal-panel reveal" style="--i:4">
+          <div class="signal-panel__bar">
+            <span class="signal-panel__live"><span class="status-dot" aria-hidden="true"></span>LIVE</span>
+            <span class="signal-panel__inst">forex · 15m</span>
           </div>
-          <div class="hc-body">
-            <div class="hc-section-lbl">Setups</div>
-            <div class="hc-metrics">
-              <div class="hc-metric">
-                <span class="hc-mk">Fulcrum</span>
-                <span class="hc-mv c-blue" id="stFulcrum">forming</span>
-              </div>
-              <div class="hc-metric">
-                <span class="hc-mk">Volatile Bar</span>
-                <span class="hc-mv c-amber">impulse detected</span>
-              </div>
+          <div class="signal-panel__body">
+            <div class="signal-panel__lbl">Setups</div>
+            <div class="signal-panel__metrics">
+              <div class="signal-panel__metric"><span class="k">Fulcrum</span><span class="v" id="stFulcrum">forming</span></div>
+              <div class="signal-panel__metric"><span class="k">Volatile Bar</span><span class="v c-ember" id="stVB">watching</span></div>
             </div>
 
-            <div class="hc-section-lbl">Signals</div>
-            <div class="hc-sigs">
-              <div class="hc-sig sig-blue">▛▜ Fulcrum ↑ — active</div>
-              <div class="hc-sig sig-amber">● VB Sweep — pdH swept</div>
-              <div class="hc-sig sig-purple">+pwL — level tagged</div>
+            <div class="signal-panel__lbl">Signals</div>
+            <div class="signal-panel__feed">
+              <p class="feed-row reveal" style="--i:5">▛▜ Fulcrum ↑ — active</p>
+              <p class="feed-row is-clay reveal" style="--i:6">● VB Sweep — pdH swept</p>
+              <p class="feed-row is-muted reveal" style="--i:7">+pwL — level tagged</p>
             </div>
 
-            <div class="hc-section-lbl">Levels</div>
-            <div class="hc-mode-row" style="display:flex;align-items:center;gap:8px;background:rgba(59,110,165,0.05);border-radius:8px;border:1px solid rgba(59,110,165,0.12);padding:7px 10px;">
-              <span class="hc-mode-lbl" style="font-family:var(--mono);font-size:10px;color:var(--muted);width:52px;flex-shrink:0;">pdH/pdL</span>
-              <span class="hc-mode-val" style="font-family:var(--mono);font-size:11px;font-weight:600;color:#2962FF" id="stLevelMode">tracking</span>
+            <div class="signal-panel__lbl">Levels</div>
+            <div class="signal-panel__mode">
+              <span class="k">pdH/pdL</span><span class="v" id="stLevel">tracking</span>
             </div>
 
-            <div class="hc-section-lbl">Zigzag</div>
-            <div class="hc-pat-track">
-              <div class="hc-pat-chip on">Small</div>
-              <div class="hc-pat-chip">Medium</div>
-              <div class="hc-pat-chip">Large</div>
-              <div class="hc-pat-chip">Very large</div>
+            <div class="signal-panel__lbl">Zigzag</div>
+            <div class="signal-panel__chips">
+              <span class="chip on">Small</span>
+              <span class="chip">Medium</span>
+              <span class="chip">Large</span>
+              <span class="chip">Very large</span>
             </div>
           </div>
         </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ── FEATURES ── -->
-<section id="features">
-  <div class="wrap">
-    <div class="reveal">
-      <div class="section-label">signal engine</div>
-      <h2 class="section-title">Four structure modules</h2>
-      <p class="section-sub">Each module toggles and tunes independently — build your own set to match your trading style.</p>
-    </div>
-
-    <div class="feature-grid">
-
-      <div class="feat-card reveal" style="--fc:rgba(59,110,165,0.5);--fc-bg:rgba(59,110,165,0.025);--fc-border:rgba(59,110,165,0.22);--fc-spot:rgba(59,110,165,0.06)">
-        <div class="feat-icon ic-blue">▛▜</div>
-        <h3>Setup: Fulcrum</h3>
-        <p>A pattern of accumulation before a decisive move — the market pauses, then answers with a confident impulse. The alert fires in both directions.</p>
-      </div>
-
-      <div class="feat-card reveal" style="--fc:rgba(255,152,0,0.5);--fc-bg:rgba(255,152,0,0.025);--fc-border:rgba(255,152,0,0.22);--fc-spot:rgba(255,152,0,0.06)">
-        <div class="feat-icon ic-amber">●</div>
-        <h3>Volatile Bar + Sweep</h3>
-        <p>Flags unusually wide bars — volatility spikes on the chart. If such a bar also breaks a notable level or a structural high/low, the marker changes color — a signal of a likely liquidity sweep.</p>
-      </div>
-
-      <div class="feat-card reveal" style="--fc:rgba(156,39,176,0.5);--fc-bg:rgba(156,39,176,0.025);--fc-border:rgba(156,39,176,0.22);--fc-spot:rgba(156,39,176,0.06)">
-        <div class="feat-icon ic-purple">━</div>
-        <h3>PD / PW Levels</h3>
-        <p>Automatic high/low levels from the previous day and the previous week. On a break, the level gets tagged right on the chart — instantly showing that price has already tested that zone.</p>
-      </div>
-
-      <div class="feat-card reveal" style="--fc:rgba(26,158,120,0.5);--fc-bg:rgba(26,158,120,0.025);--fc-border:rgba(26,158,120,0.22);--fc-spot:rgba(26,158,120,0.06)">
-        <div class="feat-icon ic-teal">↝</div>
-        <h3>Structural Zigzag</h3>
-        <p>Shows market structure through key swing highs and lows. Sensitivity is adjustable — from minor wiggles to only the biggest moves.</p>
-      </div>
-
-    </div>
-
-    <div class="req-card reveal" id="requirements">
-      <div class="req-title">// TradingView subscription requirements</div>
-      <div class="req-rows">
-        <div class="req-row">
-          <span class="req-badge req-essential">Any plan</span>
-          <p><strong>The entire indicator</strong> works on any TradingView plan, including the free one. No hidden Premium requirements.</p>
-        </div>
+        <button type="button" class="chart-trigger reveal" style="--i:5" data-chart-open>
+          <svg class="chart-trigger__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2 12V4M5.5 12V7M9 12V5.5M12.5 12V3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <span>See it on the chart</span>
+          <svg class="chart-trigger__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </div>
     </div>
-
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- ── PRICING ── -->
-<section class="pricing-section" id="pricing">
-  <div class="wrap">
-    <div class="reveal" style="margin-bottom:36px;text-align:center">
-      <div class="section-label">pricing</div>
-      <h2 class="section-title">One tool. Its own license.</h2>
-      <p class="section-sub">A standalone license. Access opens right after payment.</p>
     </div>
+  </section>
 
-    <div class="tier-col reveal">
-      <div class="price-rows">
-        <div class="price-row">
-          <div class="row-left">
-            <span class="row-period">1 month</span>
-            <span class="row-disc none">—</span>
-          </div>
-          <div class="row-right">
-            <span class="row-total" data-val="20">$20</span>
-            <span class="row-eff">$20.00 / mo</span>
+  <!-- ── MODULES ── -->
+  <section class="wrap-section" id="modules" aria-labelledby="modules-head">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-head__label" id="modules-head">Modules</span>
+        <span class="sec-head__rule" aria-hidden="true"></span>
+        <span class="sec-head__no">Four independent modules <span class="accent-dot" aria-hidden="true">·</span> MOD-01…04</span>
+      </div>
+      <p class="sec-sub">Each module toggles and tunes independently — build your own set to match your trading style.</p>
+
+      <div class="modules-grid">
+        <div class="mod-card reveal" style="--i:0">
+          <div class="mod-card__kicker"><span class="mod-card__no">MOD-01</span><span>Setup</span></div>
+          <h3>Fulcrum</h3>
+          <p>A pattern of accumulation before a decisive move — the market pauses, then answers with a confident impulse.</p>
+          <div class="mod-card__specs">Pause · Accumulation · Impulse</div>
+          <div class="mod-card__till">
+            <span class="mod-card__price">Alert</span>
+            <span class="mod-card__status"><span class="status-dot" aria-hidden="true"></span>Available</span>
           </div>
         </div>
-        <div class="price-row">
-          <div class="row-left">
-            <span class="row-period">3 months</span>
-            <span class="row-disc d1">−7%</span>
-          </div>
-          <div class="row-right">
-            <span class="row-total" data-val="56">$56</span>
-            <span class="row-eff">$18.67 / mo</span>
-          </div>
-        </div>
-        <div class="price-row">
-          <div class="row-left">
-            <span class="row-period">6 months</span>
-            <span class="row-disc d2">−13%</span>
-          </div>
-          <div class="row-right">
-            <span class="row-total" data-val="105">$105</span>
-            <span class="row-eff">$17.50 / mo</span>
+
+        <div class="mod-card is-clay reveal" style="--i:1">
+          <div class="mod-card__kicker"><span class="mod-card__no">MOD-02</span><span>Detector</span></div>
+          <h3>Volatile Bar + Sweep</h3>
+          <p>Flags unusually wide bars. If such a bar also breaks a notable level or structural high/low, the marker changes color.</p>
+          <div class="mod-card__specs">Wide bar · Sweep · Color shift</div>
+          <div class="mod-card__till">
+            <span class="mod-card__price">Alert</span>
+            <span class="mod-card__status"><span class="status-dot" aria-hidden="true"></span>Available</span>
           </div>
         </div>
-        <div class="price-row best">
-          <div class="best-inner">
-            <div class="row-left">
-              <span class="row-period">12 months</span>
-              <span class="row-disc d3">−18%</span>
-            </div>
-            <div class="row-right">
-              <span class="row-total" data-val="197">$197</span>
-              <span class="row-eff">$16.42 / mo</span>
-            </div>
+
+        <div class="mod-card reveal" style="--i:2">
+          <div class="mod-card__kicker"><span class="mod-card__no">MOD-03</span><span>Levels</span></div>
+          <h3>PD / PW Levels</h3>
+          <p>Automatic high/low levels from the previous day and week. On a break, the level gets tagged right on the chart.</p>
+          <div class="mod-card__specs">Prev day · Prev week · Break tag</div>
+          <div class="mod-card__till">
+            <span class="mod-card__price">Levels</span>
+            <span class="mod-card__status">pdH · pdL · pwH · pwL</span>
           </div>
-          <span class="best-badge">★ Best value</span>
+        </div>
+
+        <div class="mod-card reveal" style="--i:3">
+          <div class="mod-card__kicker"><span class="mod-card__no">MOD-04</span><span>Structure</span></div>
+          <h3>Structural Zigzag</h3>
+          <p>Shows market structure through key swing highs and lows. Sensitivity is adjustable — from minor wiggles to only the biggest moves.</p>
+          <div class="mod-card__specs">Swing High · Swing Low · 4 levels</div>
+          <div class="mod-card__till">
+            <span class="mod-card__price">Sensitivity</span>
+            <span class="mod-card__status">4 levels</span>
+          </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="perks-row reveal" style="transition-delay:.2s">
-      <div class="perk"><div class="perk-icon">🔑</div><span>Instant access via TradingView</span></div>
-      <div class="perk"><div class="perk-icon">🔄</div><span>All updates included</span></div>
-      <div class="perk"><div class="perk-icon">💬</div><span>Support on Telegram</span></div>
+  <!-- ── REQUIREMENTS ── -->
+  <section class="wrap-section" id="requirements" aria-labelledby="requirements-head">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-head__label" id="requirements-head">Requirements</span>
+        <span class="sec-head__rule" aria-hidden="true"></span>
+        <span class="sec-head__no">Terms of use</span>
+      </div>
+      <p class="deal-intro">No hidden conditions: works right after install, on any instrument, with any account size.</p>
+
+      <div class="deal-terms">
+        <div class="deal-term">
+          <p class="deal-term__no">01</p>
+          <h3 class="deal-term__head">Any TradingView plan</h3>
+          <p class="deal-term__body">The entire indicator works on the free plan too — no hidden Premium requirements.</p>
+        </div>
+        <div class="deal-term">
+          <p class="deal-term__no">02</p>
+          <h3 class="deal-term__head">Any instrument, any timeframe</h3>
+          <p class="deal-term__body">Forex, indices, crypto, stocks — tune the setup parameters to your own market and chart.</p>
+        </div>
+        <div class="deal-term">
+          <p class="deal-term__no">03</p>
+          <h3 class="deal-term__head">Alerts on Fulcrum and Volatile Bar</h3>
+          <p class="deal-term__body">Both setups can be set as a TradingView alert — no need to keep the chart open.</p>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ── FAQ ── -->
-<section id="faq">
-  <div class="wrap faq-wrap" style="padding-top:60px;padding-bottom:80px">
+  <!-- ── PRICING ── -->
+  <section class="wrap-section" id="pricing" aria-labelledby="pricing-head">
+    <div class="price-wrap">
+      <div class="sec-head">
+        <span class="sec-head__label" id="pricing-head">Pricing</span>
+        <span class="sec-head__rule" aria-hidden="true"></span>
+        <span class="sec-head__no">Its own license</span>
+      </div>
+      <div class="counter">
+        <p class="counter__lede reveal" style="--i:0">Pick a term — the longer you go, the lower the monthly price.</p>
+        <ul class="feature-list">
+          <li class="reveal" style="--i:1">
+            <span class="no">1 MO</span>
+            <span class="feature-list__main">
+              <span class="feature-list__val">$20 <span class="feature-list__eff">$20.00 / mo</span></span>
+            </span>
+          </li>
+          <li class="reveal" style="--i:2">
+            <span class="no">3 MO</span>
+            <span class="feature-list__main">
+              <span class="feature-list__val">$56 <span class="feature-list__eff">$18.67 / mo</span></span>
+              <span class="tag">−7%</span>
+            </span>
+          </li>
+          <li class="reveal" style="--i:3">
+            <span class="no">6 MO</span>
+            <span class="feature-list__main">
+              <span class="feature-list__val">$105 <span class="feature-list__eff">$17.50 / mo</span></span>
+              <span class="tag">−13%</span>
+            </span>
+          </li>
+          <li class="reveal" style="--i:4">
+            <span class="no">12 MO</span>
+            <span class="feature-list__main">
+              <span class="feature-list__val">$197 <span class="feature-list__eff">$16.42 / mo</span></span>
+              <span class="tag is-best">★ −18% best value</span>
+            </span>
+          </li>
+        </ul>
+        <a class="button reveal" style="--i:5" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">Open on TradingView</a>
+        <p class="counter__fine reveal" style="--i:6">Access opens right after payment. All updates included.</p>
+      </div>
 
-    <div class="reveal" style="margin-bottom:36px">
-      <div class="section-label">faq</div>
-      <h2 class="section-title">Frequently asked questions</h2>
+      <div class="perks-row">
+        <span class="perk reveal" style="--i:0">🔑 Instant access via TradingView</span>
+        <span class="perk reveal" style="--i:1">🔄 All updates included</span>
+        <span class="perk reveal" style="--i:2">💬 Support on Telegram</span>
+      </div>
     </div>
+  </section>
 
-    <div class="faq-grid" style="--item-ac:#3B6EA5;--item-border:rgba(59,110,165,0.12);--item-border-open:rgba(59,110,165,0.28)">
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggle(this)">
-          <div class="faq-q-left"><div class="faq-cat-dot"></div>
-          <span>Do I need TradingView Premium?</span></div>
-          <div class="faq-icon">+</div>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">
-          <p>No. Sentry calculates everything on the current chart and doesn't use any Premium-only features. It works on any plan, including the free one.</p>
-        </div></div>
+  <!-- ── FAQ ── -->
+  <section class="wrap-section" id="faq" aria-labelledby="faq-head">
+    <div class="faq-wrap">
+      <div class="sec-head">
+        <span class="sec-head__label" id="faq-head">FAQ</span>
+        <span class="sec-head__rule" aria-hidden="true"></span>
+        <span class="sec-head__no">Frequently asked questions</span>
       </div>
 
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggle(this)">
-          <div class="faq-q-left"><div class="faq-cat-dot"></div>
-          <span>Which timeframes and instruments does Sentry work on?</span></div>
-          <div class="faq-icon">+</div>
+      <div class="faq-list">
+        <div class="faq-row">
+          <div class="faq-row__q"><span>Do I need TradingView Premium?</span><span class="faq-row__icon">+</span></div>
+          <div class="faq-row__a"><p>No. Sentry calculates everything on the current chart and doesn't use any Premium-only features. It works on any plan, including the free one.</p></div>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">
-          <p>Any of them. All patterns are calculated bar-by-bar on the current chart, and previous day/week levels update automatically by calendar. Tune the zigzag sensitivity and setup parameters to fit your instrument and timeframe.</p>
-        </div></div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggle(this)">
-          <div class="faq-q-left"><div class="faq-cat-dot"></div>
-          <span>What's the difference between an orange and a gray Volatile Bar dot?</span></div>
-          <div class="faq-icon">+</div>
+        <div class="faq-row">
+          <div class="faq-row__q"><span>Which timeframes and instruments does Sentry work on?</span><span class="faq-row__icon">+</span></div>
+          <div class="faq-row__a"><p>Any of them. All patterns are calculated bar-by-bar on the current chart, and previous day/week levels update automatically by calendar. Tune the zigzag sensitivity and setup parameters to fit your instrument and timeframe.</p></div>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">
-          <p>A gray dot is a plain volatile bar (its range exceeds the previous N bars). Orange is the same bar, but it's also the first to sweep a zigzag high/low or a pdH/pdL/pwH/pwL level. A swept zigzag point additionally gets a purple dashed line running to the bar where it was swept.</p>
-        </div></div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggle(this)">
-          <div class="faq-q-left"><div class="faq-cat-dot"></div>
-          <span>Does Sentry have BOS/CHoCH like other indicators?</span></div>
-          <div class="faq-icon">+</div>
+        <div class="faq-row">
+          <div class="faq-row__q"><span>What's the difference between an orange and a gray Volatile Bar dot?</span><span class="faq-row__icon">+</span></div>
+          <div class="faq-row__a"><p>A gray dot is a plain volatile bar (its range exceeds the previous N bars). Orange is the same bar, but it's also the first to sweep a zigzag high/low or a pdH/pdL/pwH/pwL level. A swept zigzag point additionally gets a dashed line running to the bar where it was swept.</p></div>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">
-          <p>No — in Sentry, the zigzag is only used as a source of swing points for Volatile Bar Sweep detection and as a standalone structure visualization. Break of structure (BOS/CHoCH) isn't tracked in the current version — the focus here is on Volatile Bar Sweep.</p>
-        </div></div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggle(this)">
-          <div class="faq-q-left"><div class="faq-cat-dot"></div>
-          <span>How do I get access to the indicator?</span></div>
-          <div class="faq-icon">+</div>
+        <div class="faq-row">
+          <div class="faq-row__q"><span>Does Sentry have BOS/CHoCH like other indicators?</span><span class="faq-row__icon">+</span></div>
+          <div class="faq-row__a"><p>No — in Sentry, the zigzag is only used as a source of swing points for Volatile Bar Sweep detection and as a standalone structure visualization. Break of structure (BOS/CHoCH) isn't tracked in the current version — the focus here is on Volatile Bar Sweep.</p></div>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">
-          <p>The indicator is invite-only. To get access, contact the author after paying for your chosen plan.</p>
-        </div></div>
+        <div class="faq-row">
+          <div class="faq-row__q"><span>How do I get access to the indicator?</span><span class="faq-row__icon">+</span></div>
+          <div class="faq-row__a"><p>The indicator is invite-only. To get access, contact the author after paying for your chosen plan.</p></div>
+        </div>
       </div>
-
     </div>
-  </div>
-</section>
+  </section>
+
+</main>
 
 <!-- ── FOOTER ── -->
-<footer>
+<footer class="foot">
   <div class="wrap">
-    <p>© 2026 Sentry · PineScript v6</p>
-    <div class="footer-links">
-      <a href="#pricing">Pricing</a>
+    <div class="foot__mark">
+      <svg class="foot__mark-icon" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
+        <g style="isolation:isolate">
+          <polygon points="17,-1 20,4 17,9 11,9 8,4 11,-1"    fill="#2B2118" style="mix-blend-mode:multiply"/>
+          <polygon points="11,6 14,11 11,16 5,16 2,11 5,6"    fill="#97431F" style="mix-blend-mode:multiply"/>
+          <polygon points="23,6 26,11 23,16 17,16 14,11 17,6" fill="#B5532E" style="mix-blend-mode:multiply"/>
+          <polygon points="17,13 20,18 17,23 11,23 8,18 11,13" fill="#E08A2E" style="mix-blend-mode:multiply"/>
+        </g>
+      </svg>
+      <div>
+        <p class="foot__name">Sentry</p>
+        <p class="foot__sub">Structural market watch</p>
+      </div>
     </div>
+    <nav class="foot__nav" aria-label="Footer">
+      <a class="link" href="#modules">Modules</a>
+      <a class="link" href="#pricing">Pricing</a>
+      <a class="link" href="#faq">FAQ</a>
+      <a class="link" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">TradingView</a>
+    </nav>
+    <p class="foot__fine">
+      <span>Premium not required</span><span aria-hidden="true">·</span><span>© 2026 Sentry · PineScript v6</span>
+    </p>
   </div>
 </footer>
 
+<div class="lightbox" id="chart-lightbox" hidden>
+  <div class="lightbox__backdrop" data-chart-close tabindex="-1"></div>
+  <div class="lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="chart-lightbox-title">
+    <div class="lightbox__head">
+      <p class="lightbox__title" id="chart-lightbox-title">Sentry on the chart</p>
+      <button type="button" class="lightbox__close" data-chart-close aria-label="Close">×</button>
+    </div>
+    <img class="lightbox__img" src="assets/chart-example.png" alt="Sentry indicator example on a chart: Fulcrum, Volatile Bar, PD levels, and structural zigzag" width="2216" height="1242">
+  </div>
+</div>
+
 <script src="scripts.js"></script>
 <script>
-
-document.querySelectorAll('.hc-sig').forEach((el, i) => {
-  setTimeout(() => el.classList.add('show'), 900 + i * 320);
-});
-
-function cycleMetric(el, states, interval) {
+function cycleMetric(el, baseClass, states, interval) {
   if (!el) return;
   let idx = 0;
   setInterval(() => {
     idx = (idx + 1) % states.length;
-    const s = states[idx];
-    el.textContent = s.text;
-    el.className = 'hc-mv ' + s.cls;
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.textContent = states[idx].text;
+      el.className = baseClass + (states[idx].cls ? ' ' + states[idx].cls : '');
+      el.style.opacity = '1';
+    }, 250);
   }, interval);
 }
 
-cycleMetric(document.getElementById('stFulcrum'), [
-  { text: 'forming',   cls: 'c-blue' },
-  { text: 'confirmed ↑', cls: 'c-purple' },
-  { text: 'watching',  cls: 'c-amber' },
+cycleMetric(document.getElementById('stFulcrum'), 'v', [
+  { text: 'forming' },
+  { text: 'confirmed ↑' },
+  { text: 'watching' },
 ], 3400);
 
-const levelModes = ['tracking', 'pdH swept', 'pwL swept'];
-const levelColors = ['#2962FF', '#ff9800', '#9C27B0'];
-const levelModeEl = document.getElementById('stLevelMode');
-let lmIdx = 0;
-if (levelModeEl) {
-  setInterval(() => {
-    lmIdx = (lmIdx + 1) % levelModes.length;
-    levelModeEl.style.opacity = '0';
-    setTimeout(() => {
-      levelModeEl.textContent = levelModes[lmIdx];
-      levelModeEl.style.color = levelColors[lmIdx];
-      levelModeEl.style.transition = 'opacity 0.3s';
-      levelModeEl.style.opacity = '1';
-    }, 200);
-  }, 3600);
-}
+cycleMetric(document.getElementById('stVB'), 'v', [
+  { text: 'watching',  cls: 'c-ember' },
+  { text: 'pdH swept', cls: 'c-ember' },
+  { text: 'pwL swept', cls: 'c-ember' },
+], 3900);
 
-// ── Price counter animation on reveal ──
-function animatePrice(el) {
-  const target = parseInt(el.dataset.val, 10);
-  if (!target) return;
-  const dur = 700;
-  const start = performance.now();
-  function tick(now) {
-    const p = Math.min((now - start) / dur, 1);
-    const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = '$' + Math.round(target * eased);
-    if (p < 1) requestAnimationFrame(tick);
-    else el.textContent = '$' + target;
-  }
-  requestAnimationFrame(tick);
-}
-
-const priceObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    const rows = e.target.querySelectorAll('.price-row');
-    rows.forEach((row, i) => {
-      setTimeout(() => {
-        row.style.opacity = '1';
-        row.style.transform = 'translateY(0)';
-        row.querySelectorAll('.row-total[data-val]').forEach(el => animatePrice(el));
-      }, i * 90);
-    });
-    priceObs.unobserve(e.target);
-  });
-}, { threshold: 0.15 });
-
-document.querySelectorAll('.tier-col').forEach(col => {
-  col.querySelectorAll('.price-row').forEach(row => {
-    row.style.opacity = '0';
-    row.style.transform = 'translateY(12px)';
-    row.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-  });
-  priceObs.observe(col);
-});
+cycleMetric(document.getElementById('stLevel'), 'v', [
+  { text: 'tracking' },
+  { text: 'pdH swept' },
+  { text: 'pwL swept' },
+], 4300);
 </script>
 </body>
 </html>
