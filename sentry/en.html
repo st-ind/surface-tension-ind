@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Sentry — сетап Fulcrum, Volatile Bar со Sweep-детекцией, уровни pdH/pdL/pwH/pwL и структурный зигзаг. Работает на любом плане TradingView, без Premium.">
-<meta property="og:title" content="Sentry — структурный страж рынка для TradingView">
-<meta property="og:description" content="Fulcrum, Volatile Bar + Sweep, уровни PD/PW и зигзаг по структуре. PineScript v6, любой план TradingView.">
+<meta name="description" content="Sentry — the Fulcrum setup, Volatile Bar with Sweep detection, pdH/pdL/pwH/pwL levels, and a structural zigzag. Works on any TradingView plan, no Premium required.">
+<meta property="og:title" content="Sentry — structural market watch for TradingView">
+<meta property="og:description" content="Fulcrum, Volatile Bar + Sweep, PD/PW levels, and structural zigzag. PineScript v6, any TradingView plan.">
 <meta property="og:type" content="website">
-<meta property="og:locale" content="ru_RU">
-<title>Sentry — структурный страж рынка</title>
+<meta property="og:locale" content="en_US">
+<title>Sentry — structural market watch</title>
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -224,7 +224,7 @@
 <!-- ── NAV ── -->
 <nav>
   <div class="wrap">
-    <a class="nav-logo" href="index.html">
+    <a class="nav-logo" href="en.html">
       <div class="nav-logo-mark">
         <svg class="hex-logo-svg" width="40" height="40" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
           <g style="isolation:isolate">
@@ -239,16 +239,16 @@
         <span class="nav-logo-l1">Sentry</span>
       </div>
     </a>
-    <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-menu">
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
       <span class="nav-toggle-bar"></span>
       <span class="nav-toggle-bar"></span>
       <span class="nav-toggle-bar"></span>
     </button>
     <ul class="nav-links" id="nav-menu">
-      <li class="nav-lang"><a href="index.html" class="active">RU</a><span class="nav-lang-sep">/</span><a href="en.html">EN</a></li>
-      <li><a class="nav-link" href="#features">Возможности</a></li>
-      <li><a class="nav-link" href="#requirements">Требования</a></li>
-      <li><a class="nav-link" href="#pricing">Цены</a></li>
+      <li class="nav-lang"><a href="index.html">RU</a><span class="nav-lang-sep">/</span><a href="en.html" class="active">EN</a></li>
+      <li><a class="nav-link" href="#features">Features</a></li>
+      <li><a class="nav-link" href="#requirements">Requirements</a></li>
+      <li><a class="nav-link" href="#pricing">Pricing</a></li>
       <li><a class="nav-link" href="#faq">FAQ</a></li>
       <li><a class="nav-cta" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">TradingView →</a></li>
     </ul>
@@ -293,7 +293,7 @@
 
       <!-- LEFT -->
       <div class="hero-left">
-        <div class="hero-eyebrow">PineScript v6 · Любой план TradingView</div>
+        <div class="hero-eyebrow">PineScript v6 · Any TradingView plan</div>
         <h1 class="hero-ind-h1">
           <svg aria-hidden="true" width="44" height="50" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
             <g style="isolation:isolate">
@@ -306,38 +306,38 @@
           <span class="anim-grad">Sentry</span>
         </h1>
         <div class="hero-lead">
-          <p class="hero-lead-kicker">Структурный страж: накопление, импульс, снятие уровней</p>
+          <p class="hero-lead-kicker">Structural watch: accumulation, impulse, level sweeps</p>
           <p class="hero-lead-text">
-            Sentry следит за рынком по трём независимым осям структуры: сетап накопления Fulcrum,
-            всплески волатильности Volatile Bar со Sweep-детекцией снятия уровней, и
-            структурный зигзаг по свинг-хаям/лоям. Ни одна фича не требует TradingView Premium —
-            работает на любом плане, включая бесплатный.
+            Sentry tracks the market across three independent structural axes: the Fulcrum
+            accumulation setup, Volatile Bar spikes with Sweep detection of level breaks, and
+            a structural zigzag over swing highs/lows. No feature requires TradingView Premium —
+            it works on any plan, including the free one.
           </p>
           <ul class="hero-lead-groups">
             <li>
               <span class="hero-lead-lbl">Fulcrum</span>
-              <span class="hero-lead-val">накопление → решительный ответ</span>
+              <span class="hero-lead-val">accumulation → decisive response</span>
             </li>
             <li>
               <span class="hero-lead-lbl">Volatile Bar</span>
-              <span class="hero-lead-val">импульс + маркировка снятия уровня</span>
+              <span class="hero-lead-val">impulse + level-sweep marker</span>
             </li>
             <li>
-              <span class="hero-lead-lbl">Уровни PD/PW</span>
-              <span class="hero-lead-val">хай/лой дня и недели с отметкой снятия</span>
+              <span class="hero-lead-lbl">PD/PW Levels</span>
+              <span class="hero-lead-val">prior day/week high & low with sweep tag</span>
             </li>
             <li>
-              <span class="hero-lead-lbl">Зигзаг</span>
-              <span class="hero-lead-val">структура рынка, гибкая чувствительность</span>
+              <span class="hero-lead-lbl">Zigzag</span>
+              <span class="hero-lead-val">market structure, flexible sensitivity</span>
             </li>
           </ul>
         </div>
         <div class="hero-actions">
           <a class="btn-primary" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Открыть на TradingView
+            Open on TradingView
           </a>
-          <a class="btn-secondary" href="#pricing">Цены ↓</a>
+          <a class="btn-secondary" href="#pricing">Pricing ↓</a>
         </div>
       </div>
 
@@ -365,8 +365,8 @@
             <div class="hc-section-lbl">Signals</div>
             <div class="hc-sigs">
               <div class="hc-sig sig-blue">▛▜ Fulcrum ↑ — active</div>
-              <div class="hc-sig sig-amber">● VB Sweep — pdH снят</div>
-              <div class="hc-sig sig-purple">+pwL — уровень отмечен</div>
+              <div class="hc-sig sig-amber">● VB Sweep — pdH swept</div>
+              <div class="hc-sig sig-purple">+pwL — level tagged</div>
             </div>
 
             <div class="hc-section-lbl">Levels</div>
@@ -377,10 +377,10 @@
 
             <div class="hc-section-lbl">Zigzag</div>
             <div class="hc-pat-track">
-              <div class="hc-pat-chip on">Мелкие</div>
-              <div class="hc-pat-chip">Средние</div>
-              <div class="hc-pat-chip">Крупные</div>
-              <div class="hc-pat-chip">Оч. крупные</div>
+              <div class="hc-pat-chip on">Small</div>
+              <div class="hc-pat-chip">Medium</div>
+              <div class="hc-pat-chip">Large</div>
+              <div class="hc-pat-chip">Very large</div>
             </div>
           </div>
         </div>
@@ -395,8 +395,8 @@
   <div class="wrap">
     <div class="reveal">
       <div class="section-label">signal engine</div>
-      <h2 class="section-title">Четыре модуля структуры</h2>
-      <p class="section-sub">Каждый модуль включается и настраивается независимо — собери свой набор под свой стиль торговли.</p>
+      <h2 class="section-title">Four structure modules</h2>
+      <p class="section-sub">Each module toggles and tunes independently — build your own set to match your trading style.</p>
     </div>
 
     <div class="feature-grid">
@@ -404,35 +404,35 @@
       <div class="feat-card reveal" style="--fc:rgba(59,110,165,0.5);--fc-bg:rgba(59,110,165,0.025);--fc-border:rgba(59,110,165,0.22);--fc-spot:rgba(59,110,165,0.06)">
         <div class="feat-icon ic-blue">▛▜</div>
         <h3>Setup: Fulcrum</h3>
-        <p>Паттерн накопления перед решительным движением — рынок делает паузу, а затем отвечает уверенным импульсом. Алерт срабатывает в обе стороны.</p>
+        <p>A pattern of accumulation before a decisive move — the market pauses, then answers with a confident impulse. The alert fires in both directions.</p>
       </div>
 
       <div class="feat-card reveal" style="--fc:rgba(255,152,0,0.5);--fc-bg:rgba(255,152,0,0.025);--fc-border:rgba(255,152,0,0.22);--fc-spot:rgba(255,152,0,0.06)">
         <div class="feat-icon ic-amber">●</div>
         <h3>Volatile Bar + Sweep</h3>
-        <p>Отмечает необычно широкие бары — всплески волатильности на графике. Если такой бар ещё и снимает заметный уровень или вершину структуры, метка выделяется отдельным цветом — сигнал вероятного снятия ликвидности.</p>
+        <p>Flags unusually wide bars — volatility spikes on the chart. If such a bar also breaks a notable level or a structural high/low, the marker changes color — a signal of a likely liquidity sweep.</p>
       </div>
 
       <div class="feat-card reveal" style="--fc:rgba(156,39,176,0.5);--fc-bg:rgba(156,39,176,0.025);--fc-border:rgba(156,39,176,0.22);--fc-spot:rgba(156,39,176,0.06)">
         <div class="feat-icon ic-purple">━</div>
-        <h3>Уровни PD / PW</h3>
-        <p>Автоматические уровни хая и лоя предыдущего дня и предыдущей недели. При пробое уровень помечается прямо на графике — сразу видно, что рынок уже протестировал эту зону.</p>
+        <h3>PD / PW Levels</h3>
+        <p>Automatic high/low levels from the previous day and the previous week. On a break, the level gets tagged right on the chart — instantly showing that price has already tested that zone.</p>
       </div>
 
       <div class="feat-card reveal" style="--fc:rgba(26,158,120,0.5);--fc-bg:rgba(26,158,120,0.025);--fc-border:rgba(26,158,120,0.22);--fc-spot:rgba(26,158,120,0.06)">
         <div class="feat-icon ic-teal">↝</div>
-        <h3>Зигзаг по структуре</h3>
-        <p>Показывает структуру рынка через ключевые свинг-хаи и лои. Чувствительность настраивается — от мелких колебаний до только главных движений.</p>
+        <h3>Structural Zigzag</h3>
+        <p>Shows market structure through key swing highs and lows. Sensitivity is adjustable — from minor wiggles to only the biggest moves.</p>
       </div>
 
     </div>
 
     <div class="req-card reveal" id="requirements">
-      <div class="req-title">// Требования к подписке TradingView</div>
+      <div class="req-title">// TradingView subscription requirements</div>
       <div class="req-rows">
         <div class="req-row">
-          <span class="req-badge req-essential">Любой план</span>
-          <p><strong>Весь индикатор</strong> работает на любом плане TradingView, включая бесплатный. Никаких скрытых требований к Premium-подписке.</p>
+          <span class="req-badge req-essential">Any plan</span>
+          <p><strong>The entire indicator</strong> works on any TradingView plan, including the free one. No hidden Premium requirements.</p>
         </div>
       </div>
     </div>
@@ -446,63 +446,63 @@
 <section class="pricing-section" id="pricing">
   <div class="wrap">
     <div class="reveal" style="margin-bottom:36px;text-align:center">
-      <div class="section-label">цены</div>
-      <h2 class="section-title">Один инструмент. Своя лицензия.</h2>
-      <p class="section-sub">Своя отдельная лицензия. Доступ открывается сразу после оплаты.</p>
+      <div class="section-label">pricing</div>
+      <h2 class="section-title">One tool. Its own license.</h2>
+      <p class="section-sub">A standalone license. Access opens right after payment.</p>
     </div>
 
     <div class="tier-col reveal">
       <div class="price-rows">
         <div class="price-row">
           <div class="row-left">
-            <span class="row-period">1 месяц</span>
+            <span class="row-period">1 month</span>
             <span class="row-disc none">—</span>
           </div>
           <div class="row-right">
             <span class="row-total" data-val="20">$20</span>
-            <span class="row-eff">$20.00 / мес</span>
+            <span class="row-eff">$20.00 / mo</span>
           </div>
         </div>
         <div class="price-row">
           <div class="row-left">
-            <span class="row-period">3 месяца</span>
+            <span class="row-period">3 months</span>
             <span class="row-disc d1">−7%</span>
           </div>
           <div class="row-right">
             <span class="row-total" data-val="56">$56</span>
-            <span class="row-eff">$18.67 / мес</span>
+            <span class="row-eff">$18.67 / mo</span>
           </div>
         </div>
         <div class="price-row">
           <div class="row-left">
-            <span class="row-period">6 месяцев</span>
+            <span class="row-period">6 months</span>
             <span class="row-disc d2">−13%</span>
           </div>
           <div class="row-right">
             <span class="row-total" data-val="105">$105</span>
-            <span class="row-eff">$17.50 / мес</span>
+            <span class="row-eff">$17.50 / mo</span>
           </div>
         </div>
         <div class="price-row best">
           <div class="best-inner">
             <div class="row-left">
-              <span class="row-period">12 месяцев</span>
+              <span class="row-period">12 months</span>
               <span class="row-disc d3">−18%</span>
             </div>
             <div class="row-right">
               <span class="row-total" data-val="197">$197</span>
-              <span class="row-eff">$16.42 / мес</span>
+              <span class="row-eff">$16.42 / mo</span>
             </div>
           </div>
-          <span class="best-badge">★ Лучшая цена</span>
+          <span class="best-badge">★ Best value</span>
         </div>
       </div>
     </div>
 
     <div class="perks-row reveal" style="transition-delay:.2s">
-      <div class="perk"><div class="perk-icon">🔑</div><span>Мгновенный доступ через TradingView</span></div>
-      <div class="perk"><div class="perk-icon">🔄</div><span>Все обновления включены</span></div>
-      <div class="perk"><div class="perk-icon">💬</div><span>Поддержка в Telegram</span></div>
+      <div class="perk"><div class="perk-icon">🔑</div><span>Instant access via TradingView</span></div>
+      <div class="perk"><div class="perk-icon">🔄</div><span>All updates included</span></div>
+      <div class="perk"><div class="perk-icon">💬</div><span>Support on Telegram</span></div>
     </div>
   </div>
 </section>
@@ -513,7 +513,7 @@
 
     <div class="reveal" style="margin-bottom:36px">
       <div class="section-label">faq</div>
-      <h2 class="section-title">Частые вопросы</h2>
+      <h2 class="section-title">Frequently asked questions</h2>
     </div>
 
     <div class="faq-grid" style="--item-ac:#3B6EA5;--item-border:rgba(59,110,165,0.12);--item-border-open:rgba(59,110,165,0.28)">
@@ -521,55 +521,55 @@
       <div class="faq-item">
         <div class="faq-q" onclick="toggle(this)">
           <div class="faq-q-left"><div class="faq-cat-dot"></div>
-          <span>Нужен ли TradingView Premium?</span></div>
+          <span>Do I need TradingView Premium?</span></div>
           <div class="faq-icon">+</div>
         </div>
         <div class="faq-a"><div class="faq-a-inner">
-          <p>Нет. Sentry считает всё на текущем графике и не использует функции, доступные только по Premium-подписке. Работает на любом плане, включая бесплатный.</p>
+          <p>No. Sentry calculates everything on the current chart and doesn't use any Premium-only features. It works on any plan, including the free one.</p>
         </div></div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggle(this)">
           <div class="faq-q-left"><div class="faq-cat-dot"></div>
-          <span>На каких таймфреймах и инструментах работает Sentry?</span></div>
+          <span>Which timeframes and instruments does Sentry work on?</span></div>
           <div class="faq-icon">+</div>
         </div>
         <div class="faq-a"><div class="faq-a-inner">
-          <p>На любых. Все паттерны считаются по бару текущего графика, а уровни предыдущего дня/недели обновляются автоматически по календарю. Настрой чувствительность зигзага и параметры сетапов под свой инструмент и таймфрейм.</p>
+          <p>Any of them. All patterns are calculated bar-by-bar on the current chart, and previous day/week levels update automatically by calendar. Tune the zigzag sensitivity and setup parameters to fit your instrument and timeframe.</p>
         </div></div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggle(this)">
           <div class="faq-q-left"><div class="faq-cat-dot"></div>
-          <span>Чем оранжевая точка Volatile Bar отличается от серой?</span></div>
+          <span>What's the difference between an orange and a gray Volatile Bar dot?</span></div>
           <div class="faq-icon">+</div>
         </div>
         <div class="faq-a"><div class="faq-a-inner">
-          <p>Серая точка — обычный волатильный бар (диапазон больше N предыдущих). Оранжевая — тот же бар, но он первым снял вершину зигзага или уровень pdH/pdL/pwH/pwL. Снятая вершина зигзага дополнительно получает фиолетовую пунктирную линию до бара снятия.</p>
+          <p>A gray dot is a plain volatile bar (its range exceeds the previous N bars). Orange is the same bar, but it's also the first to sweep a zigzag high/low or a pdH/pdL/pwH/pwL level. A swept zigzag point additionally gets a purple dashed line running to the bar where it was swept.</p>
         </div></div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggle(this)">
           <div class="faq-q-left"><div class="faq-cat-dot"></div>
-          <span>Есть ли у Sentry BOS/CHoCH, как в других индикаторах?</span></div>
+          <span>Does Sentry have BOS/CHoCH like other indicators?</span></div>
           <div class="faq-icon">+</div>
         </div>
         <div class="faq-a"><div class="faq-a-inner">
-          <p>Нет — в Sentry зигзаг используется только как источник вершин для Sweep-детекции Volatile Bar и как самостоятельная визуализация структуры. Слом структуры (BOS/CHoCH) в текущей версии не отслеживается — фокус сделан на Volatile Bar Sweep.</p>
+          <p>No — in Sentry, the zigzag is only used as a source of swing points for Volatile Bar Sweep detection and as a standalone structure visualization. Break of structure (BOS/CHoCH) isn't tracked in the current version — the focus here is on Volatile Bar Sweep.</p>
         </div></div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggle(this)">
           <div class="faq-q-left"><div class="faq-cat-dot"></div>
-          <span>Как получить доступ к индикатору?</span></div>
+          <span>How do I get access to the indicator?</span></div>
           <div class="faq-icon">+</div>
         </div>
         <div class="faq-a"><div class="faq-a-inner">
-          <p>Индикатор закрытый. Чтобы получить доступ — свяжись с автором после оплаты выбранного тарифа.</p>
+          <p>The indicator is invite-only. To get access, contact the author after paying for your chosen plan.</p>
         </div></div>
       </div>
 
@@ -582,7 +582,7 @@
   <div class="wrap">
     <p>© 2026 Sentry · PineScript v6</p>
     <div class="footer-links">
-      <a href="#pricing">Цены</a>
+      <a href="#pricing">Pricing</a>
     </div>
   </div>
 </footer>

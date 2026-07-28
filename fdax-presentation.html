@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FDAX · Surface Tension — Atlas + Relief + Contour</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+<style>
+/* ══════════════ TOKENS ══════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F8F4EE;--bg2:#F0EAE0;
+  --surface:rgba(255,255,255,0.75);--surface2:rgba(255,255,255,0.95);
+  --border:rgba(30,20,10,0.09);--border2:rgba(30,20,10,0.18);
+  --text:#1C1410;--muted:#7A6A5C;--dim:#B8A494;
+  --orange:#C85A20;--orange2:#E07040;--teal:#1A9E78;--purple:#7B5EA7;
+  --red:#C84040;--amber:#B8861E;--blue:#2E8CB8;
+  --grad:linear-gradient(135deg,var(--orange),var(--orange2));
+  --mono:'JetBrains Mono',monospace;--sans:'Rubik',system-ui,sans-serif;--display:"Russo One",sans-serif;
+  --r:14px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(200,90,32,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(200,90,32,0.025) 1px,transparent 1px);
+  background-size:72px 72px;
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+
+/* ── ORBS ── */
+.orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;opacity:0.30;z-index:0}
+.orb-1{width:480px;height:480px;background:radial-gradient(circle,var(--orange2),transparent 70%);top:-140px;left:-120px;animation:orbDrift1 20s ease-in-out infinite}
+.orb-2{width:380px;height:380px;background:radial-gradient(circle,var(--teal),transparent 70%);bottom:-100px;right:-80px;animation:orbDrift2 24s ease-in-out infinite}
+.orb-3{width:320px;height:320px;background:radial-gradient(circle,var(--purple),transparent 70%);top:40%;right:12%;animation:orbDrift3 28s ease-in-out infinite}
+@keyframes orbDrift1{0%,100%{transform:translate(0,0)}50%{transform:translate(70px,40px)}}
+@keyframes orbDrift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,-35px)}}
+@keyframes orbDrift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-30px,50px) scale(1.1)}}
+
+/* ── PROGRESS BAR ── */
+.progress-track{position:fixed;top:0;left:0;right:0;height:3px;background:var(--border);z-index:200}
+.progress-fill{height:100%;width:12.5%;background:var(--grad);transition:width 0.4s cubic-bezier(.4,0,.2,1)}
+
+/* ── DOT NAV ── */
+.dot-nav{
+  position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:200;
+  display:flex;flex-direction:column;gap:12px;
+}
+.dot-nav button{
+  width:8px;height:8px;border-radius:50%;border:1.5px solid var(--border2);
+  background:transparent;cursor:pointer;padding:0;transition:all 0.3s cubic-bezier(.34,1.56,.64,1);position:relative;
+}
+.dot-nav button::after{
+  content:attr(data-label);position:absolute;right:18px;top:50%;transform:translateY(-50%);
+  font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity 0.2s;background:var(--surface2);
+  padding:3px 8px;border-radius:5px;border:1px solid var(--border);
+}
+.dot-nav button:hover::after{opacity:1}
+.dot-nav button.active{background:var(--orange);border-color:var(--orange);transform:scale(1.5)}
+@media(max-width:760px){.dot-nav{display:none}}
+
+/* ── DECK ── */
+#deck{
+  position:relative;z-index:1;height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;
+  -webkit-overflow-scrolling:touch;
+}
+.slide{
+  height:100vh;width:100%;scroll-snap-align:start;scroll-snap-stop:always;
+  display:flex;align-items:center;justify-content:center;position:relative;
+  padding:90px 6vw 60px;overflow:hidden;
+}
+.slide-inner{max-width:1180px;width:100%;margin:0 auto;position:relative;z-index:1}
+.slide-num{
+  position:absolute;bottom:28px;left:6vw;font-family:var(--mono);font-size:11px;color:var(--dim);
+  letter-spacing:0.08em;z-index:1;
+}
+
+/* Kicker */
+.kicker{
+  font-family:var(--mono);font-size:0.78rem;font-weight:600;color:var(--orange);
+  letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;display:inline-flex;align-items:center;gap:8px;
+}
+.kicker::before{content:'//';color:var(--dim)}
+.kicker.c-teal{color:var(--teal)}
+.kicker.c-purple{color:var(--purple)}
+.kicker.c-blue{color:var(--blue)}
+.kicker.c-amber{color:var(--amber)}
+
+h2.disp{
+  font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,3.4vw,2.6rem);
+  line-height:1.22;margin-bottom:16px;color:var(--text);
+}
+.lead{font-size:1.02rem;color:var(--muted);max-width:620px;line-height:1.75}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+.slide.in-view .reveal{opacity:1;transform:translateY(0)}
+.stagger>*{transition-delay:0s}
+.slide.in-view .stagger>*:nth-child(1){transition-delay:.04s}
+.slide.in-view .stagger>*:nth-child(2){transition-delay:.10s}
+.slide.in-view .stagger>*:nth-child(3){transition-delay:.16s}
+.slide.in-view .stagger>*:nth-child(4){transition-delay:.22s}
+.slide.in-view .stagger>*:nth-child(5){transition-delay:.28s}
+.slide.in-view .stagger>*:nth-child(6){transition-delay:.34s}
+.slide.in-view .stagger>*:nth-child(7){transition-delay:.40s}
+
+/* Card base */
+.card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);
+  padding:24px;position:relative;overflow:hidden;box-shadow:0 1px 6px rgba(30,20,10,0.04);
+}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--card-ac,var(--orange)),transparent)}
+
+/* Split */
+.split{display:grid;grid-template-columns:0.9fr 1.1fr;gap:56px;align-items:center}
+.split.reverse{grid-template-columns:1.1fr 0.9fr}
+@media(max-width:900px){.split,.split.reverse{grid-template-columns:1fr;gap:32px}}
+
+/* Feat list */
+.feat-list{display:flex;flex-direction:column;gap:16px;margin-top:26px}
+.feat-row{display:flex;gap:14px;align-items:flex-start}
+.feat-row .fi{font-size:1.3rem;flex-shrink:0;width:30px;text-align:center;margin-top:2px}
+.feat-row .ft b{font-size:0.94rem;font-weight:600;color:var(--text);display:block;margin-bottom:2px}
+.feat-row .ft span{font-size:0.83rem;color:var(--muted);line-height:1.6}
+
+/* ══════════════ SLIDE 1 — HERO ══════════════ */
+.hero-slide{text-align:center}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:0.78rem;color:var(--muted);letter-spacing:0.14em;
+  text-transform:uppercase;margin-bottom:28px;display:inline-flex;align-items:center;gap:8px;
+}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--orange);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
+.hero-title{
+  font-family:var(--display);font-weight:400;font-size:clamp(3rem,9vw,6.5rem);line-height:0.95;
+  letter-spacing:0.01em;margin-bottom:24px;
+}
+.hero-title .g{
+  background:linear-gradient(270deg,var(--orange),var(--orange2),var(--amber),var(--orange));
+  background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:gradShift 6s ease infinite;
+}
+@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.hero-sub{font-size:clamp(0.95rem,1.6vw,1.2rem);color:var(--muted);max-width:580px;margin:0 auto 44px}
+.hero-tools{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:60px}
+.hero-tool{display:flex;flex-direction:column;align-items:center;gap:8px}
+.hero-tool .glyph{font-size:2rem}
+.hero-tool .name{font-family:var(--mono);font-size:0.82rem;font-weight:700;letter-spacing:0.04em}
+.hero-tool .role{font-family:var(--mono);font-size:0.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:0.08em}
+.hero-tool.atlas .glyph,.hero-tool.atlas .name{color:var(--teal)}
+.hero-tool.relief .glyph,.hero-tool.relief .name{color:var(--orange)}
+.hero-tool.contour .glyph,.hero-tool.contour .name{color:var(--purple)}
+.scroll-hint{
+  display:inline-flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--mono);
+  font-size:0.72rem;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;
+  animation:bounce 2.2s ease-in-out infinite;
+}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* ══════════════ SLIDE 2 — PROBLEM ══════════════ */
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+@media(max-width:800px){.problem-grid{grid-template-columns:1fr}}
+.problem-card{--card-ac:var(--red)}
+.problem-card .p-icon{font-size:1.6rem;margin-bottom:14px}
+.problem-card h3{font-size:1rem;font-weight:600;margin-bottom:10px;line-height:1.4;color:var(--text)}
+.problem-card p{font-size:0.85rem;color:var(--muted);line-height:1.7}
+
+/* ══════════════ SLIDE 3 — ATLAS ══════════════ */
+.ladder{
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);
+  padding:6px 0;box-shadow:0 8px 28px rgba(30,20,10,0.07);
+}
+.ladder-row{
+  display:grid;grid-template-columns:52px 88px 1fr;align-items:center;gap:12px;
+  padding:14px 22px;position:relative;
+}
+.ladder-row:not(:last-child)::after{content:'';position:absolute;bottom:0;left:22px;right:22px;height:1px;background:var(--border)}
+.ladder-row .tick{width:28px;height:3px;border-radius:2px;flex-shrink:0}
+.ladder-row .lbl{font-family:var(--mono);font-size:0.8rem;font-weight:700}
+.ladder-row .desc{font-size:0.82rem;color:var(--muted)}
+.tick-on{background:var(--orange)}
+.tick-teal{background:var(--teal)}
+.tick-blue{background:var(--blue)}
+.tick-purple{background:var(--purple)}
+.tick-amber{background:var(--amber)}
+.tick-dim{background:var(--dim)}
+.ladder-row.hit{background:rgba(26,158,120,0.05)}
+.lbl-on{color:var(--orange)}
+.lbl-teal{color:var(--teal)}
+.lbl-blue{color:var(--blue)}
+.lbl-purple{color:var(--purple)}
+.lbl-amber{color:var(--amber)}
+.gap-box{
+  background:rgba(26,158,120,0.08);border:1px dashed rgba(26,158,120,0.35);
+  border-radius:8px;padding:12px 18px;margin-top:14px;
+  font-family:var(--mono);font-size:0.78rem;color:var(--teal);
+  display:flex;align-items:center;gap:10px;
+}
+.gap-box::before{content:'▲';font-size:0.7rem}
+
+/* ══════════════ SLIDE 4 — RELIEF ══════════════ */
+.period-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-bottom:18px}
+.pc{
+  aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:0.75rem;font-weight:700;color:#fff;
+  opacity:0;transform:scale(0.6);transition:opacity 0.4s ease,transform 0.4s ease;
+}
+.slide.in-view .pc{opacity:1;transform:scale(1)}
+.pc.bull{background:var(--teal)}
+.pc.bear{background:var(--red)}
+.pc.neut{background:var(--dim)}
+.pc.ib{background:var(--orange)}
+.relief-meta{display:flex;flex-direction:column;gap:8px}
+.relief-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:0.78rem;padding:10px 14px;
+  background:var(--bg2);border-radius:9px;
+}
+.relief-row .k{color:var(--dim)}
+.relief-row .v{font-weight:700;color:var(--text)}
+.relief-row .v.bull{color:var(--teal)}
+.relief-row .v.bear{color:var(--red)}
+.relief-row .v.on{color:var(--orange)}
+
+/* ══════════════ SLIDE 5 — CONTOUR ══════════════ */
+.state-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.state-row{
+  display:grid;grid-template-columns:38px 110px 1fr;align-items:center;gap:14px;
+  padding:13px 18px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;transition:background 0.25s,border-color 0.25s;
+}
+.state-row.active-s{background:rgba(123,94,167,0.07);border-color:rgba(123,94,167,0.28)}
+.state-row .sn{font-family:var(--display);font-size:1.1rem;color:var(--dim);text-align:center}
+.state-row .sname{font-family:var(--mono);font-size:0.82rem;font-weight:700}
+.state-row .sdesc{font-size:0.8rem;color:var(--muted);line-height:1.5}
+.s-trend{color:var(--teal)} .s-pull{color:var(--blue)} .s-fade{color:var(--amber)}
+.s-rev{color:var(--red)} .s-sweep{color:var(--orange)} .s-bal{color:var(--purple)}
+.contour-note{
+  margin-top:22px;padding:14px 18px;border-radius:10px;
+  background:rgba(123,94,167,0.06);border:1px solid rgba(123,94,167,0.22);
+  font-size:0.84rem;color:var(--muted);display:flex;align-items:flex-start;gap:10px;
+}
+.contour-note::before{content:'◆';color:var(--purple);flex-shrink:0;margin-top:1px}
+
+/* ══════════════ SLIDE 6 — STACK ══════════════ */
+.stack-flow{display:flex;flex-direction:column;gap:0;margin-top:32px}
+.stack-step{
+  display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:stretch;
+  position:relative;
+}
+.stack-step:not(:last-child)::after{
+  content:'';position:absolute;left:27px;top:56px;bottom:0;width:2px;
+  background:var(--border2);
+}
+.stack-num{
+  width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:1.1rem;flex-shrink:0;position:relative;z-index:1;
+  border:2px solid;
+}
+.stack-body{padding:0 0 32px 0}
+.stack-body h3{font-family:var(--mono);font-size:0.92rem;font-weight:700;margin-bottom:6px}
+.stack-body p{font-size:0.84rem;color:var(--muted);line-height:1.65;max-width:480px}
+.stack-tag{
+  display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:4px 12px;
+  border-radius:100px;font-family:var(--mono);font-size:0.7rem;font-weight:700;border:1px solid;
+}
+.sn-atlas{background:rgba(26,158,120,0.1);color:var(--teal);border-color:rgba(26,158,120,0.3)}
+.sn-relief{background:rgba(200,90,32,0.1);color:var(--orange);border-color:rgba(200,90,32,0.3)}
+.sn-contour{background:rgba(123,94,167,0.1);color:var(--purple);border-color:rgba(123,94,167,0.3)}
+.num-atlas{background:rgba(26,158,120,0.12);border-color:var(--teal);color:var(--teal)}
+.num-relief{background:rgba(200,90,32,0.12);border-color:var(--orange);color:var(--orange)}
+.num-contour{background:rgba(123,94,167,0.12);border-color:var(--purple);color:var(--purple)}
+
+/* ══════════════ SLIDE 7 — WORKFLOW ══════════════ */
+.timeline{display:flex;flex-direction:column;gap:0;position:relative}
+.timeline::before{
+  content:'';position:absolute;left:36px;top:8px;bottom:8px;width:2px;background:var(--border2);
+}
+.tl-item{
+  display:grid;grid-template-columns:72px 1fr;gap:18px;align-items:flex-start;position:relative;
+  padding-bottom:22px;
+}
+.tl-item:last-child{padding-bottom:0}
+.tl-time{
+  font-family:var(--mono);font-size:0.72rem;font-weight:700;color:var(--dim);
+  text-align:right;padding-top:3px;white-space:nowrap;
+}
+.tl-dot{
+  position:absolute;left:30px;top:6px;width:14px;height:14px;border-radius:50%;
+  border:2px solid var(--border2);background:var(--bg);z-index:1;
+}
+.tl-dot.dot-teal{border-color:var(--teal);background:rgba(26,158,120,0.2)}
+.tl-dot.dot-orange{border-color:var(--orange);background:rgba(200,90,32,0.2)}
+.tl-dot.dot-purple{border-color:var(--purple);background:rgba(123,94,167,0.2)}
+.tl-dot.dot-blue{border-color:var(--blue);background:rgba(46,140,184,0.2)}
+.tl-content{padding-left:30px}
+.tl-content h4{font-size:0.9rem;font-weight:600;margin-bottom:4px;color:var(--text)}
+.tl-content p{font-size:0.8rem;color:var(--muted);line-height:1.6}
+.tl-tools{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.tl-pill{
+  font-family:var(--mono);font-size:0.64rem;font-weight:700;padding:2px 9px;
+  border-radius:100px;border:1px solid;
+}
+
+/* ══════════════ SLIDE 8 — CTA ══════════════ */
+.cta-slide{text-align:center}
+.cta-title{font-family:var(--display);font-weight:400;font-size:clamp(2.2rem,5vw,4rem);line-height:1.1;margin-bottom:20px}
+.cta-sub{font-size:1rem;color:var(--muted);max-width:520px;margin:0 auto 44px}
+.price-cards{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-bottom:50px}
+.price-card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);
+  padding:28px 32px;min-width:220px;text-align:left;position:relative;overflow:hidden;
+  box-shadow:0 2px 12px rgba(30,20,10,0.05);
+}
+.price-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--pc-ac,var(--orange)),transparent)}
+.price-card.featured{border-color:rgba(200,90,32,0.35);box-shadow:0 6px 28px rgba(200,90,32,0.14)}
+.pc-label{font-family:var(--mono);font-size:0.72rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px}
+.pc-name{font-family:var(--display);font-size:1.3rem;font-weight:400;color:var(--text);margin-bottom:6px}
+.pc-includes{font-size:0.78rem;color:var(--muted);margin-bottom:20px;line-height:1.6}
+.pc-price{font-family:var(--display);font-size:2.4rem;font-weight:400;color:var(--orange);line-height:1}
+.pc-period{font-family:var(--mono);font-size:0.72rem;color:var(--dim);margin-top:4px}
+.pc-badge{
+  position:absolute;top:14px;right:14px;
+  font-family:var(--mono);font-size:0.64rem;font-weight:700;padding:3px 10px;border-radius:100px;
+  background:linear-gradient(135deg,var(--orange),var(--amber));color:#fff;
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+.cta-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:14px 34px;border-radius:10px;
+  background:var(--grad);color:#fff;text-decoration:none;font-weight:700;font-size:1rem;
+  box-shadow:0 4px 18px rgba(200,90,32,0.32);transition:opacity 0.2s,transform 0.2s;
+}
+.cta-btn:hover{opacity:0.9;transform:translateY(-2px)}
+.cta-note{margin-top:18px;font-family:var(--mono);font-size:0.72rem;color:var(--dim)}
+
+@media(max-width:680px){
+  .problem-grid{grid-template-columns:1fr}
+  .split,.split.reverse{grid-template-columns:1fr;gap:28px}
+  .price-cards{flex-direction:column;align-items:center}
+  .price-card{min-width:280px;width:100%;max-width:340px}
+  .hero-title{font-size:clamp(2.4rem,12vw,4rem)}
+  .stack-step{grid-template-columns:44px 1fr}
+  .stack-num{width:44px;height:44px;font-size:0.95rem}
+  .timeline::before{left:30px}
+  .tl-dot{left:24px}
+  .tl-content{padding-left:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- Progress -->
+<div class="progress-track"><div class="progress-fill" id="pbar"></div></div>
+
+<!-- Dot nav -->
+<nav class="dot-nav" id="dotnav">
+  <button data-label="Старт" data-idx="0" class="active"></button>
+  <button data-label="Проблема" data-idx="1"></button>
+  <button data-label="Atlas" data-idx="2"></button>
+  <button data-label="Relief" data-idx="3"></button>
+  <button data-label="Contour" data-idx="4"></button>
+  <button data-label="Стек" data-idx="5"></button>
+  <button data-label="Сессия" data-idx="6"></button>
+  <button data-label="Доступ" data-idx="7"></button>
+</nav>
+
+<div id="deck">
+
+<!-- ══ SLIDE 1 — HERO ══ -->
+<section class="slide hero-slide" data-idx="0">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="slide-inner">
+    <div class="hero-eyebrow reveal">Surface Tension · FDAX · GER40</div>
+    <h1 class="hero-title reveal" style="transition-delay:.06s">
+      Три слоя.<br>Один <span class="g">контекст.</span>
+    </h1>
+    <p class="hero-sub reveal" style="transition-delay:.12s">
+      Atlas читает ночь. Relief читает день. Contour читает аукцион.<br>
+      Вместе — полная карта для торговли FDAX.
+    </p>
+    <div class="hero-tools reveal stagger" style="transition-delay:.18s">
+      <div class="hero-tool atlas">
+        <span class="glyph">⬢</span>
+        <span class="name">Atlas</span>
+        <span class="role">HTF уровни</span>
+      </div>
+      <div class="hero-tool relief">
+        <span class="glyph">⬢</span>
+        <span class="name">Relief</span>
+        <span class="role">TPO / структура дня</span>
+      </div>
+      <div class="hero-tool contour">
+        <span class="glyph">⬢</span>
+        <span class="name">Contour</span>
+        <span class="role">Аукцион периодов</span>
+      </div>
+    </div>
+    <div class="scroll-hint reveal" style="transition-delay:.28s">
+      <svg width="16" height="22" viewBox="0 0 16 22" fill="none"><rect x="1" y="1" width="14" height="14" rx="7" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M4 18l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Листай вниз
+    </div>
+  </div>
+  <div class="slide-num">01 / 08</div>
+</section>
+
+<!-- ══ SLIDE 2 — ПРОБЛЕМА ══ -->
+<section class="slide" data-idx="1">
+  <div class="slide-inner">
+    <div class="kicker reveal">Контекст</div>
+    <h2 class="disp reveal" style="transition-delay:.05s">FDAX без структуры —<br>торговля в темноте</h2>
+    <p class="lead reveal" style="transition-delay:.1s">
+      DAX — один из самых структурированных индексов в мире.
+      Институциональные игроки работают строго от уровней. Без карты ты просто шум.
+    </p>
+    <div class="problem-grid stagger reveal" style="transition-delay:.15s">
+      <div class="card problem-card">
+        <div class="p-icon">🌑</div>
+        <h3>Ночь создаёт уровни, которые рынок тестирует утром</h3>
+        <p>ONH/ONL задают первые магниты. Без Atlas ты не видишь, откуда открывается день и где первая реакция.</p>
+      </div>
+      <div class="card problem-card">
+        <div class="p-icon">📊</div>
+        <h3>Структура дня читается через 30m-периоды, а не свечи</h3>
+        <p>IB, POC, VAH/VAL, nPOC — это язык маркет-мейкеров. Без Relief ты не знаешь ни типа дня, ни ожидаемых экстремумов.</p>
+      </div>
+      <div class="card problem-card">
+        <div class="p-icon">⚙️</div>
+        <h3>Не каждый сигнал — вход. Нужен фильтр аукциона</h3>
+        <p>Сигнал в Trend-периоде и сигнал в Balance — это разные ставки. Без Contour ты берёшь все сигналы и не знаешь почему.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">02 / 08</div>
+</section>
+
+<!-- ══ SLIDE 3 — ATLAS ══ -->
+<section class="slide" data-idx="2">
+  <div class="slide-inner">
+    <div class="split">
+      <div>
+        <div class="kicker c-teal reveal">⬢ Atlas</div>
+        <h2 class="disp reveal" style="transition-delay:.05s">Overnight. Prior Day.<br>Карта до открытия.</h2>
+        <p class="lead reveal" style="transition-delay:.1s">
+          Все ключевые HTF-уровни — на чарте до того, как открылась кэш-сессия FDAX.
+          Без единого <code style="font-family:var(--mono);font-size:0.9em">request.security</code> lookback — полная совместимость с Bar Replay.
+        </p>
+        <div class="feat-list stagger reveal" style="transition-delay:.15s">
+          <div class="feat-row">
+            <span class="fi">🌙</span>
+            <div class="ft">
+              <b>ONH / ONL / ON mid</b>
+              <span>High и Low между закрытием вчерашней RTH и открытием сегодняшней. Первые магниты дня.</span>
+            </div>
+          </div>
+          <div class="feat-row">
+            <span class="fi">📅</span>
+            <div class="ft">
+              <b>pdH / pdL / pdC</b>
+              <span>High, Low и Close предыдущей RTH-сессии. Ключевые target-зоны и ориентиры баланса.</span>
+            </div>
+          </div>
+          <div class="feat-row">
+            <span class="fi">📆</span>
+            <div class="ft">
+              <b>pwH / pwL · wOpen · mOpen</b>
+              <span>Недельный и месячный контекст. Уровни, к которым цена тяготеет при расширении.</span>
+            </div>
+          </div>
+          <div class="feat-row">
+            <span class="fi">⬛</span>
+            <div class="ft">
+              <b>Gap-бокс</b>
+              <span>Реальная пустота между вчерашним закрытием и сегодняшним открытием — с отслеживанием закрытия.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay:.2s">
+        <div class="ladder">
+          <div class="ladder-row">
+            <div class="tick tick-purple"></div>
+            <div class="lbl lbl-purple">pwH</div>
+            <div class="desc">Prior Week High · 18 742</div>
+          </div>
+          <div class="ladder-row">
+            <div class="tick tick-blue"></div>
+            <div class="lbl lbl-blue">pdH</div>
+            <div class="desc">Prior Day High · 18 690</div>
+          </div>
+          <div class="ladder-row">
+            <div class="tick tick-teal"></div>
+            <div class="lbl lbl-teal">ONH</div>
+            <div class="desc">Overnight High · 18 645</div>
+          </div>
+          <div class="ladder-row hit">
+            <div class="tick tick-dim"></div>
+            <div class="lbl" style="color:var(--dim)">ON mid</div>
+            <div class="desc">Overnight Mid · 18 612 ← цена здесь</div>
+          </div>
+          <div class="ladder-row">
+            <div class="tick tick-teal"></div>
+            <div class="lbl lbl-teal">ONL</div>
+            <div class="desc">Overnight Low · 18 578</div>
+          </div>
+          <div class="ladder-row">
+            <div class="tick tick-blue"></div>
+            <div class="lbl lbl-blue">pdL</div>
+            <div class="desc">Prior Day Low · 18 520</div>
+          </div>
+          <div class="ladder-row">
+            <div class="tick tick-on" style="background:var(--amber)"></div>
+            <div class="lbl" style="color:var(--amber)">pdC</div>
+            <div class="desc">Prior Day Close · 18 495</div>
+          </div>
+          <div class="ladder-row">
+            <div class="tick tick-purple"></div>
+            <div class="lbl lbl-purple">pwL</div>
+            <div class="desc">Prior Week Low · 18 440</div>
+          </div>
+        </div>
+        <div class="gap-box" style="margin-top:14px">Gap ▲ 0.31% · открылись выше ONH — гэп вверх</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">03 / 08</div>
+</section>
+
+<!-- ══ SLIDE 4 — RELIEF ══ -->
+<section class="slide" data-idx="3">
+  <div class="slide-inner">
+    <div class="split reverse">
+      <div class="reveal" style="transition-delay:.18s">
+        <div class="card" style="--card-ac:var(--orange)">
+          <div style="margin-bottom:12px;font-family:var(--mono);font-size:0.76rem;font-weight:700;color:var(--orange);display:flex;justify-content:space-between">
+            <span>TPO · FDAX · Сессия 09:00–17:30</span>
+            <span style="color:var(--dim)">Period J · Live</span>
+          </div>
+          <div class="period-grid stagger">
+            <div class="pc bull" style="transition-delay:.20s">A</div>
+            <div class="pc bull" style="transition-delay:.24s">B</div>
+            <div class="pc bear" style="transition-delay:.28s">C</div>
+            <div class="pc bear" style="transition-delay:.32s">D</div>
+            <div class="pc bull" style="transition-delay:.36s">E</div>
+            <div class="pc bull" style="transition-delay:.40s">F</div>
+            <div class="pc neut" style="transition-delay:.44s">G</div>
+            <div class="pc bull" style="transition-delay:.48s">H</div>
+            <div class="pc ib"   style="transition-delay:.52s">I</div>
+          </div>
+          <div class="relief-meta">
+            <div class="relief-row"><span class="k">Тип дня</span><span class="v on">Normal Variation ↑</span></div>
+            <div class="relief-row"><span class="k">Open type</span><span class="v">Open Drive — выше pdH</span></div>
+            <div class="relief-row"><span class="k">IB Range</span><span class="v">18 578 – 18 645 (67 pt)</span></div>
+            <div class="relief-row"><span class="k">POC</span><span class="v">18 621</span></div>
+            <div class="relief-row"><span class="k">VAH / VAL</span><span class="v">18 640 / 18 598</span></div>
+            <div class="relief-row"><span class="k">Структура</span><span class="v bull">LONG only (выше IB)</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="kicker reveal">⬢ Relief</div>
+        <h2 class="disp reveal" style="transition-delay:.05s">TPO и Market Profile.<br>Полная структура дня.</h2>
+        <p class="lead reveal" style="transition-delay:.1s">
+          30-минутные периоды A–Z, POC, Value Area, nPOC, IB и тип открытия.
+          Relief читает день так, как его читают институционалы.
+        </p>
+        <div class="feat-list stagger reveal" style="transition-delay:.15s">
+          <div class="feat-row">
+            <span class="fi">🗂</span>
+            <div class="ft">
+              <b>Тип открытия + Bias</b>
+              <span>Open Drive, Open Auction, Open Test Drive — каждый задаёт ожидаемое поведение дня и сторону.</span>
+            </div>
+          </div>
+          <div class="feat-row">
+            <span class="fi">📐</span>
+            <div class="ft">
+              <b>IB + расширения + SW</b>
+              <span>Initial Balance как зона ожидаемого диапазона. Sweep ↓/↑ — возврат за IB-экстремум, первая ловушка дня.</span>
+            </div>
+          </div>
+          <div class="feat-row">
+            <span class="fi">🎯</span>
+            <div class="ft">
+              <b>nPOC + Raid / Sweep + BOS</b>
+              <span>Незакрытые Point of Control с прошлых сессий, ликвидационные свипы и Break of Structure.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">04 / 08</div>
+</section>
+
+<!-- ══ SLIDE 5 — CONTOUR ══ -->
+<section class="slide" data-idx="4">
+  <div class="slide-inner">
+    <div class="split">
+      <div>
+        <div class="kicker c-purple reveal">⬢ Contour</div>
+        <h2 class="disp reveal" style="transition-delay:.05s">6 состояний аукциона.<br>Фильтр перед входом.</h2>
+        <p class="lead reveal" style="transition-delay:.1s">
+          Каждый 30m-период автоматически классифицируется по аукционной логике.
+          Сигнал Undertow (◆+FVG) проходит только если состояние совпадает с направлением.
+        </p>
+        <div class="contour-note reveal" style="transition-delay:.15s">
+          Сигнал ◆+FVG в Trend-периоде — высокая вероятность продолжения.<br>
+          Тот же сигнал в Balance — ожидание пробоя, не направленная ставка.
+        </div>
+        <div style="margin-top:18px" class="reveal" style="transition-delay:.2s">
+          <div class="feat-row" style="margin-bottom:10px">
+            <span class="fi">▛▜</span>
+            <div class="ft">
+              <b>Сетап Fulcrum</b>
+              <span>Точка разворота: первое импульсное движение + компрессия + выход. Фильтруется по состоянию и VWAP.</span>
+            </div>
+          </div>
+          <div class="feat-row">
+            <span class="fi">📊</span>
+            <div class="ft">
+              <b>RF-score</b>
+              <span>4-компонентный score из 1m-подбаров: OTF + экстензия + CLV + тейл. Красит бокс и участвует в фильтре.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay:.15s">
+        <div class="state-list stagger">
+          <div class="state-row">
+            <div class="sn">1</div>
+            <div class="sname s-trend">Trend</div>
+            <div class="sdesc">OTF-движение продолжается, экстензия растёт — направленный вход с трендом.</div>
+          </div>
+          <div class="state-row">
+            <div class="sn">2</div>
+            <div class="sname s-pull">Pullback</div>
+            <div class="sdesc">Коррекция внутри тренда — вход по тренду при возврате к уровню.</div>
+          </div>
+          <div class="state-row">
+            <div class="sn">3</div>
+            <div class="sname s-fade">Fading</div>
+            <div class="sdesc">Экстензия затухает — тренд теряет силу. Осторожно, сократить размер.</div>
+          </div>
+          <div class="state-row active-s">
+            <div class="sn">4</div>
+            <div class="sname s-rev">Reversal</div>
+            <div class="sdesc">Закрытие за противоположный экстремум — смена направления подтверждена.</div>
+          </div>
+          <div class="state-row">
+            <div class="sn">5</div>
+            <div class="sname s-sweep">Sweep</div>
+            <div class="sdesc">Ликвидационный выброс с возвратом — ловушка, вход в обратную сторону.</div>
+          </div>
+          <div class="state-row">
+            <div class="sn">6</div>
+            <div class="sname s-bal">Balance</div>
+            <div class="sdesc">Перекрытие ≥70% — аукцион нашёл ценность. Ждём пробой с объёмом.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">05 / 08</div>
+</section>
+
+<!-- ══ SLIDE 6 — СТЕК ══ -->
+<section class="slide" data-idx="5">
+  <div class="slide-inner">
+    <div class="split">
+      <div>
+        <div class="kicker c-amber reveal">Синергия</div>
+        <h2 class="disp reveal" style="transition-delay:.05s">Три уровня.<br>Один workflow.</h2>
+        <p class="lead reveal" style="transition-delay:.1s">
+          Инструменты не дублируют друг друга — каждый отвечает за свой горизонт.
+          Вместе они образуют полный аналитический стек от ночи до входа.
+        </p>
+      </div>
+      <div class="stack-flow stagger reveal" style="transition-delay:.15s">
+        <div class="stack-step">
+          <div class="stack-num num-atlas">①</div>
+          <div class="stack-body">
+            <h3>Atlas — контекст до открытия</h3>
+            <p>До 09:00 смотришь ONH/ONL, pdH/pdL/pdC, gap. Определяешь, от каких уровней рынок может искать реакцию с первых минут.</p>
+            <span class="stack-tag sn-atlas">⬢ Atlas</span>
+          </div>
+        </div>
+        <div class="stack-step">
+          <div class="stack-num num-relief">②</div>
+          <div class="stack-body">
+            <h3>Relief — структура IB и тип дня</h3>
+            <p>После периодов A–B видишь тип открытия, IB-диапазон и первый bias. Если Open Drive — POC и VAH/VAL становятся целями. nPOC показывает магниты с прошлых дней.</p>
+            <span class="stack-tag sn-relief">⬢ Relief</span>
+          </div>
+        </div>
+        <div class="stack-step">
+          <div class="stack-num num-contour">③</div>
+          <div class="stack-body">
+            <h3>Contour — фильтр и сигнал</h3>
+            <p>В Trend или Pullback — Undertow-сигнал ◆ проходит фильтр. В Balance — ждёшь пробоя. Fulcrum ▛▜ у Atlas-уровня + Trend-состояние = приоритетный вход.</p>
+            <span class="stack-tag sn-contour">⬢ Contour</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">06 / 08</div>
+</section>
+
+<!-- ══ SLIDE 7 — WORKFLOW ══ -->
+<section class="slide" data-idx="6">
+  <div class="slide-inner">
+    <div class="split">
+      <div>
+        <div class="kicker reveal">Торговый день</div>
+        <h2 class="disp reveal" style="transition-delay:.05s">Типичная сессия FDAX.<br>Шаг за шагом.</h2>
+        <p class="lead reveal" style="transition-delay:.1s">
+          Реальный workflow от предмаркета до закрытия —
+          три инструмента работают последовательно, не перегружая чарт.
+        </p>
+      </div>
+      <div class="timeline stagger reveal" style="transition-delay:.15s">
+        <div class="tl-item">
+          <div class="tl-time">08:30</div>
+          <div class="tl-dot dot-teal"></div>
+          <div class="tl-content">
+            <h4>Читаю Atlas перед открытием</h4>
+            <p>ONH, ONL, gap, pdH/pdL. Отмечаю уровни, которые первыми станут точками реакции после 09:00.</p>
+            <div class="tl-tools">
+              <span class="tl-pill sn-atlas">Atlas</span>
+            </div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">09:00</div>
+          <div class="tl-dot dot-orange"></div>
+          <div class="tl-content">
+            <h4>Открытие — тип и IB</h4>
+            <p>Relief показывает Open Drive или Auction. Период A задаёт первый вектор. Слежу за IB-формированием в B.</p>
+            <div class="tl-tools">
+              <span class="tl-pill sn-relief">Relief</span>
+            </div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">10:00</div>
+          <div class="tl-dot dot-purple"></div>
+          <div class="tl-content">
+            <h4>IB закрыт — жду состояние в Contour</h4>
+            <p>После закрытия B Contour классифицирует: Trend ↑ значит смотрю Long только. Undertow ◆ у ONH — кандидат на вход.</p>
+            <div class="tl-tools">
+              <span class="tl-pill sn-contour">Contour</span>
+              <span class="tl-pill sn-relief">Relief</span>
+            </div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">11–13</div>
+          <div class="tl-dot dot-blue"></div>
+          <div class="tl-content">
+            <h4>Мидсессия — nPOC и Sweep</h4>
+            <p>Relief показывает нетронутые nPOC. Если цена делает Sweep IB-Low и возвращается — вход Long с нПОК как целью.</p>
+            <div class="tl-tools">
+              <span class="tl-pill sn-relief">Relief</span>
+              <span class="tl-pill sn-atlas">Atlas</span>
+            </div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">14–17</div>
+          <div class="tl-dot dot-orange"></div>
+          <div class="tl-content">
+            <h4>Финал — цели и закрытие позиций</h4>
+            <p>pdH / pwH как финальные target. Если Contour переходит в Balance после 15:00 — снижаю активность, не открываю новых позиций.</p>
+            <div class="tl-tools">
+              <span class="tl-pill sn-atlas">Atlas</span>
+              <span class="tl-pill sn-contour">Contour</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">07 / 08</div>
+</section>
+
+<!-- ══ SLIDE 8 — CTA ══ -->
+<section class="slide cta-slide" data-idx="7">
+  <div class="orb orb-1" style="opacity:0.2"></div>
+  <div class="orb orb-2" style="opacity:0.2"></div>
+  <div class="slide-inner">
+    <div class="kicker reveal" style="justify-content:center">Доступ</div>
+    <h2 class="cta-title reveal" style="transition-delay:.06s">
+      Начни торговать<br>с полным контекстом.
+    </h2>
+    <p class="cta-sub reveal" style="transition-delay:.12s">
+      Все три инструмента доступны сразу после оплаты —
+      через TradingView Invite-Only. Обновления включены.
+    </p>
+    <div class="price-cards stagger reveal" style="transition-delay:.18s">
+      <div class="price-card" style="--pc-ac:var(--purple)">
+        <div class="pc-label">Meridian + Contour</div>
+        <div class="pc-name">Без Relief</div>
+        <div class="pc-includes">Contour · Meridian<br>+ Atlas (бесплатно)</div>
+        <div class="pc-price">$44</div>
+        <div class="pc-period">/ месяц · от $27.40 при годовой</div>
+      </div>
+      <div class="price-card featured" style="--pc-ac:var(--orange)">
+        <div class="pc-badge">★ Лучшее</div>
+        <div class="pc-label">Полный пакет</div>
+        <div class="pc-name">All-in</div>
+        <div class="pc-includes">Relief · Contour · Meridian<br>+ Atlas (бесплатно)</div>
+        <div class="pc-price">$59</div>
+        <div class="pc-period">/ месяц · от $37.40 при годовой</div>
+      </div>
+    </div>
+    <a class="cta-btn reveal" href="pricing.html" style="transition-delay:.28s">
+      Смотреть все тарифы →
+    </a>
+    <div class="cta-note reveal" style="transition-delay:.32s">
+      🔑 Мгновенный доступ · 🔄 Все обновления · 💬 Поддержка в Telegram
+    </div>
+  </div>
+  <div class="slide-num">08 / 08</div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+const deck   = document.getElementById('deck');
+const slides = Array.from(document.querySelectorAll('.slide'));
+const dots   = Array.from(document.querySelectorAll('.dot-nav button'));
+const pbar   = document.getElementById('pbar');
+
+// Scroll-snap active slide detection
+function getActiveIdx() {
+  const scrollTop = deck.scrollTop;
+  const h = deck.clientHeight;
+  return Math.round(scrollTop / h);
+}
+
+function updateUI(idx) {
+  // progress bar
+  pbar.style.width = ((idx + 1) / slides.length * 100) + '%';
+  // dots
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  // reveal
+  slides.forEach((s, i) => {
+    s.classList.toggle('in-view', i === idx);
+  });
+}
+
+// Tilt effect on suite cards (desktop only)
+if (window.matchMedia('(hover:hover)').matches) {
+  document.querySelectorAll('.suite-tilt').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      card.style.transform = `perspective(700px) rotateY(${x*8}deg) rotateX(${-y*6}deg) translateY(-3px)`;
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+  });
+}
+
+// State row animation
+(function animateStates() {
+  const rows = document.querySelectorAll('.state-row');
+  let cur = 3; // start at Reversal (active)
+  setInterval(() => {
+    rows.forEach(r => r.classList.remove('active-s'));
+    cur = (cur + 1) % rows.length;
+    rows[cur].classList.add('active-s');
+  }, 2200);
+})();
+
+// Period cell stagger delays
+document.querySelectorAll('.pc').forEach((el, i) => {
+  el.style.transitionDelay = (0.20 + i * 0.045) + 's';
+});
+
+// Scroll detection
+let ticking = false;
+deck.addEventListener('scroll', () => {
+  if (!ticking) {
+    requestAnimationFrame(() => {
+      updateUI(getActiveIdx());
+      ticking = false;
+    });
+    ticking = true;
+  }
+}, { passive: true });
+
+// Dot click → scroll
+dots.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const idx = parseInt(btn.dataset.idx);
+    deck.scrollTo({ top: idx * deck.clientHeight, behavior: 'smooth' });
+  });
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  const cur = getActiveIdx();
+  if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+    e.preventDefault();
+    deck.scrollTo({ top: Math.min(cur + 1, slides.length - 1) * deck.clientHeight, behavior: 'smooth' });
+  }
+  if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+    e.preventDefault();
+    deck.scrollTo({ top: Math.max(cur - 1, 0) * deck.clientHeight, behavior: 'smooth' });
+  }
+});
+
+// Init
+updateUI(0);
+</script>
+</body>
+</html>

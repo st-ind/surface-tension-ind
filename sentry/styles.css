@@ -227,6 +227,18 @@ nav .wrap {
   transition: color 0.15s, background 0.15s;
 }
 .nav-links a:hover { color: var(--text); background: var(--border); }
+
+/* ── LANG SWITCH ── */
+.nav-links li.nav-lang { display: flex; align-items: center; gap: 3px; margin-right: 4px; }
+.nav-links li.nav-lang a {
+  font-family: var(--mono); font-size: 0.76rem !important; font-weight: 700;
+  padding: 5px 8px !important; display: inline-flex !important; width: auto !important;
+}
+.nav-links li.nav-lang a.active { color: var(--sentry, var(--orange)); background: rgba(255,255,255,0.06); }
+.nav-lang-sep { color: var(--dim); font-family: var(--mono); font-size: 0.7rem; }
+@media (max-width: 900px) {
+  .nav-links li.nav-lang { width: auto; padding: 6px 14px 2px; }
+}
 .nav-links .nav-cta {
   margin-left: 12px;
   background: var(--grad); color: #fff; font-weight: 600;
