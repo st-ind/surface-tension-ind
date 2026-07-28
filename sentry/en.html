@@ -211,83 +211,101 @@
     </div>
   </section>
 
-  <!-- ── REQUIREMENTS ── -->
-  <section class="wrap-section" id="requirements" aria-labelledby="requirements-head">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="sec-head__label" id="requirements-head">Requirements</span>
-        <span class="sec-head__rule" aria-hidden="true"></span>
-        <span class="sec-head__no">Terms of use</span>
-      </div>
-      <p class="deal-intro">No hidden conditions: works right after install, on any instrument, with any account size.</p>
-
-      <div class="deal-terms">
-        <div class="deal-term">
-          <p class="deal-term__no">01</p>
-          <h3 class="deal-term__head">Any TradingView plan</h3>
-          <p class="deal-term__body">The entire indicator works on the free plan too — no hidden Premium requirements.</p>
-        </div>
-        <div class="deal-term">
-          <p class="deal-term__no">02</p>
-          <h3 class="deal-term__head">Any instrument, any timeframe</h3>
-          <p class="deal-term__body">Forex, indices, crypto, stocks — tune the setup parameters to your own market and chart.</p>
-        </div>
-        <div class="deal-term">
-          <p class="deal-term__no">03</p>
-          <h3 class="deal-term__head">Alerts on Fulcrum and Volatile Bar</h3>
-          <p class="deal-term__body">Both setups can be set as a TradingView alert — no need to keep the chart open.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── PRICING ── -->
+  <!-- ── PRICING + REQUIREMENTS ── -->
   <section class="wrap-section" id="pricing" aria-labelledby="pricing-head">
-    <div class="price-wrap">
+    <div class="wrap">
       <div class="sec-head">
         <span class="sec-head__label" id="pricing-head">Pricing</span>
         <span class="sec-head__rule" aria-hidden="true"></span>
         <span class="sec-head__no">Its own license</span>
       </div>
-      <div class="counter">
-        <p class="counter__lede reveal" style="--i:0">Pick a term — the longer you go, the lower the monthly price.</p>
-        <ul class="feature-list">
-          <li class="reveal" style="--i:1">
-            <span class="no">1 MO</span>
-            <span class="feature-list__main">
-              <span class="feature-list__val">$20 <span class="feature-list__eff">$20.00 / mo</span></span>
-            </span>
-          </li>
-          <li class="reveal" style="--i:2">
-            <span class="no">3 MO</span>
-            <span class="feature-list__main">
-              <span class="feature-list__val">$56 <span class="feature-list__eff">$18.67 / mo</span></span>
-              <span class="tag">−7%</span>
-            </span>
-          </li>
-          <li class="reveal" style="--i:3">
-            <span class="no">6 MO</span>
-            <span class="feature-list__main">
-              <span class="feature-list__val">$105 <span class="feature-list__eff">$17.50 / mo</span></span>
-              <span class="tag">−13%</span>
-            </span>
-          </li>
-          <li class="reveal" style="--i:4">
-            <span class="no">12 MO</span>
-            <span class="feature-list__main">
-              <span class="feature-list__val">$197 <span class="feature-list__eff">$16.42 / mo</span></span>
-              <span class="tag is-best">★ −18% best value</span>
-            </span>
-          </li>
-        </ul>
-        <a class="button reveal" style="--i:5" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">Open on TradingView</a>
-        <p class="counter__fine reveal" style="--i:6">Access opens right after payment. All updates included.</p>
-      </div>
 
-      <div class="perks-row">
-        <span class="perk reveal" style="--i:0">🔑 Instant access via TradingView</span>
-        <span class="perk reveal" style="--i:1">🔄 All updates included</span>
-        <span class="perk reveal" style="--i:2">💬 Support on Telegram</span>
+      <div class="price-layout">
+        <div class="price-layout__buy">
+          <div class="counter">
+            <p class="counter__lede reveal" style="--i:0">Pick a term — the longer you go, the lower the monthly price.</p>
+            <ul class="feature-list">
+              <li class="reveal" style="--i:1">
+                <span class="no">1 MO</span>
+                <span class="feature-list__main">
+                  <span class="feature-list__val">$20</span>
+                  <span class="feature-list__side">
+                    <span class="feature-list__eff">$20.00 / mo</span>
+                  </span>
+                </span>
+              </li>
+              <li class="reveal" style="--i:2">
+                <span class="no">3 MO</span>
+                <span class="feature-list__main">
+                  <span class="feature-list__val">$56</span>
+                  <span class="feature-list__side">
+                    <span class="feature-list__eff">$18.67 / mo</span>
+                    <span class="tag">−7%</span>
+                  </span>
+                </span>
+              </li>
+              <li class="reveal" style="--i:3">
+                <span class="no">6 MO</span>
+                <span class="feature-list__main">
+                  <span class="feature-list__val">$105</span>
+                  <span class="feature-list__side">
+                    <span class="feature-list__eff">$17.50 / mo</span>
+                    <span class="tag">−13%</span>
+                  </span>
+                </span>
+              </li>
+              <li class="reveal is-featured" style="--i:4">
+                <span class="no">12 MO</span>
+                <span class="feature-list__main">
+                  <span class="feature-list__val">$197</span>
+                  <span class="feature-list__side">
+                    <span class="feature-list__eff">$16.42 / mo</span>
+                    <span class="tag is-best">
+                      <svg class="tag__star" width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true"><path d="M5 0.6l1.2 2.55 2.8.3-2.1 1.9.6 2.75L5 6.7 2.5 8.1l.6-2.75-2.1-1.9 2.8-.3L5 .6z"/></svg>
+                      −18%
+                    </span>
+                  </span>
+                </span>
+              </li>
+            </ul>
+            <a class="button reveal" style="--i:5" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">Open on TradingView</a>
+            <p class="counter__fine reveal" style="--i:6">Access opens right after payment. All updates included.</p>
+          </div>
+        </div>
+
+        <aside class="price-layout__terms" id="requirements" aria-label="Requirements">
+          <div class="deal-terms deal-terms--stack">
+            <div class="deal-term reveal" style="--i:0">
+              <p class="deal-term__no">01</p>
+              <h3 class="deal-term__head">Any TradingView plan</h3>
+              <p class="deal-term__body">The entire indicator works on the free plan too — no hidden Premium requirements.</p>
+            </div>
+            <div class="deal-term reveal" style="--i:1">
+              <p class="deal-term__no">02</p>
+              <h3 class="deal-term__head">Any instrument, any timeframe</h3>
+              <p class="deal-term__body">Forex, indices, crypto, stocks — tune the setup parameters to your own market and chart.</p>
+            </div>
+            <div class="deal-term reveal" style="--i:2">
+              <p class="deal-term__no">03</p>
+              <h3 class="deal-term__head">Alerts on Fulcrum and Volatile Bar</h3>
+              <p class="deal-term__body">Both setups can be set as a TradingView alert — no need to keep the chart open.</p>
+            </div>
+          </div>
+          <div class="perks-row">
+            <span class="perk reveal" style="--i:0">
+              <svg class="perk__icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M8.2 5.8a2.4 2.4 0 1 0-2.4-2.4M5.8 3.4 2.2 7v2.2H4.4L8 3.6" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Instant access via TradingView
+            </span>
+            <span class="perk reveal" style="--i:1">
+              <svg class="perk__icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M11.2 4.2A4.8 4.8 0 0 0 2.8 5.5M2.8 9.8a4.8 4.8 0 0 0 8.4-1.3M2.2 2.8v3h3M11.8 11.2v-3h-3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              All updates included
+            </span>
+            <span class="perk reveal" style="--i:2">
+              <svg class="perk__icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.2 2.8h9.6v6.2H7.4L4.6 11.2V9H2.2V2.8Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>
+              Support on Telegram
+            </span>
+          </div>
+        </aside>
       </div>
     </div>
   </section>
