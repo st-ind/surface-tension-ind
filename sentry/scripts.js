@@ -1,3 +1,53 @@
+// ── Mobile nav ──
+;(function () {
+  const toggle = document.querySelector('.runhead__toggle');
+  const menu = document.getElementById('runhead-menu');
+  if (!toggle || !menu) return;
+
+  const isEn = document.documentElement.lang === 'en';
+  const labelOpen = isEn ? 'Open menu' : 'Открыть меню';
+  const labelClose = isEn ? 'Close menu' : 'Закрыть меню';
+
+  let backdrop = document.querySelector('.runhead-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('button');
+    backdrop.className = 'runhead-backdrop';
+    backdrop.type = 'button';
+    backdrop.setAttribute('aria-label', labelClose);
+    document.body.appendChild(backdrop);
+  }
+
+  function closeMenu() {
+    document.body.classList.remove('nav-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', labelOpen);
+  }
+
+  function openMenu() {
+    document.body.classList.add('nav-open');
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', labelClose);
+  }
+
+  toggle.addEventListener('click', () => {
+    document.body.classList.contains('nav-open') ? closeMenu() : openMenu();
+  });
+
+  backdrop.addEventListener('click', closeMenu);
+
+  menu.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 900) closeMenu();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+})();
+
 // ── FAQ accordion ──
 function toggleFaq(row) {
   const wasOpen = row.classList.contains('open');

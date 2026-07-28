@@ -10,11 +10,14 @@
 <meta property="og:locale" content="en_US">
 <meta name="theme-color" content="#E7DCC4">
 <title>Sentry — structural market watch</title>
-<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- EN typography: Space Grotesk only (see --font-* defaults in styles.css) -->
 </head>
 <body>
 
@@ -26,21 +29,34 @@
 <!-- ── NAV ── -->
 <header class="runhead">
   <div class="wrap">
-    <a class="runhead__home" href="en.html">
-      <svg class="runhead__mark" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
-        <g style="isolation:isolate">
-          <polygon points="17,-1 20,4 17,9 11,9 8,4 11,-1"    fill="#2B2118" style="mix-blend-mode:multiply"/>
-          <polygon points="11,6 14,11 11,16 5,16 2,11 5,6"    fill="#97431F" style="mix-blend-mode:multiply"/>
-          <polygon points="23,6 26,11 23,16 17,16 14,11 17,6" fill="#B5532E" style="mix-blend-mode:multiply"/>
-          <polygon points="17,13 20,18 17,23 11,23 8,18 11,13" fill="#E08A2E" style="mix-blend-mode:multiply"/>
-        </g>
-      </svg>
-      <span class="runhead__name">Sentry</span>
+    <a class="runhead__home" href="en.html" aria-label="Surface Tension Indicators">
+      <div class="runhead__logo-mark">
+        <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g style="isolation:isolate">
+            <polygon class="rh-hex rh-hex--ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#2E96B0" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#5BBFCE" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#2580A0" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#1D6A80" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#154E62" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="runhead__lockup">
+        <span class="runhead__lockup-l1">Surface</span>
+        <span class="runhead__lockup-l2">Tension</span>
+        <span class="runhead__lockup-sub">Indicators</span>
+      </div>
     </a>
-    <nav class="runhead__nav" aria-label="Primary">
+    <button class="runhead__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="runhead-menu">
+      <span class="runhead__toggle-bar"></span>
+      <span class="runhead__toggle-bar"></span>
+      <span class="runhead__toggle-bar"></span>
+    </button>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Primary">
       <span class="lang-switch"><a href="index.html">RU</a><span class="lang-switch__sep">/</span><a href="en.html" class="active">EN</a></span>
       <a class="link" href="#modules">Modules</a>
-      <a class="link" href="#requirements">Requirements</a>
       <a class="link" href="#pricing">Pricing</a>
       <a class="link" href="#faq">FAQ</a>
       <a class="button" href="https://ru.tradingview.com/script/yBFtRPta-sentry-by-robotlegs/" target="_blank" rel="noopener">
@@ -90,7 +106,7 @@
         <p class="hero__eyebrow reveal" style="--i:0">
           PineScript v6 <span class="accent-dot" aria-hidden="true">·</span> Any TradingView plan
         </p>
-        <h1 class="hero__title reveal" style="--i:1">Sentry</h1>
+        <h1 class="hero__title reveal" style="--i:1">Sentry<sup class="hero__sup">on watch</sup></h1>
         <p class="hero__sub reveal" style="--i:2">
           A structural watch on the market: the <span class="hero__term">Fulcrum</span> accumulation setup, <span class="hero__term">Volatile&nbsp;Bar</span> spikes
           with <span class="hero__term">Sweep</span> detection of level breaks, and a structural zigzag over swing highs/lows.
