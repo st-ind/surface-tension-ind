@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Relief — Market Profile on 1m for TradingView. A–Z TPO profile, POC/VAH/VAL, nPOC, VWAP + Bias, Raid/Sweep, EQH/EQL, Initial Balance, a zigzag with BOS and CHoCH.">
+<meta property="og:title" content="Relief — Market Profile · Surface Tension">
+<meta property="og:description" content="A–Z TPO profile, POC/VAH/VAL, nPOC, VWAP + Bias, Raid/Sweep, EQH/EQL, IB and setups, a zigzag with BOS and CHoCH.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#E7DCC4">
+<title>Relief — Market Profile · Surface Tension</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<!-- EN typography: Space Grotesk only (see --font-* defaults in styles.css) -->
+</head>
+<body>
+
+<div class="atmosphere" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ── NAV ── -->
+<header class="runhead">
+  <div class="wrap">
+    <a class="runhead__home" href="en.html" aria-label="Surface Tension Indicators">
+      <div class="runhead__logo-mark">
+        <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g style="isolation:isolate">
+            <polygon class="rh-hex rh-hex--ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#D07C3C" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#97431F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#B5532E" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#E8A94F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#B5532E" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#97431F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#6E2E12" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="runhead__lockup">
+        <span class="runhead__lockup-l1">Surface</span>
+        <span class="runhead__lockup-l2">Tension</span>
+        <span class="runhead__lockup-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="runhead__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="runhead-menu">
+      <span class="runhead__toggle-bar"></span>
+      <span class="runhead__toggle-bar"></span>
+      <span class="runhead__toggle-bar"></span>
+    </button>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Main navigation">
+      <span class="lang-switch"><a href="relief.html">RU</a><span class="lang-switch__sep">/</span><a href="relief-en.html" class="active">EN</a></span>
+      <a class="link is-current" href="relief-en.html" style="--acc:var(--relief);--acc-deep:var(--relief-deep)">Relief</a>
+      <a class="link" href="meridian-en.html">Meridian</a>
+      <a class="link" href="contour-en.html">Contour</a>
+      <a class="link" href="free-en.html">Free</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <div class="runhead__dropdown" data-dropdown>
+        <button class="runhead__dropdown-btn" type="button" aria-expanded="false">
+          On this page
+          <svg class="runhead__dropdown-caret" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="runhead__dropdown-menu">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#signals">Signals</a></li>
+          <li><a href="#how">Trading day</a></li>
+          <li><a href="#guides">Strategies</a></li>
+          <li><a href="#settings">Settings</a></li>
+        </ul>
+      </div>
+      <a class="button" href="https://www.tradingview.com/script/zW96uPe2-relief-by-robotlegs/" target="_blank" rel="noopener" style="--acc-deep:var(--relief-deep)">
+        TradingView
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- ── HERO ── -->
+  <section class="hero" style="--acc:var(--relief);--acc-deep:var(--relief-deep);--acc-glow:var(--relief-glow);--acc-tint:var(--relief-tint);--acc-border:var(--relief-border)">
+    <div class="wrap">
+    <div class="hero-hex-deco" aria-hidden="true">
+      <svg viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g class="hex-outer" opacity="0.055" stroke="#3D1A0A" stroke-width="1.2" stroke-dasharray="9 6">
+          <polygon points="536,140 502,81 434,81 400,140 434,199 502,199"/>
+          <polygon points="328,20 294,-39 226,-39 192,20 226,79 294,79"/>
+          <polygon points="120,140 86,81 18,81 -16,140 18,199 86,199"/>
+          <polygon points="120,380 86,321 18,321 -16,380 18,439 86,439"/>
+          <polygon points="328,500 294,441 226,441 192,500 226,559 294,559"/>
+          <polygon points="536,380 502,321 434,321 400,380 434,439 502,439"/>
+        </g>
+        <g class="hex-mid" opacity="0.1" stroke="#8A2E10" stroke-width="1.3">
+          <polygon points="462,260 436,215 384,215 358,260 384,305 436,305"/>
+          <polygon points="387,130 361,85 309,85 283,130 309,175 361,175"/>
+          <polygon points="237,130 211,85 159,85 133,130 159,175 211,175"/>
+          <polygon points="162,260 136,215 84,215 58,260 84,305 136,305"/>
+          <polygon points="237,390 211,345 159,345 133,390 159,435 211,435"/>
+          <polygon points="387,390 361,345 309,345 283,390 309,435 361,435"/>
+        </g>
+        <g class="hex-inner" opacity="0.19" stroke="#C85A20" stroke-width="1.6">
+          <polygon points="298,260 279,227 241,227 222,260 241,293 279,293" fill="#8A2E10" fill-opacity="0.12"/>
+          <polygon points="364,260 345,227 307,227 288,260 307,293 345,293" fill="#E07040" fill-opacity="0.07"/>
+          <polygon points="331,203 312,170 274,170 255,203 274,236 312,236"/>
+          <polygon points="265,203 246,170 208,170 189,203 208,236 246,236" fill="#E07040" fill-opacity="0.07"/>
+          <polygon points="232,260 213,227 175,227 156,260 175,293 213,293"/>
+          <polygon points="265,317 246,284 208,284 189,317 208,350 246,350" fill="#E07040" fill-opacity="0.07"/>
+          <polygon points="331,317 312,284 274,284 255,317 274,350 312,350"/>
+        </g>
+      </svg>
+    </div>
+    <div class="hero__grid">
+      <div class="hero__left">
+        <p class="hero__eyebrow reveal" style="--i:0">PineScript v6 <span class="accent-dot" aria-hidden="true">·</span> 1m chart</p>
+        <h1 class="hero__title reveal" style="--i:1;display:flex;align-items:center;gap:0.6rem">
+          <svg width="72" height="32" viewBox="0 6 28 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="flex-shrink:0">
+            <g style="isolation:isolate">
+              <polygon points="10,7 13,12 10,17 4,17 1,12 4,7"   fill="#9A2808" style="mix-blend-mode:multiply"/>
+              <polygon points="17,7 20,12 17,17 11,17 8,12 11,7"  fill="#C04820" style="mix-blend-mode:multiply"/>
+              <polygon points="24,7 27,12 24,17 18,17 15,12 18,7" fill="#E07038" style="mix-blend-mode:multiply"/>
+            </g>
+          </svg>
+          Relief
+        </h1>
+        <p class="hero__type reveal" style="--i:2">Reads: <span class="hero__type-word" id="tw" data-typewriter="TPO profile|VWAP + Bias|Raid G / Sweep|CHoCH|nPOC levels|EQH / EQL|IB setups|Info panel|Zigzag + BOS"></span><span class="hero__type-cur">_</span></p>
+
+        <p class="hero__lead-kicker reveal" style="--i:3">Market Profile on 1m — the whole session in one indicator</p>
+        <p class="hero__lead-text reveal" style="--i:3">Relief builds a TPO profile from 30-minute A–Z periods right on the TradingView chart. No need to stack a dozen scripts — levels, liquidity, and signals are already there.</p>
+        <ul class="hero__spec-list reveal" style="--i:4">
+          <li><span class="hero__spec-lbl">Profile</span><span class="hero__spec-val">A–Z cubes · Poor H/L · nPOC · pVA</span></li>
+          <li><span class="hero__spec-lbl">Levels</span><span class="hero__spec-val">IB and extensions · Raid G/S · EQH/EQL</span></li>
+          <li><span class="hero__spec-lbl">Signals</span><span class="hero__spec-val">VWAP · Bias 1–5/5 · Zigzag + BOS</span></li>
+          <li><span class="hero__spec-lbl">Structure</span><span class="hero__spec-val">Zigzag · BOS · CHoCH</span></li>
+        </ul>
+
+        <div class="hero__cta reveal" style="--i:5">
+          <a class="button" href="https://www.tradingview.com/script/zW96uPe2-relief-by-robotlegs/" target="_blank" rel="noopener">
+            Open on TradingView
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="link" href="#guides">Trading playbooks</a>
+          <a class="link" href="en.html">← Back</a>
+        </div>
+
+        <div class="hero__stats reveal" style="--i:6">
+          <div class="hero__stat"><span class="hero__stat-val">12</span><span class="hero__stat-lbl">Modules</span></div>
+          <div class="hero__stat"><span class="hero__stat-val">1m</span><span class="hero__stat-lbl">Timeframe</span></div>
+          <div class="hero__stat"><span class="hero__stat-val">30</span><span class="hero__stat-lbl">Min / period</span></div>
+        </div>
+      </div>
+
+      <div class="hero__right">
+        <div class="signal-panel reveal" style="--i:4">
+          <div class="signal-panel__bar">
+            <svg class="signal-panel__hex" width="18" height="18" viewBox="0 6 28 12" xmlns="http://www.w3.org/2000/svg">
+              <g style="isolation:isolate">
+                <polygon points="10,7 13,12 10,17 4,17 1,12 4,7"   fill="#9A2808" style="mix-blend-mode:multiply"/>
+                <polygon points="17,7 20,12 17,17 11,17 8,12 11,7"  fill="#C04820" style="mix-blend-mode:multiply"/>
+                <polygon points="24,7 27,12 24,17 18,17 15,12 18,7" fill="#E07038" style="mix-blend-mode:multiply"/>
+              </g>
+            </svg>
+            <span class="signal-panel__live"><span class="status-dot" aria-hidden="true"></span>LIVE</span>
+            <span class="signal-panel__name">Relief</span>
+            <span class="signal-panel__inst">GER40 · 1m</span>
+          </div>
+          <div class="signal-panel__body">
+            <div class="signal-panel__lbl">Periods</div>
+            <div class="signal-panel__periods">
+              <span class="signal-panel__pd" style="background:#6E2E12;color:#f2ead6">A</span>
+              <span class="signal-panel__pd" style="background:#97431F;color:#f2ead6">B</span>
+              <span class="signal-panel__pd" style="background:#B5532E;color:#f2ead6;box-shadow:0 0 10px rgba(181,83,46,0.45)">C</span>
+              <span class="signal-panel__pd" style="background:#E08A2E;color:#f2ead6">D</span>
+              <span class="signal-panel__pd" style="background:#C99A45;color:#2b2118">E</span>
+              <span class="signal-panel__pd" style="background:rgba(181,83,46,0.14);color:#97431F;border:1px solid rgba(181,83,46,0.28)">F</span>
+              <span class="signal-panel__pd" style="background:rgba(224,138,46,0.14);color:#B5532E;border:1px solid rgba(224,138,46,0.28)">G</span>
+              <span class="signal-panel__pd" style="background:rgba(201,154,69,0.16);color:#8A6A2E;border:1px solid rgba(201,154,69,0.3)">H</span>
+            </div>
+
+            <div class="signal-panel__lbl">Metrics</div>
+            <div class="signal-panel__metrics">
+              <div class="signal-panel__metric">
+                <span class="k">VWAP</span>
+                <div class="signal-panel__vtrack"><div class="signal-panel__vfill" style="width:62%"></div></div>
+                <span class="v c-ember" style="font-size:9px">above</span>
+              </div>
+              <div class="signal-panel__metric"><span class="k">Bias</span><span class="v c-ember" data-cycle="▲ L 4/5|▲ L 3/5|watching">▲ L 4/5</span></div>
+              <div class="signal-panel__metric"><span class="k">Day</span><span class="v" data-cycle="NV ↑|OTF ↓|Balance">NV ↑</span></div>
+              <div class="signal-panel__metric"><span class="k">Period</span><span class="v c-ember" data-cycle="C ▲↑|D ♦↓|E ▼–|F ▲↑|A ↑|B ▲–">C ▲↑</span></div>
+            </div>
+
+            <div class="signal-panel__lbl">Signals</div>
+            <div class="signal-panel__feed">
+              <p class="feed-row is-clay">★ First VWAP test</p>
+              <p class="feed-row">↑ Raid G confirmed</p>
+              <p class="feed-row">BOS ↑ continuation</p>
+              <p class="feed-row is-muted">🧲 EQH magnet</p>
+            </div>
+
+            <div class="signal-panel__mini">
+              <div class="signal-panel__mini-bar" style="height:55%;background:#6E2E12"></div>
+              <div class="signal-panel__mini-bar" style="height:72%;background:#97431F"></div>
+              <div class="signal-panel__mini-bar" style="height:88%;background:#B5532E"></div>
+              <div class="signal-panel__mini-bar" style="height:65%;background:#B5532E"></div>
+              <div class="signal-panel__mini-bar" style="height:90%;background:#E08A2E"></div>
+              <div class="signal-panel__mini-bar" style="height:78%;background:#E08A2E"></div>
+              <div class="signal-panel__mini-bar" style="height:60%;background:#C99A45"></div>
+              <div class="signal-panel__mini-bar" style="height:82%;background:#C99A45"></div>
+              <div class="signal-panel__mini-bar" style="height:70%;background:#97431F"></div>
+              <div class="signal-panel__mini-bar" style="height:55%;background:#B5532E"></div>
+              <div class="signal-panel__mini-bar" style="height:45%;background:#E08A2E"></div>
+              <div class="signal-panel__mini-bar" style="height:68%;background:#C99A45"></div>
+              <div class="signal-panel__mini-bar" style="height:74%;background:#B5532E"></div>
+              <div class="signal-panel__mini-bar" style="height:80%;background:#E08A2E"></div>
+              <div class="signal-panel__mini-bar" style="height:62%;background:#97431F"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ── CHART PREVIEW ── -->
+  <section class="wrap-section wrap-section--no-top">
+    <div class="wrap">
+      <div class="media-frame reveal">
+        <div class="media-frame__head">
+          <span class="media-frame__tag">// preview</span>
+          <span class="media-frame__hint">Schematic view of the indicator on a 1m chart</span>
+        </div>
+        <img src="image.png" alt="Relief on the chart" width="2600" height="950" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ── -->
+  <section class="wrap-section wrap-section--no-top" id="features" aria-labelledby="features-head">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-head__label" id="features-head">Modules</span>
+        <span class="sec-head__rule" aria-hidden="true"></span>
+        <span class="sec-head__no">12 independent modules <span class="accent-dot" aria-hidden="true">·</span> FEAT-01…12</span>
+      </div>
+      <p class="sec-sub">Each one switches on and off independently.</p>
+
+      <div class="modules-grid is-3col" style="--acc:var(--relief);--acc-deep:var(--relief-deep);--acc-tint:var(--relief-tint);--acc-border:var(--relief-border)">
+
+        <div class="mod-card reveal" style="--i:0">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-01</span><span class="mod-card__icon">📊</span></div>
+          <h3>A–Z periods</h3>
+          <p>30-minute blocks with a direction mark ↑/↓/— by default. Optionally dual: range ▲/▼/— plus candle ↑/↓. At the close of A it detects Open Drive — all TPO prints on one side of the open; shown in the info panel.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">A–Z · 30 min</span>
+            <span class="chip on">↑/↓/—</span>
+            <span class="chip on">▲/▼ + ↑/↓ opt.</span>
+            <span class="chip on">Open Drive</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:1">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-02</span><span class="mod-card__icon">🔷</span></div>
+          <h3>TPO profile</h3>
+          <p>Vertical tick-based blocks built with TradingView's own TPO algorithm, tie-break by proximity to center. Compatible with the standard TPO "Ticks per row" setting.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">A–Z cubes</span>
+            <span class="chip on">Ticks per row</span>
+            <span class="chip on">Poor H/L · SP</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:2">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-03</span><span class="mod-card__icon">〰️</span></div>
+          <h3>VWAP + Bias</h3>
+          <p>Session VWAP from the session start. First wick test — ★, the rest — circles. On period B, a scored bias ▲ L 1–5/5: VWAP, A/B direction, an IBH/IBL break, and position versus IB Mid.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">First test ★</span>
+            <span class="chip on">Bias ▲ L n/5</span>
+            <span class="chip on">±σ bands</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:3">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-04</span><span class="mod-card__icon">📐</span></div>
+          <h3>Balance (pVAH / pVAL)</h3>
+          <p>Yesterday's Value Area bounds. Open type (Outside/Inside) is detected automatically. A wick test and a body break are visually distinguished by signal strength.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">pVAH / pVAL</span>
+            <span class="chip on">Outside / Inside</span>
+            <span class="chip on">Test · Break</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:4">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-05</span><span class="mod-card__icon">🎯</span></div>
+          <h3>nPOC</h3>
+          <p>Untested POCs from previous days — up to 60 days deep. Three visual states: untouched, wick-tested, body-broken. Colour changes automatically.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">Up to 60 days</span>
+            <span class="chip on">Blue — untouched</span>
+            <span class="chip on">Red — tested</span>
+            <span class="chip on">Grey — broken</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:5">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-06</span><span class="mod-card__icon">⚠️</span></div>
+          <h3>Poor H/L · Single Print</h3>
+          <p>Poor High/Low — an extreme touched by fewer than two TPO periods: an unfinished auction. Single Print — one-off profile price levels, highlighted with a background zone.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">Poor High / Low</span>
+            <span class="chip on">Single Print</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:6">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-07</span><span class="mod-card__icon">⚡</span></div>
+          <h3>Raid / Liquidity</h3>
+          <p>Raid G — a false break of an extreme with a fast return. Raid S — holding beyond the level for N+ bars. The signal is confirmed or removed after N candles.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">Raid G (Grab)</span>
+            <span class="chip on">Raid S (Sweep)</span>
+            <span class="chip on">Live version</span>
+            <span class="chip on">Confirmation</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:7">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-08</span><span class="mod-card__icon">🧲</span></div>
+          <h3>EQH / EQL</h3>
+          <p>Equal Highs/Lows — zones of stacked stops behind repeatedly-touched levels. A cluster of levels within X points gets marked with a magnet. HL Sweep after ▲/▼ runs.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">EQH / EQL</span>
+            <span class="chip on">Magnet 🧲</span>
+            <span class="chip on">HL Sweep</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:8">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-09</span><span class="mod-card__icon">📏</span></div>
+          <h3>Initial Balance & setups</h3>
+          <p>IB from periods A+B with 0.5×, 1×, 1.5×, 2× extensions. A-High/A-Low, IB Mid, Open Drive. Day Type in the info panel: Trend, NV, Tight, ORR.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">IB High / Low</span>
+            <span class="chip on">IB Ext 0.5–2×</span>
+            <span class="chip on">A-HL · IB Mid</span>
+            <span class="chip on">OD↑ / OD↓</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:9">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-10</span><span class="mod-card__icon">▤</span></div>
+          <h3>TPO presets</h3>
+          <p>Ready-made ticks-per-row for popular contracts — FDAX, NQ, YM — or manual setup for any instrument.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">FDAX · NQ · YM</span>
+            <span class="chip on">Manual entry</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:10">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-11</span><span class="mod-card__icon">▦</span></div>
+          <h3>Info panel</h3>
+          <p>A table in the corner: Open Drive, Day Type, Open, B vs A, Struct — session context without switching indicators.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">OD · Day Type</span>
+            <span class="chip on">Open · B vs A</span>
+            <span class="chip on">Struct</span>
+          </div>
+        </div>
+
+        <div class="mod-card reveal" style="--i:11">
+          <div class="mod-card__kicker"><span class="mod-card__no">FEAT-12</span><span class="mod-card__icon">〜</span></div>
+          <h3>Zigzag + BOS + CHoCH</h3>
+          <p>Swing structure on the 1m chart — three sensitivity modes (3 / 5 / 8 TPO rows). BOS — a break in the direction of the previous break (continuation). CHoCH — a break the other way, the first sign of a trend change.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">Zigzag</span>
+            <span class="chip on">BOS↑ / BOS↓</span>
+            <span class="chip on">CHoCH</span>
+            <span class="chip on">3 · 5 · 8 rows</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SIGNALS ── -->
+  <section class="wrap-section" id="signals" aria-labelledby="signals-head">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-head__label" id="signals-head">Signals</span>
+        <span class="sec-head__rule" aria-hidden="true"></span>
+        <span class="sec-head__no">Marks and levels</span>
+      </div>
+      <p class="sec-sub">Every mark shows up right on the chart — no separate panel.</p>
+
+      <div class="info-rows">
+
+        <div class="info-row reveal" style="--i:0">
+          <div>
+            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.7rem">
+              <span class="info-row__badge tag-bull">▲↑ bullish</span>
+              <span class="info-row__badge tag-bear">▼↓ bearish</span>
+              <span class="info-row__badge tag-neutral">◆ inside</span>
+              <span class="info-row__badge tag-neutral">– neutral OC</span>
+            </div>
+            <h3>Period marks</h3>
+            <p>The first symbol is range direction (H/L vs. the previous period). The second is open→close direction. An uninterrupted run of ▲ or ▼ feeds into HL Sweep.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:1">
+          <span class="info-row__badge tag-bull">Raid G ↑</span>
+          <div>
+            <h3>Grab — a quick touch</h3>
+            <p>Price pushed past the previous period's extreme and closed back inside. Stops are swept, a reversal is likely. Confirmed or removed after N candles.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:2">
+          <span class="info-row__badge tag-bear">Raid S ↑</span>
+          <div>
+            <h3>Sweep — holding past the level</h3>
+            <p>Price closed past the extreme or spent N bars beyond it. A strong grab with follow-through. Continuation is more likely.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:3">
+          <span class="info-row__badge tag-bull">▲ L 4/5</span>
+          <div>
+            <h3>Bias — a scored session lean</h3>
+            <p>On period B — a ▲ L 1–5/5 or ▼ S 1–5/5 score: VWAP, A and B direction, an IBH/IBL break, position versus IB Mid. A standalone chart mark — context for an entry, not a filter on other signals.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:4">
+          <span class="info-row__badge" style="background:rgba(46,140,184,0.14);color:#2E6B8C">▲×3 ↑</span>
+          <div>
+            <h3>HL Sweep — a run gets taken out</h3>
+            <p>After N periods in a row of ▲ or ▼, the next period breaks the last extreme and snaps back quickly. The number is the run length — a sign of trend exhaustion.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:5">
+          <span class="info-row__badge tag-info">Outside</span>
+          <div>
+            <h3>Day open type</h3>
+            <p><strong style="color:var(--meridian-deep)">Outside (above)</strong> — opened above pVAH, a bullish context. <strong style="color:var(--relief-deep)">Outside (below)</strong> — below pVAL, a bearish context. <strong style="color:var(--ember-deep)">Inside (danger)</strong> — inside the Value Area, a two-sided auction.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:6">
+          <span class="info-row__badge tag-struct">🧲 EQH</span>
+          <div>
+            <h3>Equal Highs / Lows + Magnet</h3>
+            <p>Levels touched repeatedly without breaking — stops stacked behind them. A cluster of N such levels within X points gets marked 🧲 — a strong pull zone.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:7">
+          <span class="info-row__badge tag-info">OD↑ / OD↓</span>
+          <div>
+            <h3>Open Drive — a trending start</h3>
+            <p>Period A has zero TPO blocks against the move's direction. <strong style="color:var(--meridian-deep)">OD↑</strong> — bullish blocks only, <strong style="color:var(--relief-deep)">OD↓</strong> — bearish only. The strongest sign of a trend day from the first few minutes.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:8">
+          <span class="info-row__badge tag-info">IB 1×</span>
+          <div>
+            <h3>IB extensions</h3>
+            <p>Once price clears the Initial Balance, the 0.5×, 1×, 1.5×, and 2× levels become reaction zones. A break past IB × the threshold by session end → <strong>Trend Day</strong>.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:9">
+          <span class="info-row__badge tag-info">IBm</span>
+          <div>
+            <h3>IB Mid — level test</h3>
+            <p>A marker on the first touch of the IB midpoint in period C+. The main magnet on a balancing day — appears right after period B closes.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:10">
+          <span class="info-row__badge tag-bull">CHoCH↓</span>
+          <div>
+            <h3>Change of Character</h3>
+            <p>A break of a swing extreme in the direction opposite the previous break — the first sign of a trend change. Unlike BOS (a break with the previous direction), CHoCH catches the actual structural reversal.</p>
+          </div>
+        </div>
+
+        <div class="info-row reveal" style="--i:11">
+          <span class="info-row__badge tag-struct">BOS↑</span>
+          <div>
+            <h3>Break of Structure</h3>
+            <p>A break of the previous swing high (<strong style="color:var(--meridian-deep)">BOS↑</strong>) or swing low (<strong style="color:var(--relief-deep)">BOS↓</strong>) in the direction of the previous break — trend continuation. The mark appears on the breaking bar. Swing sensitivity is configurable, from short 1m waves up to large structures.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW TO READ ── -->
+  <section class="wrap-section" id="how" aria-labelledby="how-head">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-head__label" id="how-head">Trading day</span>
+        <span class="sec-head__rule" aria-hidden="true"></span>
+        <span class="sec-head__no">7 steps <span class="accent-dot" aria-hidden="true">·</span> from open to entry</span>
+      </div>
+      <p class="sec-sub">The analysis sequence for a trading day, in order.</p>
+
+      <div class="modules-grid is-3col" style="--acc:var(--relief);--acc-deep:var(--relief-deep);--acc-tint:var(--relief-tint);--acc-border:var(--relief-border)">
+
+        <div class="mod-card reveal" style="--i:0">
+          <span class="mod-card__step">Step 01</span>
+          <h3>Before the open: context</h3>
+          <p>pVAH / pVAL — where was yesterday's Value Area? Are there untested nPOCs above/below? These are magnets for today's move.</p>
+        </div>
+
+        <div class="mod-card reveal" style="--i:1">
+          <span class="mod-card__step">Step 02</span>
+          <h3>Period A: open type</h3>
+          <p>Outside above/below — a trend-day context. Inside (danger) — a two-sided auction. Check Open Drive and the open type in the info panel.</p>
+        </div>
+
+        <div class="mod-card reveal" style="--i:2">
+          <span class="mod-card__step">Step 03</span>
+          <h3>Period B: Bias</h3>
+          <p>▲ L n/5 or ▼ S n/5 — a score from VWAP, A/B, IB, and IB Mid. Trade with the bias unless there's a strong opposing setup.</p>
+        </div>
+
+        <div class="mod-card reveal" style="--i:3">
+          <span class="mod-card__step">Step 04</span>
+          <h3>VWAP as a filter</h3>
+          <p>Above VWAP — longs, below — shorts. The first test (★) matters most. Circles mark weaker wick tests.</p>
+        </div>
+
+        <div class="mod-card reveal" style="--i:4">
+          <span class="mod-card__step">Step 05</span>
+          <h3>Raid / HL Sweep</h3>
+          <p>Raid G/S and ▲×N/▼×N — liquidity grabs after a run of periods. The arrow direction is the expected move once confirmed.</p>
+        </div>
+
+        <div class="mod-card reveal" style="--i:5">
+          <span class="mod-card__step">Step 06</span>
+          <h3>BOS / CHoCH: confirm structure</h3>
+          <p>After a Raid — check swing structure. BOS with the bias confirms continuation, CHoCH signals a trend change earlier than anything else. Combine with Bias and open type.</p>
+        </div>
+
+        <div class="mod-card reveal" style="--i:6">
+          <span class="mod-card__step">Step 07</span>
+          <h3>Targets: Poor H/L, nPOC, EQH</h3>
+          <p>Poor H/L, Single Print, nPOC, and EQH/EQL — zones price gravitates toward. Use them as take-profits or reversal points.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STRATEGY GUIDES ── -->
+  <section class="wrap-section" id="guides" aria-labelledby="guides-head">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-head__label" id="guides-head">Playbooks</span>
+        <span class="sec-head__rule" aria-hidden="true"></span>
+        <span class="sec-head__no">Trading methodology</span>
+      </div>
+      <p class="sec-sub">A step-by-step methodology on Relief — from overnight context to a BOS/CHoCH structural entry and position management.</p>
+
+      <div class="modules-grid">
+
+        <a class="mod-card reveal" style="--i:0;--acc:#2E8CB8;--acc-deep:#215E7A;--acc-tint:rgba(46,140,184,0.08);--acc-border:rgba(46,140,184,0.28)" href="strategy-fdax-en.html">
+          <div class="mod-card__kicker"><span>GER40 · Eurex</span></div>
+          <h3>FDAX playbook</h3>
+          <p>CET session schedule, periods A–C, three IB-based setups, BOS/CHoCH confirmation, a second window at the US Open overlap.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">09:00 CET</span>
+            <span class="chip on">IB Extension</span>
+            <span class="chip on">Raid</span>
+            <span class="chip on">BOS / CHoCH</span>
+          </div>
+          <div class="mod-card__till">
+            <span class="mod-card__price">Playbook</span>
+            <span class="link mod-card__more">Open the guide →</span>
+          </div>
+        </a>
+
+        <a class="mod-card reveal" style="--i:1;--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-tint:var(--contour-tint);--acc-border:var(--contour-border)" href="strategy-nq-en.html">
+          <div class="mod-card__kicker"><span>E-mini NQ · CME</span></div>
+          <h3>NQ playbook</h3>
+          <p>The same principles adjusted for NQ's volatility: wider stops, 96% of IB breaks, an evening MOC window 21:30–22:00.</p>
+          <div class="mod-card__chips">
+            <span class="chip on">RTH 09:30</span>
+            <span class="chip on">Bias ≥ 3/5</span>
+            <span class="chip on">MOC window</span>
+            <span class="chip on">BOS / CHoCH</span>
+          </div>
+          <div class="mod-card__till">
+            <span class="mod-card__price">Playbook</span>
+            <span class="link mod-card__more">Open the guide →</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SETTINGS ── -->
+  <section class="wrap-section" id="settings" aria-labelledby="settings-head">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-head__label" id="settings-head">Settings</span>
+        <span class="sec-head__rule" aria-hidden="true"></span>
+        <span class="sec-head__no">Every parameter</span>
+      </div>
+      <p class="sec-sub">Default values and a description for each parameter.</p>
+
+      <div class="settings-wrap reveal">
+        <table class="settings-table">
+          <thead>
+            <tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-info">Session</span></td></tr>
+            <tr><td>Session start (CET)</td><td class="def">08:00</td><td>Trading session start. GER40 — 08:00 CET, NY — 15:30 CET.</td></tr>
+            <tr><td>Periods on chart</td><td class="def">15</td><td>How many 30m blocks to show (1–31). TPO and nPoc are always computed for the full session.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-struct">TPO</span></td></tr>
+            <tr><td>Instrument</td><td class="def">Manual</td><td>Ticks-per-row preset: FDAX (5), NQ (39), YM (14), GER40 (51), or manual.</td></tr>
+            <tr><td>Ticks per row</td><td class="def">40</td><td>Used when "Manual" is selected. Matches TradingView TPO "Ticks per row".</td></tr>
+            <tr><td>TPO blocks</td><td class="def">off</td><td>Vertical profile letters on the chart.</td></tr>
+            <tr><td>Poor H/L · Single Print</td><td class="def">on</td><td>Unfinished-auction zones and single-letter rows.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-bull">Balance · nPoc</span></td></tr>
+            <tr><td>Previous-day balance</td><td class="def">on</td><td>Yesterday's pVAH / pVAL (Value Area 68%). Open type appears in the info panel.</td></tr>
+            <tr><td>nPoc</td><td class="def">on</td><td>Untested POCs from prior days.</td></tr>
+            <tr><td>nPoc: history (days)</td><td class="def">20</td><td>How many days to keep. 60 max.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-info">Periods</span></td></tr>
+            <tr><td>Color by direction</td><td class="def">on</td><td>Green / red / gray from period direction.</td></tr>
+            <tr><td>Simple arrow (↑↓—)</td><td class="def">on</td><td>One arrow on the label. Off — dual range + candle mark.</td></tr>
+            <tr><td>Period letter</td><td class="def">on</td><td>Show A/B/C… on the label.</td></tr>
+            <tr><td>Neutral OC zone %</td><td class="def">0.05</td><td>|close − open| below the threshold → "—" on the label.</td></tr>
+            <tr><td>Color box by RF-score</td><td class="def">off</td><td>Colors the box and arrow from RF instead of arrow/OC.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-bull">VWAP</span></td></tr>
+            <tr><td>VWAP · wick tests</td><td class="def">on</td><td>Session VWAP. First test ★, later tests as circles.</td></tr>
+            <tr><td>±σ bands</td><td class="def">off</td><td>Optional bands around VWAP.</td></tr>
+            <tr><td>Bias: last N bars of B</td><td class="def">10</td><td>Display window for the bias score on period B.</td></tr>
+            <tr><td>Bias: min. VWAP distance</td><td class="def">5 ticks</td><td>Closer → "≈". 0 = no filter. Skipped when A and B share direction.</td></tr>
+            <tr><td>Bias: freeze N bars before C</td><td class="def">3</td><td>Last N bars of B keep a fixed score. 0 = recalculate until B closes.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-bear">Raid / liquidity</span></td></tr>
+            <tr><td>Raid G/S</td><td class="def">off</td><td>Liquidity grab / sweep of prior periods.</td></tr>
+            <tr><td>Raid S: bars past level</td><td class="def">5</td><td>More than N bars past the level → Raid S, otherwise Raid G.</td></tr>
+            <tr><td>Confirmation (bars)</td><td class="def">3</td><td>After N bars, close must confirm the signal. 0 = off.</td></tr>
+            <tr><td>HL Sweep after ▲/▼ run</td><td class="def">on</td><td>Min. 2 periods in a run, close return within 3 bars.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-info">EQH / EQL</span></td></tr>
+            <tr><td>EQH / EQL</td><td class="def">on</td><td>Equal highs / lows with extending lines.</td></tr>
+            <tr><td>Magnet: min. EQ / zone</td><td class="def">2 / 19 pt</td><td>EQ cluster in the zone → 🧲 mark.</td></tr>
+            <tr><td>Signal: min. bars between EQ</td><td class="def">8</td><td>With enough gap — ↑/↓ on the label.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-info">Setups</span></td></tr>
+            <tr><td>Open Drive (OD↑/OD↓)</td><td class="def">on</td><td>At A's close: all TPO prints on one side of the open. Shown in the info panel.</td></tr>
+            <tr><td>IB Extension</td><td class="def">on</td><td>0.5×, 1×, 1.5×, 2× levels from IB after B closes.</td></tr>
+            <tr><td>IB: Trend Day threshold</td><td class="def">40 pt</td><td>Narrow IB + edge break → Trend Day in the info panel.</td></tr>
+            <tr><td>A-High / A-Low</td><td class="def">on</td><td>Period A range from the start of B.</td></tr>
+            <tr><td>IB Mid</td><td class="def">on</td><td>IB midpoint after B closes.</td></tr>
+            <tr><td>Flip Mid</td><td class="def">on</td><td>Midpoint of the first post-C period with a different color.</td></tr>
+            <tr><td>Info panel</td><td class="def">on</td><td>Open Drive, Day Type, Open, B vs A, Struct, Box Color.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-struct">Zigzag</span></td></tr>
+            <tr><td>Structural zigzag</td><td class="def">off</td><td>Swing-structure lines. BOS/CHoCH still work with lines off.</td></tr>
+            <tr><td>Sensitivity</td><td class="def">Medium (5)</td><td>Small (3) / Medium (5) / Large (8) — retracement in TPO rows.</td></tr>
+            <tr><td>Break of Structure (BOS)</td><td class="def">on</td><td>Swing break in the direction of the previous break.</td></tr>
+            <tr><td>Change of Character (CHoCH)</td><td class="def">on</td><td>Swing break against the previous break — character change.</td></tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__mark">
+      <svg class="foot__mark-icon" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+        <g style="isolation:isolate">
+          <polygon points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#D07C3C" style="mix-blend-mode:multiply"/>
+          <polygon points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#97431F" style="mix-blend-mode:multiply"/>
+          <polygon points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#B5532E" style="mix-blend-mode:multiply"/>
+          <polygon points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#E8A94F" style="mix-blend-mode:multiply"/>
+          <polygon points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#B5532E" style="mix-blend-mode:multiply"/>
+          <polygon points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#97431F" style="mix-blend-mode:multiply"/>
+          <polygon points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#6E2E12" style="mix-blend-mode:multiply"/>
+        </g>
+      </svg>
+      <div>
+        <p class="foot__name">Relief</p>
+        <p class="foot__sub">Market Profile · PineScript v6</p>
+      </div>
+    </div>
+    <nav class="foot__nav" aria-label="Footer">
+      <a class="link" href="strategy-fdax-en.html">FDAX playbook</a>
+      <a class="link" href="strategy-nq-en.html">NQ playbook</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <a class="link" href="about-en.html">About</a>
+    </nav>
+    <p class="foot__fine">
+      <span>12 modules · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
+    </p>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+</body>
+</html>

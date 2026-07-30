@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Scaffold (архив) — 4 структурных паттерна разворота: Transit, Fulcrum, Needle, Volatile Bar. Работает без Premium на любом таймфрейме.">
+<meta name="description" content="Scaffold (archived) — 4 structural reversal patterns: Transit, Fulcrum, Needle, Volatile Bar. Works without Premium on any timeframe.">
 <meta property="og:title" content="Scaffold — Legacy · Surface Tension">
-<meta property="og:description" content="Архивный индикатор Surface Tension. 4 паттерна структуры свечей. Логика распознавания развивается дальше в Contour.">
+<meta property="og:description" content="An archived Surface Tension indicator. 4 candle-structure patterns. The recognition logic keeps evolving inside Contour.">
 <meta property="og:type" content="website">
-<meta property="og:locale" content="ru_RU">
+<meta property="og:locale" content="en_US">
 <meta name="theme-color" content="#E7DCC4">
 <title>Scaffold — Legacy · Surface Tension</title>
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
@@ -15,28 +15,21 @@
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css">
-<style>
-  :root {
-    --font-display: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-    --font-text:    'Rubik', system-ui, -apple-system, sans-serif;
-    --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  }
-  .hero__title { font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif; }
-</style>
+<!-- EN typography: Space Grotesk only (see --font-* defaults in styles.css) -->
 </head>
 <body>
 
 <div class="atmosphere" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
-<a href="#main" class="skip-link">Перейти к содержимому</a>
+<a href="#main" class="skip-link">Skip to content</a>
 
 <!-- ── NAV ── -->
 <header class="runhead">
   <div class="wrap">
-    <a class="runhead__home" href="../index.html" aria-label="Surface Tension Indicators">
+    <a class="runhead__home" href="../en.html" aria-label="Surface Tension Indicators">
       <div class="runhead__logo-mark">
         <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g style="isolation:isolate">
@@ -56,27 +49,27 @@
         <span class="runhead__lockup-sub">Indicators</span>
       </div>
     </a>
-    <button class="runhead__toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="runhead-menu">
+    <button class="runhead__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="runhead-menu">
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
     </button>
-    <nav class="runhead__nav" id="runhead-menu" aria-label="Основная навигация">
-      <span class="lang-switch"><a href="scaffold.html" class="active">RU</a><span class="lang-switch__sep">/</span><a href="scaffold-en.html">EN</a></span>
-      <a class="link" href="../relief.html">Relief</a>
-      <a class="link" href="../meridian.html">Meridian</a>
-      <a class="link" href="../contour.html">Contour</a>
-      <a class="link is-current" href="../legacy.html" style="--acc:var(--contour);--acc-deep:var(--contour-deep)">Архив</a>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Main navigation">
+      <span class="lang-switch"><a href="scaffold.html">RU</a><span class="lang-switch__sep">/</span><a href="scaffold-en.html" class="active">EN</a></span>
+      <a class="link" href="../relief-en.html">Relief</a>
+      <a class="link" href="../meridian-en.html">Meridian</a>
+      <a class="link" href="../contour-en.html">Contour</a>
+      <a class="link is-current" href="../legacy-en.html" style="--acc:var(--contour);--acc-deep:var(--contour-deep)">Archive</a>
       <div class="runhead__dropdown" data-dropdown>
         <button class="runhead__dropdown-btn" type="button" aria-expanded="false">
-          На странице
+          On this page
           <svg class="runhead__dropdown-caret" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <ul class="runhead__dropdown-menu">
-          <li><a href="#features">Паттерны</a></li>
+          <li><a href="#features">Patterns</a></li>
         </ul>
       </div>
-      <a class="button" href="https://ru.tradingview.com/script/bBdRtGbY-scaffold-by-robotlegs/" target="_blank" rel="noopener" style="--acc-deep:var(--contour-deep)">
+      <a class="button" href="https://www.tradingview.com/script/bBdRtGbY-scaffold-by-robotlegs/" target="_blank" rel="noopener" style="--acc-deep:var(--contour-deep)">
         TradingView
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
@@ -91,7 +84,7 @@
     <div class="wrap">
       <div style="display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;border-radius:var(--r);background:rgba(201,154,69,0.14);border:1px solid rgba(201,154,69,0.4);font-family:var(--font-mono);font-size:0.8rem;color:var(--ember-deep)">
         <span aria-hidden="true">⚠</span>
-        <span>Legacy-индикатор. Паттерны Scaffold теперь развиваются в составе <a href="../contour.html" style="color:inherit;text-decoration:underline">Contour</a> (сетап Fulcrum позже был вынесен в отдельный экспериментальный индикатор Sentry). Scaffold остаётся доступен на TradingView, но новые функции сюда не добавляются.</span>
+        <span>Legacy indicator. Scaffold's patterns now keep evolving inside <a href="../contour-en.html" style="color:inherit;text-decoration:underline">Contour</a> (the Fulcrum setup was later spun out into a separate experimental indicator, Sentry). Scaffold stays available on TradingView, but no new features are added here.</span>
       </div>
     </div>
   </div>
@@ -142,30 +135,30 @@
           </svg>
           Scaffold
         </h1>
-        <p class="hero__type reveal" style="--i:2">Читает: <span class="hero__type-word" id="tw" data-typewriter="Transit|Fulcrum|Needle|Volatile Bar"></span><span class="hero__type-cur">_</span></p>
+        <p class="hero__type reveal" style="--i:2">Reads: <span class="hero__type-word" id="tw" data-typewriter="Transit|Fulcrum|Needle|Volatile Bar"></span><span class="hero__type-cur">_</span></p>
 
-        <p class="hero__lead-kicker reveal" style="--i:3">4 паттерна разворота по структуре свечей</p>
-        <p class="hero__lead-text reveal" style="--i:3">Scaffold читает форму свечей и помечает сетапы на графике — Transit, Fulcrum, Needle и Volatile Bar. Каждый паттерн включается отдельно, работает на любом таймфрейме, Premium не требуется.</p>
+        <p class="hero__lead-kicker reveal" style="--i:3">4 candle-structure reversal patterns</p>
+        <p class="hero__lead-text reveal" style="--i:3">Scaffold reads candle shape and marks setups right on the chart — Transit, Fulcrum, Needle, and Volatile Bar. Each pattern toggles independently, works on any timeframe, no Premium required.</p>
         <ul class="hero__spec-list reveal" style="--i:4">
-          <li><span class="hero__spec-lbl">Паттерны</span><span class="hero__spec-val">Transit · Fulcrum · Needle · Volatile Bar</span></li>
-          <li><span class="hero__spec-lbl">Фильтр</span><span class="hero__spec-val">ATR · дельта для Transit</span></li>
-          <li><span class="hero__spec-lbl">Доступ</span><span class="hero__spec-val">любой TF · без Premium</span></li>
-          <li><span class="hero__spec-lbl">Судьба</span><span class="hero__spec-val">идея живёт в Contour, Fulcrum → Sentry</span></li>
+          <li><span class="hero__spec-lbl">Patterns</span><span class="hero__spec-val">Transit · Fulcrum · Needle · Volatile Bar</span></li>
+          <li><span class="hero__spec-lbl">Filter</span><span class="hero__spec-val">ATR · delta for Transit</span></li>
+          <li><span class="hero__spec-lbl">Access</span><span class="hero__spec-val">any TF · no Premium</span></li>
+          <li><span class="hero__spec-lbl">Legacy</span><span class="hero__spec-val">idea lives in Contour, Fulcrum → Sentry</span></li>
         </ul>
 
         <div class="hero__cta reveal" style="--i:5">
-          <a class="button" href="https://ru.tradingview.com/script/bBdRtGbY-scaffold-by-robotlegs/" target="_blank" rel="noopener">
-            Открыть на TradingView
+          <a class="button" href="https://www.tradingview.com/script/bBdRtGbY-scaffold-by-robotlegs/" target="_blank" rel="noopener">
+            Open on TradingView
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
-          <a class="link" href="../legacy.html">← Назад к архиву</a>
-          <a class="link" href="../index.html">На главную</a>
+          <a class="link" href="../legacy-en.html">← Back to archive</a>
+          <a class="link" href="../en.html">Home</a>
         </div>
 
         <div class="hero__stats reveal" style="--i:6">
-          <div class="hero__stat"><span class="hero__stat-val">4</span><span class="hero__stat-lbl">Паттерна</span></div>
-          <div class="hero__stat"><span class="hero__stat-val">✓</span><span class="hero__stat-lbl">Без Premium</span></div>
-          <div class="hero__stat"><span class="hero__stat-val">Any</span><span class="hero__stat-lbl">Таймфрейм</span></div>
+          <div class="hero__stat"><span class="hero__stat-val">4</span><span class="hero__stat-lbl">Patterns</span></div>
+          <div class="hero__stat"><span class="hero__stat-val">✓</span><span class="hero__stat-lbl">No Premium</span></div>
+          <div class="hero__stat"><span class="hero__stat-val">Any</span><span class="hero__stat-lbl">Timeframe</span></div>
         </div>
       </div>
 
@@ -194,9 +187,9 @@
 
             <div class="signal-panel__lbl">Signals</div>
             <div class="signal-panel__feed">
-              <p class="feed-row">↑ Transit — разворот вверх</p>
-              <p class="feed-row">↓ Fulcrum — разворот вниз</p>
-              <p class="feed-row is-clay">↑ Needle — подтверждён</p>
+              <p class="feed-row">↑ Transit — reversal up</p>
+              <p class="feed-row">↓ Fulcrum — reversal down</p>
+              <p class="feed-row is-clay">↑ Needle — confirmed</p>
               <p class="feed-row is-muted">Volatile Bar — idle</p>
             </div>
 
@@ -215,32 +208,32 @@
   <section class="wrap-section" id="features" aria-labelledby="features-head">
     <div class="wrap">
       <div class="sec-head">
-        <span class="sec-head__label" id="features-head">Паттерны Scaffold</span>
+        <span class="sec-head__label" id="features-head">Scaffold's patterns</span>
         <span class="sec-head__rule" aria-hidden="true"></span>
-        <span class="sec-head__no">4 паттерна <span class="accent-dot" aria-hidden="true">·</span> структура свечей</span>
+        <span class="sec-head__no">4 patterns <span class="accent-dot" aria-hidden="true">·</span> candle structure</span>
       </div>
-      <p class="sec-sub">Каждый читает структуру по-своему.</p>
+      <p class="sec-sub">Each one reads structure its own way.</p>
 
       <div class="modules-grid" style="--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-tint:var(--contour-tint);--acc-border:var(--contour-border)">
 
         <div class="mod-card reveal" style="--i:0">
           <div class="mod-card__kicker"><span class="mod-card__no">PAT-01</span></div>
           <h3>Transit</h3>
-          <p class="mod-card__tag">Рынок перестаёт убеждать</p>
-          <p>Transit — структурная пауза. Движение в одну сторону сменяется решительным ответом с другой. Не просто разворот — момент, когда инициатива переходит.</p>
+          <p class="mod-card__tag">The market stops persuading</p>
+          <p>Transit is a structural pause. A move in one direction gets met by a decisive response from the other side. Not just a reversal — the moment initiative changes hands.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Разворотный</span>
-            <span class="chip on">ATR-фильтр</span>
+            <span class="chip on">Reversal</span>
+            <span class="chip on">ATR filter</span>
           </div>
         </div>
 
         <div class="mod-card reveal" style="--i:1">
           <div class="mod-card__kicker"><span class="mod-card__no">PAT-02</span></div>
           <h3>Fulcrum</h3>
-          <p class="mod-card__tag">Накопление — и ответ</p>
-          <p>Fulcrum — момент, когда инициатива переходит к другой стороне. Пауза, удержание — и решение. Сегодня этот сетап развивается самостоятельно в экспериментальном индикаторе Sentry, а не здесь и не в Contour.</p>
+          <p class="mod-card__tag">Build-up — then a response</p>
+          <p>Fulcrum is the moment initiative shifts to the other side. A pause, a hold — then a decision. Today this setup lives on as its own thing inside the experimental Sentry indicator, not here and not in Contour.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Разворотный</span>
+            <span class="chip on">Reversal</span>
             <span class="chip on">→ Sentry</span>
           </div>
         </div>
@@ -248,10 +241,10 @@
         <div class="mod-card reveal" style="--i:2">
           <div class="mod-card__kicker"><span class="mod-card__no">PAT-03</span></div>
           <h3>Needle</h3>
-          <p class="mod-card__tag">Острый момент отказа</p>
-          <p>Needle — рынок пытается продолжить — и резко отказывается. Одиночный, чёткий, читаемый. Опциональное подтверждение ждёт следующего бара.</p>
+          <p class="mod-card__tag">A sharp moment of refusal</p>
+          <p>Needle: the market tries to continue — and sharply refuses. Single, clean, easy to read. An optional confirmation waits for the next bar to close.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Разворотный</span>
+            <span class="chip on">Reversal</span>
             <span class="chip on">Confirm delay</span>
           </div>
         </div>
@@ -259,10 +252,10 @@
         <div class="mod-card reveal" style="--i:3">
           <div class="mod-card__kicker"><span class="mod-card__no">PAT-04</span></div>
           <h3>Volatile Bar</h3>
-          <p class="mod-card__tag">Контекст движения</p>
-          <p>Маркирует любой бар, чей диапазон превышает N предыдущих. Базовый контекст — Transit и Fulcrum строятся на волатильных барах.</p>
+          <p class="mod-card__tag">Movement context</p>
+          <p>Flags any bar whose range exceeds the last N bars. Baseline context — Transit and Fulcrum are both built on top of volatile bars.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Контекстный</span>
+            <span class="chip on">Contextual</span>
             <span class="chip on">Filter</span>
           </div>
         </div>
@@ -273,8 +266,8 @@
         <div class="info-row reveal" style="--i:0">
           <span class="info-row__badge tag-bull">Any plan</span>
           <div>
-            <h3>Требование к подписке TradingView</h3>
-            <p>Все паттерны — <strong>Transit, Fulcrum, Needle, Volatile Bar</strong> — работают без Premium-подписки.</p>
+            <h3>TradingView subscription requirement</h3>
+            <p>All patterns — <strong>Transit, Fulcrum, Needle, Volatile Bar</strong> — work without a Premium subscription.</p>
           </div>
         </div>
       </div>
@@ -304,14 +297,14 @@
         <p class="foot__sub">Legacy · PineScript v6</p>
       </div>
     </div>
-    <nav class="foot__nav" aria-label="Футер">
-      <a class="link" href="../legacy.html">Архив</a>
-      <a class="link" href="../contour.html">Contour</a>
-      <a class="link" href="../pricing.html">Цены</a>
-      <a class="link" href="../about.html">О нас</a>
+    <nav class="foot__nav" aria-label="Footer">
+      <a class="link" href="../legacy-en.html">Archive</a>
+      <a class="link" href="../contour-en.html">Contour</a>
+      <a class="link" href="../pricing-en.html">Pricing</a>
+      <a class="link" href="../about-en.html">About</a>
     </nav>
     <p class="foot__fine">
-      <span>Legacy-индикатор · PineScript v6</span><span aria-hidden="true">·</span><span>© 2024–2026 Surface Tension</span>
+      <span>Legacy indicator · PineScript v6</span><span aria-hidden="true">·</span><span>© 2024–2026 Surface Tension</span>
     </p>
   </div>
 </footer>

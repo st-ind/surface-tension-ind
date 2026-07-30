@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A step-by-step NQ (E-mini Nasdaq-100) trading methodology built on TPO / Market Profile with the Relief indicator — from overnight context to the MOC window.">
+<meta property="og:title" content="NQ Strategy — TPO / Market Profile · Surface Tension">
+<meta property="og:description" content="A step-by-step NQ methodology: differences from FDAX, Bias ≥ 3/5, IB Extension on 96% of days, the 21:30–22:00 MOC window.">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#E7DCC4">
+<title>NQ Strategy — TPO / Market Profile · Surface Tension</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<!-- EN typography: Space Grotesk only (see --font-* defaults in styles.css) -->
+<style>
+  /* ── STRATEGY DOC PAGE — page-specific primitives (accent via --acc*, set on <body>) ── */
+  .doc-hero { padding: clamp(2.6rem,6vw,3.6rem) 0 clamp(1.6rem,3vw,2.2rem); text-align: center; }
+  .doc-hero .wrap { display: flex; flex-direction: column; align-items: center; }
+  .doc-hero__badge { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; color: var(--acc-deep); background: var(--acc-tint); border: 1px solid var(--acc-border); padding: 5px 12px; border-radius: 100px; vertical-align: middle; }
+  .doc-hero h1 { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .doc-hero__sibling { font-family: var(--font-mono); font-size: 0.74rem; font-weight: 600; color: var(--acc-deep); text-decoration: none; border: 1px dashed var(--acc-border); border-radius: 100px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 5px; margin-top: 1.1rem; }
+  .doc-hero__sibling:hover { background: var(--acc-tint); }
+  .doc-hero-meta { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 1.6rem; justify-content: center; }
+  .doc-hero-meta .stat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .doc-hero-meta .val { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--ink-900); }
+  .doc-hero-meta .lbl { font-family: var(--font-mono); font-size: 0.66rem; color: var(--whisper); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .doc-sub-h { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--ink-900); margin: 26px 0 4px; }
+  .doc-sub-h:first-child { margin-top: 0; }
+
+  .sg-tag { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; border: 1px solid; white-space: nowrap; }
+  .sg-blue   { color: #215E7A; border-color: rgba(46,140,184,0.32); background: rgba(46,140,184,0.1); }
+  .sg-teal   { color: var(--meridian-deep); border-color: var(--meridian-border); background: var(--meridian-tint); }
+  .sg-amber  { color: #8a6a1e; border-color: rgba(184,134,30,0.32); background: rgba(184,134,30,0.12); }
+  .sg-purple { color: var(--contour-deep); border-color: var(--contour-border); background: var(--contour-tint); }
+  .sg-red    { color: #a23a3a; border-color: rgba(184,64,64,0.32); background: rgba(184,64,64,0.1); }
+
+  .sg-row td { padding: 1.1rem 1.1rem 0.5rem !important; background: rgba(43,33,24,0.025); }
+
+  /* timeline */
+  .tl-list { display: flex; flex-direction: column; margin-top: 0.5rem; }
+  .tl-item { display: grid; grid-template-columns: 108px 20px 1fr; gap: 0 14px; }
+  .tl-time { font-family: var(--font-mono); font-size: 0.74rem; font-weight: 600; color: var(--ink-900); padding-top: 14px; }
+  .tl-dot-col { display: flex; flex-direction: column; align-items: center; }
+  .tl-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 17px; flex-shrink: 0; background: var(--seg-c, var(--acc-deep)); box-shadow: 0 0 0 4px var(--seg-bg, var(--acc-tint)); }
+  .tl-line { flex: 1; width: 2px; background: var(--line-strong); margin: 4px 0; }
+  .tl-item:last-child .tl-line { display: none; }
+  .tl-body { background: var(--seg-bg, var(--acc-tint)); border: 1px solid var(--seg-border, var(--acc-border)); border-radius: 12px; padding: 12px 16px; margin: 10px 0 16px; }
+  .tl-label { font-weight: 600; font-size: 0.9rem; color: var(--ink-900); margin-bottom: 3px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .tl-desc { font-size: 0.82rem; color: var(--haze); line-height: 1.6; }
+
+  /* compare grid (NQ vs FDAX) */
+  .compare-cell-fdax { color: #215E7A; font-weight: 600; }
+  .compare-cell-nq   { color: var(--contour-deep); font-weight: 700; }
+
+  /* checklist cards */
+  .check-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 1.7rem; }
+  @media (max-width:860px){ .check-grid { grid-template-columns: 1fr; } }
+  .check-card { background: var(--cream); border: 1px solid var(--line-strong); border-radius: var(--r); padding: 20px 22px; box-shadow: 0 1px 6px rgba(43,33,24,0.05); }
+  .check-card .ic { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; margin-bottom: 12px; background: var(--acc-tint); }
+  .check-card h3 { font-family: var(--font-mono); font-size: 0.88rem; font-weight: 600; margin-bottom: 8px; color: var(--ink-900); }
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .check-list li { position: relative; padding-left: 22px; font-size: 0.83rem; color: var(--haze); line-height: 1.55; }
+  .check-list li::before { content: '☐'; position: absolute; left: 0; top: 0; color: var(--acc-deep); font-size: 0.9rem; line-height: 1.55; }
+  .check-list li strong { color: var(--ink-900); }
+
+  /* OD / Bias two-col cards */
+  .od-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 1.7rem; }
+  @media (max-width:640px){ .od-grid { grid-template-columns: 1fr; } }
+  .od-card { border-radius: var(--r); padding: 20px 22px; border: 1px solid; box-shadow: 0 1px 6px rgba(43,33,24,0.05); }
+  .od-long  { background: var(--meridian-tint); border-color: var(--meridian-border); }
+  .od-short { background: var(--relief-tint); border-color: var(--relief-border); }
+  .od-card h4 { font-family: var(--font-mono); font-size: 0.92rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .od-long h4 { color: var(--meridian-deep); }
+  .od-short h4 { color: var(--relief-deep); }
+  .od-card ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .od-card li { font-size: 0.84rem; color: var(--haze); line-height: 1.6; }
+  .od-card li strong { color: var(--ink-900); }
+
+  /* setup blocks */
+  .setup-block { border: 1px solid var(--line-strong); border-radius: 18px; overflow: hidden; margin: 24px 0; box-shadow: 0 2px 14px rgba(43,33,24,0.06); background: var(--cream); }
+  .setup-head { padding: 16px 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--paper); border-bottom: 1px solid var(--line-strong); }
+  .setup-head h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.1rem; letter-spacing: 0.02em; }
+  .setup-head .sg-tag { margin-left: auto; }
+  .setup-body { padding: 22px 24px; }
+  .step-list { list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; }
+  .step-list li { counter-increment: step; position: relative; padding-left: 40px; font-size: 0.86rem; color: var(--haze); line-height: 1.65; }
+  .step-list li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 8px; background: var(--acc-tint); color: var(--acc-deep); font-family: var(--font-mono); font-weight: 700; font-size: 0.76rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-list li strong { color: var(--ink-900); }
+
+  /* level cards */
+  .level-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 14px; margin-top: 1.7rem; }
+  .level-card { background: var(--cream); border: 1px solid var(--line-strong); border-radius: var(--r); padding: 20px 22px; box-shadow: 0 1px 6px rgba(43,33,24,0.05); }
+  .level-card .ic { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; margin-bottom: 12px; background: var(--acc-tint); }
+  .level-card h3 { font-family: var(--font-mono); font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; color: var(--ink-900); }
+  .level-card p { font-size: 0.81rem; color: var(--haze); line-height: 1.6; }
+
+  /* exit / info lists */
+  .exit-list, .info-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  .exit-list li, .info-list li { font-size: 0.85rem; color: var(--haze); line-height: 1.6; display: flex; gap: 10px; }
+  .exit-list li::before { content: '⛔'; flex-shrink: 0; }
+  .info-list li::before { content: '▸'; color: var(--acc-deep); flex-shrink: 0; font-weight: 700; }
+  .exit-list li strong, .info-list li strong { color: var(--ink-900); }
+
+  /* day type cards */
+  .daytype-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 1.7rem; }
+  @media (max-width:860px){ .daytype-grid { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width:480px){ .daytype-grid { grid-template-columns: 1fr; } }
+  .daytype-card { border-radius: var(--r); padding: 18px 20px; border: 1px solid; box-shadow: 0 1px 6px rgba(43,33,24,0.05); }
+  .dt-badge { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; display: inline-block; margin-bottom: 12px; }
+  .daytype-card h4 { font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; margin-bottom: 4px; }
+  .daytype-card .dt-row-lbl { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--whisper); margin: 12px 0 3px; }
+  .daytype-card .dt-row-lbl:first-of-type { margin-top: 12px; }
+  .daytype-card p { font-size: 0.79rem; color: var(--haze); line-height: 1.55; }
+  .dt-trend  { background: var(--meridian-tint); border-color: var(--meridian-border); }
+  .dt-trend .dt-badge { background: rgba(26,158,120,0.18); color: var(--meridian-deep); }
+  .dt-normal { background: rgba(46,140,184,0.07); border-color: rgba(46,140,184,0.28); }
+  .dt-normal .dt-badge { background: rgba(46,140,184,0.18); color: #215E7A; }
+  .dt-neutral{ background: rgba(43,33,24,0.035); border-color: var(--line-strong); }
+  .dt-neutral .dt-badge { background: rgba(43,33,24,0.08); color: var(--haze); }
+  .dt-orr    { background: rgba(184,134,30,0.08); border-color: rgba(184,134,30,0.3); }
+  .dt-orr .dt-badge { background: rgba(184,134,30,0.2); color: #8a6a1e; }
+
+  /* warning block */
+  .warn-block { background: rgba(184,64,64,0.06); border: 1px solid rgba(184,64,64,0.28); border-radius: var(--r); padding: 22px 24px; margin-top: 1.7rem; }
+  .warn-block h3 { font-family: var(--font-mono); color: #a23a3a; font-size: 0.92rem; margin-bottom: 14px; display: flex; align-items: center; gap: 9px; }
+  .warn-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+  .warn-list li { font-size: 0.85rem; color: var(--haze); line-height: 1.65; display: flex; gap: 11px; }
+  .warn-list li::before { content: '⚠️'; flex-shrink: 0; }
+  .warn-list li strong { color: var(--ink-900); }
+
+  /* term footnotes */
+  .term-footnotes { margin-top: 1.4rem; padding: 16px 18px; background: rgba(43,33,24,0.035); border: 1px solid var(--line-strong); border-radius: var(--r); font-size: 0.82rem; color: var(--haze); line-height: 1.65; }
+  .term-footnotes dt { font-family: var(--font-mono); font-weight: 600; color: var(--ink-900); margin-bottom: 4px; }
+  .term-footnotes dt a { color: inherit; text-decoration: none; }
+  .term-footnotes dd { margin: 0; }
+  .term-footnotes dd:not(:last-child) { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .term-note { color: inherit; text-decoration: none; border-bottom: 1px dashed var(--line-strong); cursor: help; }
+  .term-note:hover { color: var(--ink-900); border-bottom-color: var(--acc-deep); }
+</style>
+</head>
+<body style="--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-tint:var(--contour-tint);--acc-border:var(--contour-border)">
+
+<div class="atmosphere" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ── NAV ── -->
+<header class="runhead">
+  <div class="wrap">
+    <a class="runhead__home" href="en.html" aria-label="Surface Tension Indicators">
+      <div class="runhead__logo-mark">
+        <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g style="isolation:isolate">
+            <polygon class="rh-hex rh-hex--ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#D07C3C" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#97431F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#B5532E" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#E8A94F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#B5532E" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#97431F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#6E2E12" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="runhead__lockup">
+        <span class="runhead__lockup-l1">Surface</span>
+        <span class="runhead__lockup-l2">Tension</span>
+        <span class="runhead__lockup-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="runhead__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="runhead-menu">
+      <span class="runhead__toggle-bar"></span>
+      <span class="runhead__toggle-bar"></span>
+      <span class="runhead__toggle-bar"></span>
+    </button>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Main navigation">
+      <span class="lang-switch"><a href="strategy-nq.html">RU</a><span class="lang-switch__sep">/</span><a href="strategy-nq-en.html" class="active">EN</a></span>
+      <a class="link is-current" href="strategy-nq-en.html" style="--acc:var(--contour);--acc-deep:var(--contour-deep)">NQ Strategy</a>
+      <a class="link" href="strategy-fdax-en.html">FDAX Strategy</a>
+      <a class="link" href="relief-en.html">Relief</a>
+      <div class="runhead__dropdown" data-dropdown>
+        <button class="runhead__dropdown-btn" type="button" aria-expanded="false">
+          On this page
+          <svg class="runhead__dropdown-caret" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="runhead__dropdown-menu">
+          <li><a href="#overview">Contract overview</a></li>
+          <li><a href="#differences">Differences from FDAX</a></li>
+          <li><a href="#period-a">Period A</a></li>
+          <li><a href="#period-b">Period B</a></li>
+          <li><a href="#period-c">Period C</a></li>
+          <li><a href="#signal">◆ + FVG</a></li>
+          <li><a href="#day-types">Day types</a></li>
+        </ul>
+      </div>
+      <a class="button" href="relief-en.html" style="--acc-deep:var(--contour-deep)">
+        Open Relief
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- ── HERO ── -->
+  <section class="page-head doc-hero">
+    <div class="wrap">
+      <p class="page-head__eyebrow reveal" style="--i:0">Trading methodology <span class="accent-dot" aria-hidden="true">·</span> TPO / Market Profile</p>
+      <h1 class="reveal" style="--i:1">NQ Strategy <span class="doc-hero__badge">E-mini Nasdaq-100 · CME</span></h1>
+      <p class="reveal" style="--i:2;max-width:56ch;margin:0 auto">
+        A step-by-step NQ trading methodology built on TPO/Market Profile with the
+        <a href="relief-en.html" style="color:var(--acc-deep);font-weight:600">Relief</a> indicator —
+        adjusted for higher volatility, a near-guaranteed IB breakout, and the evening MOC window.
+        Entries fire on Relief's <strong>◆ + FVG</strong> signal once context has formed. A practical breakdown, no filler: what to watch, when to enter, where the stop and target sit.
+      </p>
+      <a class="doc-hero__sibling reveal" style="--i:2" href="strategy-fdax-en.html">FDAX Strategy →</a>
+      <div class="doc-hero-meta reveal" style="--i:3">
+        <div class="stat"><span class="val">140–350</span><span class="lbl">ATR, points</span></div>
+        <div class="stat"><span class="val">96.2%</span><span class="lbl">days with an IB break</span></div>
+        <div class="stat"><span class="val">$20</span><span class="lbl">per point</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DOC BODY ── -->
+  <div class="wrap">
+    <div class="doc-grid">
+
+      <!-- SIDEBAR -->
+      <aside class="doc-sidebar" id="docSidebar">
+        <div class="doc-sidebar-label">Sections</div>
+        <a href="#overview">1. Contract overview</a>
+        <a href="#schedule">2. Session schedule</a>
+        <a href="#differences">3. Differences from FDAX</a>
+        <a href="#prep">4. Pre-open prep</a>
+        <a href="#period-a">5. Period A</a>
+        <a href="#period-b">6. Period B</a>
+        <a href="#period-c">7. Period C — the window</a>
+        <a href="#signal">8. ◆ + FVG</a>
+        <a href="#management">9. Position management</a>
+        <a href="#second-window">10. MOC window</a>
+        <a href="#day-types">11. Day types</a>
+        <a href="#avoid">12. When not to trade</a>
+      </aside>
+
+      <!-- CONTENT -->
+      <div class="doc-content">
+
+        <!-- 1. OVERVIEW -->
+        <div class="doc-section" id="overview">
+          <div class="doc-section-head">
+            <span class="doc-section-num">01 / overview</span>
+            <h2>Contract overview</h2>
+            <p>NQ is more volatile and more aggressive than FDAX — risk parameters need to be recalculated from scratch, not carried over from DAX.</p>
+          </div>
+          <div class="settings-wrap">
+            <table class="settings-table">
+              <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+              <tbody>
+                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-purple">Contract</span></td></tr>
+                <tr><td>Ticker</td><td>NQ1 / E-mini Nasdaq-100 (CME)</td></tr>
+                <tr><td>1 tick</td><td class="def">0.25 point = $5</td></tr>
+                <tr><td>1 point</td><td class="def">$20</td></tr>
+
+                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-teal">Volatility</span></td></tr>
+                <tr><td>Typical ATR (day)</td><td class="def">140–350 points</td></tr>
+
+                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-amber">Initial Balance</span></td></tr>
+                <tr><td>Narrow IB</td><td class="def">&lt; 25 points</td></tr>
+                <tr><td>Normal IB</td><td class="def">25–75 points</td></tr>
+                <tr><td>Wide IB</td><td class="def">&gt; 100 points</td></tr>
+                <tr><td>IB break — narrow</td><td class="def">98.7% of days</td></tr>
+                <tr><td>IB break — average</td><td class="def">96.2% of days</td></tr>
+
+                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-blue">Relief setup</span></td></tr>
+                <tr><td>Chart</td><td class="def">1m / 3m / 5m</td></tr>
+                <tr><td>Session open (CET)</td><td class="def">15:30</td></tr>
+                <tr><td>Ticks per row</td><td class="def">40–80 ticks (= 10–20 points)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2. SCHEDULE -->
+        <div class="doc-section" id="schedule">
+          <div class="doc-section-head">
+            <span class="doc-section-num">02 / schedule</span>
+            <h2>Trading session schedule</h2>
+            <p>Times are given in CET/CEST for trading the CME future from a European time zone.</p>
+          </div>
+          <div class="tl-list">
+
+            <div class="tl-item" style="--seg-c:var(--whisper);--seg-bg:rgba(43,33,24,0.06);--seg-border:var(--line-strong)">
+              <div class="tl-time">14:00–15:30</div>
+              <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+              <div class="tl-body">
+                <div class="tl-label">Pre-market / <a href="#fn-overnight" class="term-note">overnight</a> analysis</div>
+                <div class="tl-desc">Assess ONH/ONL, the reaction to the European session, and the morning US data.</div>
+              </div>
+            </div>
+
+            <div class="tl-item" style="--seg-c:#2E8CB8;--seg-bg:rgba(46,140,184,0.06);--seg-border:rgba(46,140,184,0.22)">
+              <div class="tl-time">15:30–16:00</div>
+              <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+              <div class="tl-body">
+                <div class="tl-label">Period A — Open Type / OD</div>
+                <div class="tl-desc">The RTH open. The first reaction to the <a href="#fn-overnight" class="term-note">overnight</a> ONH/ONL levels.</div>
+              </div>
+            </div>
+
+            <div class="tl-item" style="--seg-c:var(--contour);--seg-bg:var(--contour-tint);--seg-border:var(--contour-border)">
+              <div class="tl-time">16:00–16:30</div>
+              <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+              <div class="tl-body">
+                <div class="tl-label">Period B — Bias</div>
+                <div class="tl-desc">The second IB block. A scored Bias forms here, and it almost always gets confirmed by a breakout.</div>
+              </div>
+            </div>
+
+            <div class="tl-item" style="--seg-c:var(--meridian);--seg-bg:var(--meridian-tint);--seg-border:var(--meridian-border)">
+              <div class="tl-time">16:30–17:00</div>
+              <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+              <div class="tl-body">
+                <div class="tl-label">Period C — THE MAIN WINDOW <span class="tag tag-bull" style="margin-left:4px">long</span> <span class="tag tag-bear">short</span></div>
+                <div class="tl-desc">IB is closed — the main window for entries. IB Extension plays out in almost every session — filter by Bias, not by the fact of the breakout.</div>
+              </div>
+            </div>
+
+            <div class="tl-item" style="--seg-c:var(--whisper);--seg-bg:rgba(43,33,24,0.06);--seg-border:var(--line-strong)">
+              <div class="tl-time">17:00–18:00</div>
+              <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+              <div class="tl-body">
+                <div class="tl-label">Slower window</div>
+                <div class="tl-desc">Manage the position, take partials, usually no new entries.</div>
+              </div>
+            </div>
+
+            <div class="tl-item" style="--seg-c:var(--mango);--seg-bg:rgba(224,138,46,0.07);--seg-border:rgba(224,138,46,0.25)">
+              <div class="tl-time">18:00–20:00</div>
+              <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+              <div class="tl-body">
+                <div class="tl-label">Afternoon</div>
+                <div class="tl-desc">A quiet stretch of the day. Setups possible at VWAP tests and EQH/EQL magnets.</div>
+              </div>
+            </div>
+
+            <div class="tl-item" style="--seg-c:#a23a3a;--seg-bg:rgba(184,64,64,0.07);--seg-border:rgba(184,64,64,0.28)">
+              <div class="tl-time">21:30–22:00</div>
+              <div class="tl-dot-col"><div class="tl-dot"></div></div>
+              <div class="tl-body">
+                <div class="tl-label"><a href="#fn-moc" class="term-note">Evening surge</a> — the second window</div>
+                <div class="tl-desc">Before the exchange closes (~21:30) funds square positions — sharp moves, enter only with a clear daily context.</div>
+              </div>
+            </div>
+
+          </div>
+          <dl class="term-footnotes" id="fn-overnight">
+            <dt><a href="#fn-overnight">Overnight (ON)</a></dt>
+            <dd>Trading before the official session open — before <strong>15:30</strong> Berlin time. While the "main" day hasn't started yet, price still moves: overnight and in the morning it sets an <strong>overnight high and low</strong> (often written ONH/ONL). When the session opens at 15:30, the market often reacts to those first — not only to yesterday's levels.</dd>
+          </dl>
+        </div>
+
+        <!-- 3. DIFFERENCES -->
+        <div class="doc-section" id="differences">
+          <div class="doc-section-head">
+            <span class="doc-section-num">03 / differences</span>
+            <h2>Key differences from FDAX</h2>
+            <p>The methodology is the same, but the risk parameters and IB-breakout expectations need to be recalculated for NQ.</p>
+          </div>
+          <div class="settings-wrap">
+            <table class="settings-table">
+              <thead><tr><th>Metric</th><th>NQ</th><th>FDAX</th></tr></thead>
+              <tbody>
+                <tr><td>IB Extension — probability</td><td class="compare-cell-nq">≈ 96%</td><td class="compare-cell-fdax">≈ 85%</td></tr>
+                <tr><td>Neutral Day</td><td class="compare-cell-nq">rare</td><td class="compare-cell-fdax">happens more often</td></tr>
+                <tr><td><a href="#fn-overnight" class="term-note">Night</a> shapes the <a href="#fn-rth" class="term-note">day's open</a></td><td class="compare-cell-nq">heavily — up to half the move already happens overnight</td><td class="compare-cell-fdax">noticeable, but weaker</td></tr>
+                <tr><td><a href="#fn-earnings" class="term-note">Company earnings</a></td><td class="compare-cell-nq">heavily — Nvidia, Apple, Microsoft</td><td class="compare-cell-fdax">barely a factor</td></tr>
+                <tr><td><a href="#fn-moc" class="term-note">Evening surge before the close</a></td><td class="compare-cell-nq">yes, ~21:30–22:00</td><td class="compare-cell-fdax">no</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <dl class="term-footnotes">
+            <dt id="fn-rth"><a href="#fn-rth">Day's open (RTH)</a></dt>
+            <dd>The "real" start of trading — from <strong>15:30</strong> Berlin time, when the American market opens. In Relief these are periods A–Z. Everything before 15:30 is the overnight session.</dd>
+            <dt id="fn-earnings"><a href="#fn-earnings">Company earnings</a></dt>
+            <dd>NQ is a tech-giant index. When <strong>Nvidia, Apple, or Microsoft</strong> report quarterly results, price can whip around outside the profile's usual logic. Cut position size or skip entries during those weeks.</dd>
+            <dt id="fn-moc"><a href="#fn-moc">Evening surge (MOC)</a></dt>
+            <dd>Around <strong>21:30–22:00</strong>, before the exchange closes, large funds square positions "on the close." The result is a sharp one-sided flow — a second volatility "window" at the end of the day. FDAX has nothing like it.</dd>
+          </dl>
+        </div>
+
+        <!-- 4. PREP -->
+        <div class="doc-section" id="prep">
+          <div class="doc-section-head">
+            <span class="doc-section-num">04 / prep</span>
+            <h2>Pre-open prep (14:00–15:29)</h2>
+            <p>Overnight and in the morning before 15:30 (<a href="#fn-overnight" class="term-note">overnight</a>), price often already covers most of the day's range — which is why overnight context matters more on NQ than on FDAX.</p>
+          </div>
+          <div class="check-grid">
+
+            <div class="check-card reveal" style="--i:0">
+              <div class="ic">🧭</div>
+              <h3>Context</h3>
+              <ul class="check-list">
+                <li>Where is price relative to PDVAH/PDVAL? Outside Above / Inside / Outside Below</li>
+                <li>Is there a Naked POC nearby? → a magnet, don't trade against it</li>
+                <li>What kind of day was yesterday — Poor H/L? A return to it today is likely</li>
+              </ul>
+            </div>
+
+            <div class="check-card reveal" style="--i:1">
+              <div class="ic">🌙</div>
+              <h3><a href="#fn-overnight" class="term-note">Overnight</a> levels</h3>
+              <ul class="check-list">
+                <li><strong>ONH/ONL</strong> — the overnight high and low, the main reference points at the 15:30 open. On NQ, watch them separately from GER40.</li>
+                <li>A large gap at the open → an Open Drive is more likely</li>
+              </ul>
+            </div>
+
+            <div class="check-card reveal" style="--i:2">
+              <div class="ic">📰</div>
+              <h3>News</h3>
+              <ul class="check-list">
+                <li>08:30 ET data (CPI, NFP, jobless claims) — stay out 15 minutes before / 5 minutes after</li>
+                <li>14:00 ET (FOMC) — same rule</li>
+                <li><a href="#fn-earnings" class="term-note">Earnings weeks</a> (January / April / July / October) — cut position size</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 5. PERIOD A -->
+        <div class="doc-section" id="period-a">
+          <div class="doc-section-head">
+            <span class="doc-section-num">05 / period A</span>
+            <h2>Period A (15:30–16:00) — read the open</h2>
+            <p>The RTH open reacts first to the <a href="#fn-overnight" class="term-note">overnight</a> ONH/ONL levels, not only to yesterday's Value Area.</p>
+          </div>
+
+          <div class="doc-sub-h">Open Type (from the Relief indicator)</div>
+          <div class="settings-wrap">
+            <table class="settings-table">
+              <thead><tr><th>Open Type</th><th>Situation</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td><span class="tag tag-bull">Outside Above</span></td><td>Open above PDVAH</td><td>OAA: wait for acceptance (2 TPOs inside) or an ORR return into the VA</td></tr>
+                <tr><td><span class="tag tag-bear">Outside Below</span></td><td>Open below PDVAL</td><td>OAB: mirror image of Outside Above, downward</td></tr>
+                <tr><td><span class="tag tag-info">Inside (Danger)</span></td><td>Open inside the VA</td><td>Rotation, fade from the range's outer edges</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="doc-sub-h">Open Drive (Relief's OD signal)</div>
+          <div class="od-grid">
+            <div class="od-card od-long">
+              <h4>↑ OD Long</h4>
+              <ul>
+                <li>All of period A stays above the open, no TPO blocks against the move → <strong>Trend Day up</strong></li>
+                <li>Entry: the first pullback into period A's lower TPO, 38.2–50% of the IB range deep</li>
+                <li>Stop: beyond period A's high/low</li>
+                <li>Target 1: PDPOC / Naked POC · Target 2: PDVAH in the direction of the move</li>
+              </ul>
+            </div>
+            <div class="od-card od-short">
+              <h4>↓ OD Short</h4>
+              <ul>
+                <li>All of period A stays below the open, no TPO blocks against the move → <strong>Trend Day down</strong></li>
+                <li>Entry: the first pullback into period A's upper TPO, 38.2–50% of the IB range deep</li>
+                <li>Stop: beyond period A's high/low</li>
+                <li>Target 1: PDPOC / Naked POC · Target 2: PDVAL in the direction of the move</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. PERIOD B -->
+        <div class="doc-section" id="period-b">
+          <div class="doc-section-head">
+            <span class="doc-section-num">06 / period B</span>
+            <h2>Period B (16:00–16:30) — Bias forms</h2>
+            <p>On NQ, Bias almost always gets confirmed by an IB break — the question isn't whether it breaks, only which way. Relief scores <strong style="color:var(--ink-900)">▲ L n/5</strong> / <strong style="color:var(--ink-900)">▼ S n/5</strong>: the VWAP side, A's direction, B's arrow, B breaking A's range, close relative to the IB Mid. The same lean shows up as <strong>Sig Bias</strong> in the info panel.</p>
+          </div>
+
+          <div class="settings-wrap">
+            <table class="settings-table">
+              <thead><tr><th>Score</th><th>Meaning</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td><span class="tag tag-bull">4–5 / 5</span></td><td>Strong narrative</td><td>Trade continuation in the direction of Bias — entries that way are priority</td></tr>
+                <tr><td><span class="tag tag-info">3 / 5</span></td><td>Working threshold</td><td>The minimum for an entry — trade it, but cut size</td></tr>
+                <tr><td><span class="tag tag-neutral">0–2 / 5</span></td><td>No narrative</td><td>The lean is weak — wait for a cleaner setup</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="doc-sub-h">What Bias means for the entry in C</div>
+          <div class="od-grid">
+            <div class="od-card od-long">
+              <h4>▲ Bias UP</h4>
+              <ul>
+                <li>Long setups on the IBH break — the priority direction</li>
+                <li>A Raid G/S in the long direction — a valid entry signal</li>
+                <li><strong>FA↓</strong> (a failed IBL break) confirms Bias → enter long</li>
+              </ul>
+            </div>
+            <div class="od-card od-short">
+              <h4>▼ Bias DOWN</h4>
+              <ul>
+                <li>Short setups on the IBL break — the priority direction</li>
+                <li>A Raid G/S in the short direction — a valid entry signal</li>
+                <li><strong>FA↑</strong> (a failed IBH break) confirms Bias → enter short</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. PERIOD C -->
+        <div class="doc-section" id="period-c">
+          <div class="doc-section-head">
+            <span class="doc-section-num">07 / period C</span>
+            <h2>Period C (16:30–17:00) — the main window</h2>
+            <p>The same three setups as FDAX, but with NQ-sized risk parameters — wider stops because of the noise, a different pullback depth.</p>
+          </div>
+
+          <div class="setup-block reveal">
+            <div class="setup-head">
+              <h3>Setup 1 · IB Extension</h3>
+              <span class="sg-tag sg-blue">96% of days</span>
+            </div>
+            <div class="setup-body">
+              <ol class="step-list">
+                <li>IB is closed, <strong>Bias ≥ 3/5</strong></li>
+                <li>The first TPO closed beyond IB High (↑) or IB Low (↓)</li>
+                <li>Entry: a pullback <strong>38.2–50%</strong> deep into the IB range — ideally with a <strong>◆ + FVG</strong> signal in the direction of the break (<a href="#signal">see section 8</a>)</li>
+                <li>Stop: a return inside IB &gt; 15 points (accepting back inside)</li>
+                <li>Targets: Relief's <strong>0.5× → 1× IB</strong> levels from the break edge (reached ones get a ✓)</li>
+                <li>Target 2: <strong>1.5–2× IB</strong> — on a confirmed Trend Day</li>
+                <li>Filter: the break alone isn't a signal — on NQ it's almost guaranteed, Bias is what matters</li>
+                <li>Be careful with <strong>SW ↓/↑</strong> at IBH/IBL — a first break that sweeps and returns is a sweep, not acceptance</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="setup-block reveal">
+            <div class="setup-head">
+              <h3>Setup 2 · Confirmed raid</h3>
+              <span class="sg-tag sg-teal">Raid G / S</span>
+            </div>
+            <div class="setup-body">
+              <ol class="step-list">
+                <li>Wait for a Raid G/S signal (<strong>confirmed</strong>, not the live version)</li>
+                <li>The raid's direction matches Bias from B</li>
+                <li>Entry on the pullback after confirmation</li>
+                <li>Stop: <strong>12–15 points</strong> beyond the raid level — NQ carries more noise than FDAX</li>
+                <li>Target: Naked POC → PDPOC → the opposite edge of the VA</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="setup-block reveal">
+            <div class="setup-head">
+              <h3>Setup 3 · Failed Auction</h3>
+              <span class="sg-tag sg-purple">FA</span>
+            </div>
+            <div class="setup-body">
+              <ol class="step-list">
+                <li>An FA signal appeared (IB was broken, but price returned inside)</li>
+                <li>Bias from B is against the break (confirming the FA)</li>
+                <li>Entry back inside IB, in the direction of Bias</li>
+                <li>Stop: <strong>15 points</strong> beyond the IB edge</li>
+                <li>Target: IB Mid → Naked POC → PDPOC</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. SIGNAL ◆ + FVG -->
+        <div class="doc-section" id="signal">
+          <div class="doc-section-head">
+            <span class="doc-section-num">08 / entry confirmation</span>
+            <h2>◆ + FVG — the entry trigger</h2>
+            <p>Setups A–C give you context. The <strong>◆ + FVG</strong> signal in Relief is the specific bar to enter on, once the day's picture is already in place. The alert fires on bar close.</p>
+          </div>
+
+          <div class="setup-block reveal">
+            <div class="setup-head">
+              <h3>◆ + FVG</h3>
+              <span class="sg-tag sg-teal">Alert</span>
+            </div>
+            <div class="setup-body">
+              <ol class="step-list">
+                <li>Context is ready: period C, IB closed, <strong>Bias ≥ 3/5</strong></li>
+                <li>A period-C setup is already on the chart — ◆ + FVG <strong>confirms the entry</strong>, it doesn't replace the setup</li>
+                <li>Only in the direction of <strong>Sig Bias</strong> — Relief won't show a signal against the day's direction</li>
+                <li>Entry: <strong>close of the signal bar</strong> or a pullback into the zone on the chart</li>
+                <li>Stop: beyond the <strong>extreme of the ◆ bar</strong> — leave extra room for NQ's noise</li>
+                <li>Targets: Naked POC, IB Mid, IB extensions (0.5× → 1× → 1.5×)</li>
+                <li>Price broke through the zone and held beyond it — the <strong>idea is invalidated</strong>, don't average in</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. MANAGEMENT -->
+        <div class="doc-section" id="management">
+          <div class="doc-section-head">
+            <span class="doc-section-num">09 / management</span>
+            <h2>Position management</h2>
+            <p>Relief's magnet levels for partial profit-taking, and the forced exit signals.</p>
+          </div>
+
+          <div class="level-grid">
+            <div class="level-card reveal" style="--i:0">
+              <div class="ic">🔵</div>
+              <h3>nPOC (Naked)</h3>
+              <p>The first partial take-profit. A strong magnet from untested prior days.</p>
+            </div>
+            <div class="level-card reveal" style="--i:1">
+              <div class="ic">🟡</div>
+              <h3>VWAP</h3>
+              <p>The first stop in the direction of the trade. The session's first test (★) matters most.</p>
+            </div>
+            <div class="level-card reveal" style="--i:2">
+              <div class="ic">🧲</div>
+              <h3>EQH/EQL + magnet</h3>
+              <p>A cluster of stop-hunt levels. A target for the second partial (TP2).</p>
+            </div>
+            <div class="level-card reveal" style="--i:3">
+              <div class="ic">🔁</div>
+              <h3>Poor H/L</h3>
+              <p>An unfinished auction from prior days — the market comes back to close it within 1–3 days.</p>
+            </div>
+          </div>
+
+          <div class="doc-sub-h">Forced exits</div>
+          <ul class="exit-list">
+            <li><strong>A raid signal against your position</strong> — exit immediately, don't wait for confirmation</li>
+            <li><strong>An HL Sweep run against you</strong> — liquidity being taken your way, close the position</li>
+            <li><strong>3+ consecutive TPO accumulation periods</strong> — rare on NQ, but if it happens the move has run out of steam</li>
+          </ul>
+        </div>
+
+        <!-- 10. SECOND WINDOW / MOC -->
+        <div class="doc-section" id="second-window">
+          <div class="doc-section-head">
+            <span class="doc-section-num">10 / MOC window</span>
+            <h2><a href="#fn-moc" class="term-note">Evening surge</a> (21:30–22:00)</h2>
+            <p>Before the exchange closes, large players square positions — producing a sharp one-sided flow. It's not a repeat of the morning session; it behaves differently.</p>
+          </div>
+          <ul class="info-list">
+            <li>Enter only with a <strong>clear daily context</strong> — a Trend Day with a strong Bias from early in the session</li>
+            <li>Check the current Value Area and price's position relative to VWAP before entering</li>
+            <li>The trigger is a <strong>◆ + FVG</strong> signal in the direction of Sig Bias, once the daily context is already clear</li>
+            <li>Moves are sharper and faster than the morning — keep the stop wider than usual</li>
+            <li>Without clear context — better to skip the window than guess the direction of the flow</li>
+          </ul>
+        </div>
+
+        <!-- 11. DAY TYPES -->
+        <div class="doc-section" id="day-types">
+          <div class="doc-section-head">
+            <span class="doc-section-num">11 / day types</span>
+            <h2>Day types and tactics</h2>
+            <p>The Day Type label in Relief's info panel: Trend ↑/↓, NV ↑/↓ (Normal Variation), Normal, Neutral, Tight, ORR. On NQ, Neutral Day is rare: an IB break happens in 96.2% of sessions, so the real question isn't "will it break" but "which way."</p>
+          </div>
+          <div class="daytype-grid">
+            <div class="daytype-card dt-trend">
+              <span class="dt-badge">Trend ↑/↓</span>
+              <h4>Trend Day</h4>
+              <div class="dt-row-lbl">Signs</div>
+              <p>Narrow IB + Open Drive + Bias 4–5/5 + Single Print accumulation</p>
+              <div class="dt-row-lbl">Tactics</div>
+              <p>Enter on pullbacks, don't fade the move, trail the stop behind periods</p>
+            </div>
+            <div class="daytype-card dt-normal">
+              <span class="dt-badge">Normal</span>
+              <h4>Normal Day</h4>
+              <div class="dt-row-lbl">Signs</div>
+              <p>One IB break, a moderate Bias — the most common day type on NQ</p>
+              <div class="dt-row-lbl">Tactics</div>
+              <p>The IB Extension setup, partial off at 1× IB</p>
+            </div>
+            <div class="daytype-card dt-neutral">
+              <span class="dt-badge">Neutral</span>
+              <h4>Neutral Day</h4>
+              <div class="dt-row-lbl">Signs</div>
+              <p>Both edges of IB break — rare on NQ (unlike FDAX)</p>
+              <div class="dt-row-lbl">Tactics</div>
+              <p>Fade the second break, target the IB Mid</p>
+            </div>
+            <div class="daytype-card dt-orr">
+              <span class="dt-badge">ORR</span>
+              <h4>Open-Rejection-Reverse</h4>
+              <div class="dt-row-lbl">Signs</div>
+              <p>Open outside the VA + a quick return inside</p>
+              <div class="dt-row-lbl">Tactics</div>
+              <p>Enter on the retest of the VA edge from inside, target the PDPOC</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 12. AVOID -->
+        <div class="doc-section" id="avoid">
+          <div class="doc-section-head">
+            <span class="doc-section-num">12 / stop list</span>
+            <h2>When NOT to trade</h2>
+          </div>
+          <div class="warn-block">
+            <h3>⚠️ Red flags</h3>
+            <ul class="warn-list">
+              <li><strong>15 minutes before / 5 minutes after 08:30 ET</strong> — CPI, NFP, jobless claims data</li>
+              <li><strong>14:00 ET</strong> — FOMC meetings, rate decision releases</li>
+              <li><strong>NVDA / AAPL / MSFT / META earnings day and the day after</strong> — a distorted profile</li>
+              <li><strong>The MOC window (21:30–22:00 CEST)</strong> — only with a clear daily context, otherwise skip it</li>
+              <li><strong>IB &gt; 150 points</strong> — the trend is already running without you, the moment is gone</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__mark">
+      <svg class="foot__mark-icon" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+        <g style="isolation:isolate">
+          <polygon points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#D07C3C" style="mix-blend-mode:multiply"/>
+          <polygon points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#97431F" style="mix-blend-mode:multiply"/>
+          <polygon points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#B5532E" style="mix-blend-mode:multiply"/>
+          <polygon points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#E8A94F" style="mix-blend-mode:multiply"/>
+          <polygon points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#B5532E" style="mix-blend-mode:multiply"/>
+          <polygon points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#97431F" style="mix-blend-mode:multiply"/>
+          <polygon points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#6E2E12" style="mix-blend-mode:multiply"/>
+        </g>
+      </svg>
+      <div>
+        <p class="foot__name">NQ Strategy</p>
+        <p class="foot__sub">TPO / Market Profile · Relief</p>
+      </div>
+    </div>
+    <nav class="foot__nav" aria-label="Footer">
+      <a class="link" href="strategy-fdax-en.html">FDAX Strategy</a>
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <a class="link" href="about-en.html">About</a>
+    </nav>
+    <p class="foot__fine">
+      <span>TPO / Market Profile · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
+    </p>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+</body>
+</html>

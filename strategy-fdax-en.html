@@ -1,30 +1,24 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Пошаговая торговая методология FDAX (GER40) на TPO / Market Profile с индикатором Relief — от overnight-контекста до входа и управления позицией.">
-<meta property="og:title" content="Стратегия FDAX — TPO / Market Profile · Surface Tension">
-<meta property="og:description" content="Пошаговая методология FDAX: расписание сессии, периоды A–C, сигнал ◆ + FVG, управление позицией, второе окно US Open overlap.">
+<meta name="description" content="A step-by-step FDAX (GER40) trading methodology built on TPO / Market Profile with the Relief indicator — from overnight context to entries and position management.">
+<meta property="og:title" content="FDAX Strategy — TPO / Market Profile · Surface Tension">
+<meta property="og:description" content="A step-by-step FDAX methodology: session schedule, periods A–C, the ◆ + FVG signal, position management, the US Open overlap window.">
 <meta property="og:type" content="article">
-<meta property="og:locale" content="ru_RU">
+<meta property="og:locale" content="en_US">
 <meta name="theme-color" content="#E7DCC4">
-<title>Стратегия FDAX — TPO / Market Profile · Surface Tension</title>
+<title>FDAX Strategy — TPO / Market Profile · Surface Tension</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- EN typography: Space Grotesk only (see --font-* defaults in styles.css) -->
 <style>
-  :root {
-    --font-display: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-    --font-text:    'Rubik', system-ui, -apple-system, sans-serif;
-    --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  }
-  .hero__title { font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif; }
-
   /* ── STRATEGY DOC PAGE — page-specific primitives (accent via --acc*, set on <body>) ── */
   .doc-hero { padding: clamp(2.6rem,6vw,3.6rem) 0 clamp(1.6rem,3vw,2.2rem); text-align: center; }
   .doc-hero .wrap { display: flex; flex-direction: column; align-items: center; }
@@ -152,12 +146,12 @@
 <div class="atmosphere" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
-<a href="#main" class="skip-link">Перейти к содержимому</a>
+<a href="#main" class="skip-link">Skip to content</a>
 
 <!-- ── NAV ── -->
 <header class="runhead">
   <div class="wrap">
-    <a class="runhead__home" href="index.html" aria-label="Surface Tension Indicators">
+    <a class="runhead__home" href="en.html" aria-label="Surface Tension Indicators">
       <div class="runhead__logo-mark">
         <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g style="isolation:isolate">
@@ -177,33 +171,33 @@
         <span class="runhead__lockup-sub">Indicators</span>
       </div>
     </a>
-    <button class="runhead__toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="runhead-menu">
+    <button class="runhead__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="runhead-menu">
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
     </button>
-    <nav class="runhead__nav" id="runhead-menu" aria-label="Основная навигация">
-      <span class="lang-switch"><a href="strategy-fdax.html" class="active">RU</a><span class="lang-switch__sep">/</span><a href="strategy-fdax-en.html">EN</a></span>
-      <a class="link is-current" href="strategy-fdax.html" style="--acc:#2E8CB8;--acc-deep:#215E7A">Стратегия FDAX</a>
-      <a class="link" href="strategy-nq.html">Стратегия NQ</a>
-      <a class="link" href="relief.html">Relief</a>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Main navigation">
+      <span class="lang-switch"><a href="strategy-fdax.html">RU</a><span class="lang-switch__sep">/</span><a href="strategy-fdax-en.html" class="active">EN</a></span>
+      <a class="link is-current" href="strategy-fdax-en.html" style="--acc:#2E8CB8;--acc-deep:#215E7A">FDAX Strategy</a>
+      <a class="link" href="strategy-nq-en.html">NQ Strategy</a>
+      <a class="link" href="relief-en.html">Relief</a>
       <div class="runhead__dropdown" data-dropdown>
         <button class="runhead__dropdown-btn" type="button" aria-expanded="false">
-          На странице
+          On this page
           <svg class="runhead__dropdown-caret" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <ul class="runhead__dropdown-menu">
-          <li><a href="#overview">Обзор инструмента</a></li>
-          <li><a href="#schedule">Расписание</a></li>
-          <li><a href="#period-a">Период A</a></li>
-          <li><a href="#period-b">Период B</a></li>
-          <li><a href="#period-c">Период C</a></li>
+          <li><a href="#overview">Contract overview</a></li>
+          <li><a href="#schedule">Schedule</a></li>
+          <li><a href="#period-a">Period A</a></li>
+          <li><a href="#period-b">Period B</a></li>
+          <li><a href="#period-c">Period C</a></li>
           <li><a href="#signal">◆ + FVG</a></li>
-          <li><a href="#day-types">Типы дней</a></li>
+          <li><a href="#day-types">Day types</a></li>
         </ul>
       </div>
-      <a class="button" href="relief.html" style="--acc-deep:#215E7A">
-        Открыть Relief
+      <a class="button" href="relief-en.html" style="--acc-deep:#215E7A">
+        Open Relief
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </nav>
@@ -215,20 +209,20 @@
   <!-- ── HERO ── -->
   <section class="page-head doc-hero">
     <div class="wrap">
-      <p class="page-head__eyebrow reveal" style="--i:0">Торговая методология <span class="accent-dot" aria-hidden="true">·</span> TPO / Market Profile</p>
-      <h1 class="reveal" style="--i:1">Стратегия FDAX <span class="doc-hero__badge">GER40 · Eurex</span></h1>
+      <p class="page-head__eyebrow reveal" style="--i:0">Trading methodology <span class="accent-dot" aria-hidden="true">·</span> TPO / Market Profile</p>
+      <h1 class="reveal" style="--i:1">FDAX Strategy <span class="doc-hero__badge">GER40 · Eurex</span></h1>
       <p class="reveal" style="--i:2;max-width:52ch;margin:0 auto">
-        Пошаговая методология торговли FDAX по TPO/Market Profile на индикаторе
-        <a href="relief.html" style="color:var(--acc-deep);font-weight:600">Relief</a> —
-        от анализа <a href="#fn-overnight" class="term-note" title="Overnight — торговля до RTH Open">overnight</a>-контекста
-        до входа по сигналу ◆ + FVG, управления позицией и второго окна US Open overlap.
-        Практический разбор без воды: что смотреть, когда входить, где стоп и цель.
+        A step-by-step FDAX trading methodology built on TPO/Market Profile with the
+        <a href="relief-en.html" style="color:var(--acc-deep);font-weight:600">Relief</a> indicator —
+        from reading the <a href="#fn-overnight" class="term-note" title="Overnight — trading before the RTH open">overnight</a> context
+        to entries on the ◆ + FVG signal, position management, and the US Open overlap window.
+        A practical breakdown, no filler: what to watch, when to enter, where the stop and target sit.
       </p>
-      <a class="doc-hero__sibling reveal" style="--i:2" href="strategy-nq.html">Стратегия NQ →</a>
+      <a class="doc-hero__sibling reveal" style="--i:2" href="strategy-nq-en.html">NQ Strategy →</a>
       <div class="doc-hero-meta reveal" style="--i:3">
-        <div class="stat"><span class="val">80–200</span><span class="lbl">ATR, пунктов</span></div>
-        <div class="stat"><span class="val">09:00</span><span class="lbl">старт сессии CET</span></div>
-        <div class="stat"><span class="val">€25</span><span class="lbl">1 пункт</span></div>
+        <div class="stat"><span class="val">80–200</span><span class="lbl">ATR, points</span></div>
+        <div class="stat"><span class="val">09:00</span><span class="lbl">session open CET</span></div>
+        <div class="stat"><span class="val">€25</span><span class="lbl">per point</span></div>
       </div>
     </div>
   </section>
@@ -239,18 +233,18 @@
 
       <!-- SIDEBAR -->
       <aside class="doc-sidebar" id="docSidebar">
-        <div class="doc-sidebar-label">Разделы</div>
-        <a href="#overview">1. Обзор инструмента</a>
-        <a href="#schedule">2. Расписание сессии</a>
-        <a href="#prep">3. Подготовка до открытия</a>
-        <a href="#period-a">4. Период A</a>
-        <a href="#period-b">5. Период B</a>
-        <a href="#period-c">6. Период C — окно</a>
+        <div class="doc-sidebar-label">Sections</div>
+        <a href="#overview">1. Contract overview</a>
+        <a href="#schedule">2. Session schedule</a>
+        <a href="#prep">3. Pre-open prep</a>
+        <a href="#period-a">4. Period A</a>
+        <a href="#period-b">5. Period B</a>
+        <a href="#period-c">6. Period C — the window</a>
         <a href="#signal">7. ◆ + FVG</a>
-        <a href="#management">8. Управление позицией</a>
-        <a href="#second-window">9. Второе окно</a>
-        <a href="#day-types">10. Типы дней</a>
-        <a href="#avoid">11. Когда не торговать</a>
+        <a href="#management">8. Position management</a>
+        <a href="#second-window">9. Second window</a>
+        <a href="#day-types">10. Day types</a>
+        <a href="#avoid">11. When not to trade</a>
       </aside>
 
       <!-- CONTENT -->
@@ -259,30 +253,30 @@
         <!-- 1. OVERVIEW -->
         <div class="doc-section" id="overview">
           <div class="doc-section-head">
-            <span class="doc-section-num">01 / обзор</span>
-            <h2>Обзор инструмента</h2>
-            <p>Параметры контракта, которые нужно держать в голове перед тем как ставить стоп в пунктах.</p>
+            <span class="doc-section-num">01 / overview</span>
+            <h2>Contract overview</h2>
+            <p>The contract parameters to keep in mind before you set a stop measured in points.</p>
           </div>
           <div class="settings-wrap">
             <table class="settings-table">
-              <thead><tr><th>Параметр</th><th>Значение</th></tr></thead>
+              <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
               <tbody>
-                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-blue">Контракт</span></td></tr>
-                <tr><td>Тикер</td><td>FDAX / GER40 (Eurex)</td></tr>
-                <tr><td>1 тик</td><td class="def">0.5 пункта = €12.50</td></tr>
-                <tr><td>1 пункт</td><td class="def">€25</td></tr>
+                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-blue">Contract</span></td></tr>
+                <tr><td>Ticker</td><td>FDAX / GER40 (Eurex)</td></tr>
+                <tr><td>1 tick</td><td class="def">0.5 point = €12.50</td></tr>
+                <tr><td>1 point</td><td class="def">€25</td></tr>
 
-                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-teal">Волатильность</span></td></tr>
-                <tr><td>Типичный ATR (день)</td><td class="def">80–200 пунктов</td></tr>
+                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-teal">Volatility</span></td></tr>
+                <tr><td>Typical ATR (day)</td><td class="def">80–200 points</td></tr>
 
                 <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-amber">Initial Balance</span></td></tr>
-                <tr><td>Узкий IB</td><td class="def">&lt; 30 пунктов</td></tr>
-                <tr><td>Нормальный IB</td><td class="def">30–80 пунктов</td></tr>
-                <tr><td>Широкий IB</td><td class="def">&gt; 100 пунктов</td></tr>
+                <tr><td>Narrow IB</td><td class="def">&lt; 30 points</td></tr>
+                <tr><td>Normal IB</td><td class="def">30–80 points</td></tr>
+                <tr><td>Wide IB</td><td class="def">&gt; 100 points</td></tr>
 
-                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-purple">Сессия</span></td></tr>
-                <tr><td>График</td><td class="def">1m</td></tr>
-                <tr><td>Старт сессии</td><td class="def">09:00 CET</td></tr>
+                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-purple">Session</span></td></tr>
+                <tr><td>Chart</td><td class="def">1m</td></tr>
+                <tr><td>Session open</td><td class="def">09:00 CET</td></tr>
               </tbody>
             </table>
           </div>
@@ -291,9 +285,9 @@
         <!-- 2. SCHEDULE -->
         <div class="doc-section" id="schedule">
           <div class="doc-section-head">
-            <span class="doc-section-num">02 / расписание</span>
-            <h2>Расписание торговой сессии</h2>
-            <p>Три 30-минутных блока в начале дня — периоды A, B и C. На них строится вся логика входов.</p>
+            <span class="doc-section-num">02 / schedule</span>
+            <h2>Trading session schedule</h2>
+            <p>Three 30-minute blocks at the start of the day — periods A, B and C. The whole entry logic is built on them.</p>
           </div>
           <div class="tl-list">
 
@@ -301,8 +295,8 @@
               <div class="tl-time">08:00–09:00</div>
               <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
               <div class="tl-body">
-                <div class="tl-label">Pre-market / <a href="#fn-overnight" class="term-note">Overnight</a> анализ</div>
-                <div class="tl-desc">Оценка ночного диапазона, gap, контекста относительно вчерашней Value Area.</div>
+                <div class="tl-label">Pre-market / <a href="#fn-overnight" class="term-note">overnight</a> analysis</div>
+                <div class="tl-desc">Assess the overnight range, any gap, and the context relative to yesterday's Value Area.</div>
               </div>
             </div>
 
@@ -310,8 +304,8 @@
               <div class="tl-time">09:00–09:30</div>
               <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
               <div class="tl-body">
-                <div class="tl-label">Период A — читаем открытие</div>
-                <div class="tl-desc">Первый получас. Где открылись относительно вчерашнего диапазона? Есть ли одностороннее движение?</div>
+                <div class="tl-label">Period A — read the open</div>
+                <div class="tl-desc">The first half hour. Where did price open relative to yesterday's range? Is there a one-sided move?</div>
               </div>
             </div>
 
@@ -319,8 +313,8 @@
               <div class="tl-time">09:30–10:00</div>
               <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
               <div class="tl-body">
-                <div class="tl-label">Период B — уклон дня</div>
-                <div class="tl-desc">Второй получас IB. К концу блока понятно, куда рынок склоняется — в лонг или шорт.</div>
+                <div class="tl-label">Period B — the day's lean</div>
+                <div class="tl-desc">The second IB half hour. By the end of the block it's clear which way the market leans — long or short.</div>
               </div>
             </div>
 
@@ -328,8 +322,8 @@
               <div class="tl-time">10:00–10:30</div>
               <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
               <div class="tl-body">
-                <div class="tl-label">Период C — ГЛАВНОЕ ОКНО <span class="tag tag-bull" style="margin-left:4px">лонг</span> <span class="tag tag-bear">шорт</span></div>
-                <div class="tl-desc">IB сформирован, уклон дня ясен. Три основных сетапа: пробой IB, снятие ликвидности, неудачный аукцион.</div>
+                <div class="tl-label">Period C — THE MAIN WINDOW <span class="tag tag-bull" style="margin-left:4px">long</span> <span class="tag tag-bear">short</span></div>
+                <div class="tl-desc">IB is formed, the day's lean is clear. Three core setups: IB breakout, liquidity raid, failed auction.</div>
               </div>
             </div>
 
@@ -337,8 +331,8 @@
               <div class="tl-time">10:30–15:30</div>
               <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
               <div class="tl-body">
-                <div class="tl-label">Середина дня</div>
-                <div class="tl-desc">Управление открытой позицией, частичная фиксация на магнитах, ожидание нового сетапа.</div>
+                <div class="tl-label">Midday</div>
+                <div class="tl-desc">Manage the open position, partial off at magnets, wait for the next setup.</div>
               </div>
             </div>
 
@@ -346,8 +340,8 @@
               <div class="tl-time">15:30–17:00</div>
               <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
               <div class="tl-body">
-                <div class="tl-label">US Open overlap — второе окно входа</div>
-                <div class="tl-desc">Приток ликвидности с открытием NY. Второй шанс войти в направлении дневного тренда.</div>
+                <div class="tl-label">US Open overlap — second entry window</div>
+                <div class="tl-desc">Liquidity picks up with the NY open. A second chance to enter in the direction of the day's trend.</div>
               </div>
             </div>
 
@@ -355,34 +349,34 @@
               <div class="tl-time">17:00–17:30</div>
               <div class="tl-dot-col"><div class="tl-dot"></div></div>
               <div class="tl-body">
-                <div class="tl-label">Закрытие Xetra</div>
-                <div class="tl-desc">Снижение ликвидности перед закрытием немецкой сессии. Новые входы не открываются.</div>
+                <div class="tl-label">Xetra close</div>
+                <div class="tl-desc">Liquidity thins out before the German session closes. No new entries.</div>
               </div>
             </div>
 
           </div>
           <dl class="term-footnotes" id="fn-overnight">
             <dt><a href="#fn-overnight">Overnight (ON)</a></dt>
-            <dd>Торговля до официального открытия сессии — до <strong>09:00</strong> по берлинскому времени. За ночь цена проходит свой <strong>ночной максимум и минимум</strong>. Когда в 9:00 открывается GER40, рынок часто сначала проверяет эти уровни — там бывают ложные пробои и быстрые развороты.</dd>
+            <dd>Trading before the official session open — before <strong>09:00</strong> Berlin time. Overnight, price sets its own <strong>overnight high and low</strong>. When GER40 opens at 9:00, the market often tests those levels first — false breaks and quick reversals are common there.</dd>
           </dl>
         </div>
 
         <!-- 3. PREP -->
         <div class="doc-section" id="prep">
           <div class="doc-section-head">
-            <span class="doc-section-num">03 / подготовка</span>
-            <h2>Подготовка до открытия (08:00–08:59)</h2>
-            <p>Три блока, которые нужно пройти до старта периода A. Без контекста входы в C будут случайными.</p>
+            <span class="doc-section-num">03 / prep</span>
+            <h2>Pre-open prep (08:00–08:59)</h2>
+            <p>Three checks to run through before period A starts. Without context, entries in C are a coin flip.</p>
           </div>
           <div class="check-grid">
 
             <div class="check-card reveal" style="--i:0">
               <div class="ic">🧭</div>
-              <h3>Контекст</h3>
+              <h3>Context</h3>
               <ul class="check-list">
-                <li>Где цена относительно PDVAH/PDVAL? Outside Above / Inside / Outside Below</li>
-                <li>Есть ли Naked POC рядом? → магнит, не торгуй против него</li>
-                <li>Каким был вчерашний день — Poor H/L? Возврат к нему сегодня вероятен (≈70%)</li>
+                <li>Where is price relative to PDVAH/PDVAL? Outside Above / Inside / Outside Below</li>
+                <li>Is there a Naked POC nearby? → a magnet, don't trade against it</li>
+                <li>What kind of day was yesterday — Poor H/L? A return to it today is likely (≈70%)</li>
               </ul>
             </div>
 
@@ -390,17 +384,17 @@
               <div class="ic">🌙</div>
               <h3><a href="#fn-overnight" class="term-note">Overnight</a></h3>
               <ul class="check-list">
-                <li>Ночной максимум и минимум — ключевые уровни для раннего пробоя</li>
-                <li>Большой gap при открытии → чаще бывает сильный трендовый старт</li>
+                <li>The overnight high and low — key levels for an early break</li>
+                <li>A large gap at the open → a strong trend start is more likely</li>
               </ul>
             </div>
 
             <div class="check-card reveal" style="--i:2">
               <div class="ic">📰</div>
-              <h3>Новости</h3>
+              <h3>News</h3>
               <ul class="check-list">
-                <li>Нет важных новостей в 09:00–11:00? → всё ок, работаем по плану</li>
-                <li>Есть новости в окне → уменьши размер позиции или пропусти первое окно</li>
+                <li>No major news in the 09:00–11:00 window? → all clear, work the plan</li>
+                <li>News inside the window → cut size or skip the first window</li>
               </ul>
             </div>
 
@@ -410,41 +404,41 @@
         <!-- 4. PERIOD A -->
         <div class="doc-section" id="period-a">
           <div class="doc-section-head">
-            <span class="doc-section-num">04 / период A</span>
-            <h2>Период A (09:00–09:30) — читаем открытие</h2>
-            <p>Первые 30 минут задают тип дня: открылись выше/ниже/внутри вчерашнего диапазона и пошли ли в одну сторону без откатов.</p>
+            <span class="doc-section-num">04 / period A</span>
+            <h2>Period A (09:00–09:30) — read the open</h2>
+            <p>The first 30 minutes set the day's type: did price open above/below/inside yesterday's range, and did it run one-sided without pullbacks.</p>
           </div>
 
-          <div class="doc-sub-h">Тип открытия</div>
+          <div class="doc-sub-h">Open type</div>
           <div class="settings-wrap">
             <table class="settings-table">
-              <thead><tr><th>Ситуация</th><th>Что это значит</th><th>Действие</th></tr></thead>
+              <thead><tr><th>Situation</th><th>What it means</th><th>Action</th></tr></thead>
               <tbody>
-                <tr><td><span class="tag tag-bull">Выше вчерашнего диапазона</span></td><td>Бычий контекст</td><td>Жди принятия или возврата внутрь value area</td></tr>
-                <tr><td><span class="tag tag-bear">Ниже вчерашнего диапазона</span></td><td>Медвежий контекст</td><td>Зеркально — жди принятия или возврата внутрь</td></tr>
-                <tr><td><span class="tag tag-info">Внутри диапазона</span></td><td>Двусторонний аукцион</td><td>Осторожно — торгуй от краёв, не от середины</td></tr>
+                <tr><td><span class="tag tag-bull">Above yesterday's range</span></td><td>Bullish context</td><td>Wait for acceptance or a return inside the value area</td></tr>
+                <tr><td><span class="tag tag-bear">Below yesterday's range</span></td><td>Bearish context</td><td>Mirror image — wait for acceptance or a return inside</td></tr>
+                <tr><td><span class="tag tag-info">Inside the range</span></td><td>Two-sided auction</td><td>Careful — trade the edges, not the middle</td></tr>
               </tbody>
             </table>
           </div>
 
-          <div class="doc-sub-h">Сильное открытие (односторонний старт)</div>
+          <div class="doc-sub-h">Strong open (one-sided start)</div>
           <div class="od-grid">
             <div class="od-card od-long">
-              <h4>↑ Лонг-открытие</h4>
+              <h4>↑ Long open</h4>
               <ul>
-                <li>Весь период A — движение вверх без откатов → вероятен трендовый день</li>
-                <li>Вход: первый откат к зоне периода A</li>
-                <li>Стоп: за экстремум периода A (или 10–12 пунктов)</li>
-                <li>Цели: вчерашний POC → край вчерашней value area</li>
+                <li>All of period A moves up with no pullback → a trend day is likely</li>
+                <li>Entry: the first pullback into the period A zone</li>
+                <li>Stop: beyond period A's extreme (or 10–12 points)</li>
+                <li>Targets: yesterday's POC → the edge of yesterday's value area</li>
               </ul>
             </div>
             <div class="od-card od-short">
-              <h4>↓ Шорт-открытие</h4>
+              <h4>↓ Short open</h4>
               <ul>
-                <li>Весь период A — движение вниз без откатов → вероятен трендовый день</li>
-                <li>Вход: первый откат к зоне периода A</li>
-                <li>Стоп: за экстремум периода A (или 10–12 пунктов)</li>
-                <li>Цели: вчерашний POC → край вчерашней value area</li>
+                <li>All of period A moves down with no pullback → a trend day is likely</li>
+                <li>Entry: the first pullback into the period A zone</li>
+                <li>Stop: beyond period A's extreme (or 10–12 points)</li>
+                <li>Targets: yesterday's POC → the edge of yesterday's value area</li>
               </ul>
             </div>
           </div>
@@ -453,39 +447,39 @@
         <!-- 5. PERIOD B -->
         <div class="doc-section" id="period-b">
           <div class="doc-section-head">
-            <span class="doc-section-num">05 / период B</span>
-            <h2>Период B (09:30–10:00) — уклон дня</h2>
-            <p>К концу второго получаса понятен уклон сессии: рынок тянет в лонг, шорт или балансирует. Чем сильнее картина — тем увереннее входы в период C.</p>
+            <span class="doc-section-num">05 / period B</span>
+            <h2>Period B (09:30–10:00) — the day's lean</h2>
+            <p>By the end of the second half hour the session's lean is clear: the market is pulling long, short, or balancing. The cleaner the picture, the more confident the entries in period C.</p>
           </div>
 
-          <div class="doc-sub-h">Сила уклона</div>
+          <div class="doc-sub-h">Strength of the lean</div>
           <div class="settings-wrap">
             <table class="settings-table">
-              <thead><tr><th>Уклон</th><th>Значение</th><th>Действие</th></tr></thead>
+              <thead><tr><th>Lean</th><th>Meaning</th><th>Action</th></tr></thead>
               <tbody>
-                <tr><td><span class="tag tag-bull">Сильный</span></td><td>VWAP, периоды A и B, IB — всё в одну сторону</td><td>Торгуй продолжение, полный размер</td></tr>
-                <tr><td><span class="tag tag-info">Умеренный</span></td><td>Картина есть, но не идеальная</td><td>Торгуй, но уменьши размер</td></tr>
-                <tr><td><span class="tag tag-neutral">Слабый</span></td><td>Направления расходятся</td><td>Жди более чистый сетап</td></tr>
+                <tr><td><span class="tag tag-bull">Strong</span></td><td>VWAP, periods A and B, IB — all pointing one way</td><td>Trade continuation, full size</td></tr>
+                <tr><td><span class="tag tag-info">Moderate</span></td><td>The picture is there but not clean</td><td>Trade it, but cut size</td></tr>
+                <tr><td><span class="tag tag-neutral">Weak</span></td><td>Directions disagree</td><td>Wait for a cleaner setup</td></tr>
               </tbody>
             </table>
           </div>
 
-          <div class="doc-sub-h">Что искать на периоде C</div>
+          <div class="doc-sub-h">What to look for in period C</div>
           <div class="od-grid">
             <div class="od-card od-long">
-              <h4>Уклон в лонг</h4>
+              <h4>Long lean</h4>
               <ul>
-                <li>Пробой верхней границы IB — приоритетное направление</li>
-                <li>Снятие ликвидности снизу с возвратом вверх — валидный вход</li>
-                <li>Неудачный пробой нижней границы IB → разворот в лонг</li>
+                <li>A break of the IB upper edge — the priority direction</li>
+                <li>A liquidity raid below with a return up — a valid entry</li>
+                <li>A failed break of the IB lower edge → reversal into long</li>
               </ul>
             </div>
             <div class="od-card od-short">
-              <h4>Уклон в шорт</h4>
+              <h4>Short lean</h4>
               <ul>
-                <li>Пробой нижней границы IB — приоритетное направление</li>
-                <li>Снятие ликвидности сверху с возвратом вниз — валидный вход</li>
-                <li>Неудачный пробой верхней границы IB → разворот в шорт</li>
+                <li>A break of the IB lower edge — the priority direction</li>
+                <li>A liquidity raid above with a return down — a valid entry</li>
+                <li>A failed break of the IB upper edge → reversal into short</li>
               </ul>
             </div>
           </div>
@@ -494,57 +488,57 @@
         <!-- 6. PERIOD C -->
         <div class="doc-section" id="period-c">
           <div class="doc-section-head">
-            <span class="doc-section-num">06 / период C</span>
-            <h2>Период C (10:00–10:30) — главное окно</h2>
-            <p>IB сформирован, уклон дня ясен. Три основных сетапа — здесь проходит большинство входов.</p>
+            <span class="doc-section-num">06 / period C</span>
+            <h2>Period C (10:00–10:30) — the main window</h2>
+            <p>IB is formed, the day's lean is clear. Three core setups — most entries happen here.</p>
           </div>
 
           <div class="setup-block reveal">
             <div class="setup-head">
-              <h3>Сетап 1 · Пробой IB</h3>
+              <h3>Setup 1 · IB breakout</h3>
               <span class="sg-tag sg-blue">Normal Day</span>
             </div>
             <div class="setup-body">
               <ol class="step-list">
-                <li>IB закрыт, уклон дня умеренный или сильный</li>
-                <li>Цена вышла за верхнюю или нижнюю границу IB и закрепилась</li>
-                <li>Вход: откат к краю IB — в идеале с сигналом <strong>◆ + FVG</strong> в сторону пробоя (<a href="#signal">см. раздел 7</a>)</li>
-                <li>Стоп: возврат глубоко внутрь IB (5+ пунктов)</li>
-                <li>Цели: расширения IB — 0.5×, затем 1× от края пробоя</li>
-                <li>На трендовом дне — цель до 1.5–2× IB</li>
-                <li>Не торгуй пробой, если вчера был нейтральный день</li>
-                <li>Осторожно, если первый пробой — ложный: цена вышла и сразу вернулась</li>
+                <li>IB is closed, the day's lean is moderate or strong</li>
+                <li>Price broke the IB's upper or lower edge and held</li>
+                <li>Entry: a pullback to the IB edge — ideally with a <strong>◆ + FVG</strong> signal in the direction of the break (<a href="#signal">see section 7</a>)</li>
+                <li>Stop: a deep return back inside IB (5+ points)</li>
+                <li>Targets: IB extensions — 0.5×, then 1× from the break edge</li>
+                <li>On a trend day — target up to 1.5–2× IB</li>
+                <li>Don't trade the breakout if yesterday was a neutral day</li>
+                <li>Be careful if the first break is false: price broke out and snapped straight back</li>
               </ol>
             </div>
           </div>
 
           <div class="setup-block reveal">
             <div class="setup-head">
-              <h3>Сетап 2 · Снятие ликвидности</h3>
+              <h3>Setup 2 · Liquidity raid</h3>
               <span class="sg-tag sg-teal">Raid</span>
             </div>
             <div class="setup-body">
               <ol class="step-list">
-                <li>Цена вышла за экстремум предыдущего периода и вернулась</li>
-                <li>Направление совпадает с уклоном дня</li>
-                <li>Вход на откате после возврата</li>
-                <li>Стоп: за уровень снятия</li>
-                <li>Цель: непротестированный POC → вчерашний POC → противоположный край value area</li>
+                <li>Price broke the previous period's extreme and returned</li>
+                <li>Direction matches the day's lean</li>
+                <li>Entry on the pullback after the return</li>
+                <li>Stop: beyond the raid level</li>
+                <li>Target: an untested POC → yesterday's POC → the opposite edge of the value area</li>
               </ol>
             </div>
           </div>
 
           <div class="setup-block reveal">
             <div class="setup-head">
-              <h3>Сетап 3 · Неудачный аукцион</h3>
+              <h3>Setup 3 · Failed auction</h3>
               <span class="sg-tag sg-purple">Failed Auction</span>
             </div>
             <div class="setup-body">
               <ol class="step-list">
-                <li>IB пробит, но цена закрылась обратно внутрь — рынок не принял уровень</li>
-                <li>Уклон дня против пробоя — подтверждает разворот</li>
-                <li>Вход внутрь IB, в сторону уклона</li>
-                <li>Цель: середина IB → непротестированный POC → вчерашний POC</li>
+                <li>IB was broken but price closed back inside — the market didn't accept the level</li>
+                <li>The day's lean is against the break — confirming a reversal</li>
+                <li>Entry back inside IB, in the direction of the lean</li>
+                <li>Target: IB midpoint → an untested POC → yesterday's POC</li>
               </ol>
             </div>
           </div>
@@ -553,9 +547,9 @@
         <!-- 7. SIGNAL ◆ + FVG -->
         <div class="doc-section" id="signal">
           <div class="doc-section-head">
-            <span class="doc-section-num">07 / подтверждение входа</span>
-            <h2>◆ + FVG — точка входа</h2>
-            <p>Сетапы A–C дают контекст. Сигнал <strong>◆ + FVG</strong> в Relief — конкретный бар для входа, когда картина дня уже сложилась. Алерт приходит на закрытии бара.</p>
+            <span class="doc-section-num">07 / entry confirmation</span>
+            <h2>◆ + FVG — the entry trigger</h2>
+            <p>Setups A–C give you context. The <strong>◆ + FVG</strong> signal in Relief is the specific bar to enter on, once the day's picture is already in place. The alert fires on bar close.</p>
           </div>
 
           <div class="setup-block reveal">
@@ -565,13 +559,13 @@
             </div>
             <div class="setup-body">
               <ol class="step-list">
-                <li>Контекст готов: период C, IB закрыт, <strong>уклон дня</strong> ясен</li>
-                <li>Сетап из периода C уже на экране — ◆ + FVG <strong>подтверждает вход</strong>, а не заменяет сетап</li>
-                <li>Только в сторону уклона — Relief не покажет сигнал против направления дня</li>
-                <li>Вход: <strong>закрытие сигнального бара</strong> или откат к зоне на графике</li>
-                <li>Стоп: за <strong>экстремум бара с ◆</strong></li>
-                <li>Цели: ближайшие уровни дня — POC, середина IB, расширения IB</li>
-                <li>Цена пробила зону и закрепилась за ней — <strong>идея отменена</strong>, не усредняйся</li>
+                <li>Context is ready: period C, IB closed, the <strong>day's lean</strong> is clear</li>
+                <li>A period-C setup is already on the chart — ◆ + FVG <strong>confirms the entry</strong>, it doesn't replace the setup</li>
+                <li>Only in the direction of the lean — Relief won't show a signal against the day's direction</li>
+                <li>Entry: <strong>close of the signal bar</strong> or a pullback into the zone on the chart</li>
+                <li>Stop: beyond the <strong>extreme of the ◆ bar</strong></li>
+                <li>Targets: the nearest levels of the day — POC, IB midpoint, IB extensions</li>
+                <li>Price broke through the zone and held beyond it — the <strong>idea is invalidated</strong>, don't average in</li>
               </ol>
             </div>
           </div>
@@ -580,96 +574,96 @@
         <!-- 8. MANAGEMENT -->
         <div class="doc-section" id="management">
           <div class="doc-section-head">
-            <span class="doc-section-num">08 / управление</span>
-            <h2>Управление позицией</h2>
-            <p>Ключевые уровни дня для частичной фиксации и ситуации, когда позицию закрывают принудительно.</p>
+            <span class="doc-section-num">08 / management</span>
+            <h2>Position management</h2>
+            <p>Key levels of the day for partial profit-taking, and the situations that force you out of a trade.</p>
           </div>
 
           <div class="level-grid">
             <div class="level-card reveal" style="--i:0">
               <div class="ic">🔵</div>
-              <h3>Непротестированный POC</h3>
-              <p>Первая частичная фиксация. Уровень с прошлых дней, куда цена часто возвращается.</p>
+              <h3>Untested POC</h3>
+              <p>The first partial. A level from prior days that price often returns to.</p>
             </div>
             <div class="level-card reveal" style="--i:1">
               <div class="ic">🟡</div>
               <h3>VWAP</h3>
-              <p>Первая остановка в направлении сделки. Средневзвешенная цена сессии.</p>
+              <p>The first stop in the direction of the trade. The session's volume-weighted average price.</p>
             </div>
             <div class="level-card reveal" style="--i:2">
               <div class="ic">🧲</div>
-              <h3>Равные highs/lows</h3>
-              <p>Зоны скопления стопов. Цель для второй частичной фиксации.</p>
+              <h3>Equal highs/lows</h3>
+              <p>Stop-hunt zones. A target for the second partial.</p>
             </div>
             <div class="level-card reveal" style="--i:3">
               <div class="ic">🔁</div>
-              <h3>Незавершённые экстремумы</h3>
-              <p>Рынок часто возвращается закрыть незавершённый аукцион в течение 1–3 дней.</p>
+              <h3>Unfinished extremes</h3>
+              <p>The market often comes back to close an unfinished auction within 1–3 days.</p>
             </div>
           </div>
 
-          <div class="doc-sub-h">Принудительные выходы</div>
+          <div class="doc-sub-h">Forced exits</div>
           <ul class="exit-list">
-            <li><strong>Снятие ликвидности против позиции</strong> — выход немедленно</li>
-            <li><strong>Длинная серия периодов в одну сторону против тебя</strong> — закрывай позицию</li>
-            <li><strong>3+ периода боковика подряд</strong> — движение выдохлось, смысла держать нет</li>
+            <li><strong>A liquidity raid against your position</strong> — exit immediately</li>
+            <li><strong>A long run of periods against you</strong> — close the position</li>
+            <li><strong>3+ consecutive balancing periods</strong> — the move has run out of steam, no point holding</li>
           </ul>
         </div>
 
         <!-- 9. SECOND WINDOW -->
         <div class="doc-section" id="second-window">
           <div class="doc-section-head">
-            <span class="doc-section-num">09 / второе окно</span>
-            <h2>Второе окно (15:30–17:00) — US Open overlap</h2>
-            <p>Приток ликвидности с открытием американской сессии даёт второй шанс войти в дневной тренд.</p>
+            <span class="doc-section-num">09 / second window</span>
+            <h2>Second window (15:30–17:00) — US Open overlap</h2>
+            <p>Liquidity picks up with the American session's open, giving a second chance to enter the day's trend.</p>
           </div>
           <ul class="info-list">
-            <li>Действуют те же принципы, что утром — уклон дня, ключевые уровни, подтверждённый вход</li>
-            <li>Смотри текущую value area и положение цены относительно VWAP</li>
-            <li>Лучший вход — сигнал <strong>◆ + FVG</strong> в сторону уклона дня, когда контекст уже сложился</li>
-            <li>Стопы жёстче обычных — день заканчивается, времени на отработку меньше</li>
+            <li>Same principles as the morning apply — the day's lean, key levels, a confirmed entry</li>
+            <li>Watch the current value area and price's position relative to VWAP</li>
+            <li>The best entry is a <strong>◆ + FVG</strong> signal in the direction of the day's lean, once context is already in place</li>
+            <li>Stops should be tighter than usual — the day is ending, less time to play out</li>
           </ul>
         </div>
 
         <!-- 10. DAY TYPES -->
         <div class="doc-section" id="day-types">
           <div class="doc-section-head">
-            <span class="doc-section-num">10 / типы дней</span>
-            <h2>Типы дней и тактика</h2>
-            <p>Тип дня определяется к середине сессии и задаёт тактику до закрытия.</p>
+            <span class="doc-section-num">10 / day types</span>
+            <h2>Day types and tactics</h2>
+            <p>The day type becomes clear by mid-session and sets the tactics through the close.</p>
           </div>
           <div class="daytype-grid">
             <div class="daytype-card dt-trend">
               <span class="dt-badge">Trend</span>
-              <h4>Трендовый день</h4>
-              <div class="dt-row-lbl">Признаки</div>
-              <p>Узкий IB + одностороннее открытие + сильный уклон</p>
-              <div class="dt-row-lbl">Тактика</div>
-              <p>Входи на pullback, не фади движение, трейли стоп за периодами</p>
+              <h4>Trend Day</h4>
+              <div class="dt-row-lbl">Signs</div>
+              <p>Narrow IB + one-sided open + a strong lean</p>
+              <div class="dt-row-lbl">Tactics</div>
+              <p>Enter on pullbacks, don't fade the move, trail the stop behind periods</p>
             </div>
             <div class="daytype-card dt-normal">
               <span class="dt-badge">Normal</span>
               <h4>Normal Day</h4>
-              <div class="dt-row-lbl">Признаки</div>
-              <p>Один пробой IB, умеренный уклон</p>
-              <div class="dt-row-lbl">Тактика</div>
-              <p>Сетап пробоя IB, частичная фиксация на 1× IB</p>
+              <div class="dt-row-lbl">Signs</div>
+              <p>One IB break, a moderate lean</p>
+              <div class="dt-row-lbl">Tactics</div>
+              <p>The IB breakout setup, partial off at 1× IB</p>
             </div>
             <div class="daytype-card dt-neutral">
               <span class="dt-badge">Neutral</span>
               <h4>Neutral Day</h4>
-              <div class="dt-row-lbl">Признаки</div>
-              <p>Оба края IB пробиты в течение дня</p>
-              <div class="dt-row-lbl">Тактика</div>
-              <p>Fade второго пробоя, цель — IB Mid</p>
+              <div class="dt-row-lbl">Signs</div>
+              <p>Both edges of IB break during the day</p>
+              <div class="dt-row-lbl">Tactics</div>
+              <p>Fade the second break, target the IB midpoint</p>
             </div>
             <div class="daytype-card dt-orr">
               <span class="dt-badge">ORR</span>
               <h4>Open-Rejection-Reverse</h4>
-              <div class="dt-row-lbl">Признаки</div>
-              <p>Открытие снаружи VA + быстрый возврат внутрь</p>
-              <div class="dt-row-lbl">Тактика</div>
-              <p>Вход на ретесте края VA изнутри, цель — PDPOC</p>
+              <div class="dt-row-lbl">Signs</div>
+              <p>Open outside the VA + a quick return inside</p>
+              <div class="dt-row-lbl">Tactics</div>
+              <p>Enter on the retest of the VA edge from inside, target the PDPOC</p>
             </div>
           </div>
         </div>
@@ -677,17 +671,17 @@
         <!-- 11. AVOID -->
         <div class="doc-section" id="avoid">
           <div class="doc-section-head">
-            <span class="doc-section-num">11 / стоп-лист</span>
-            <h2>Когда НЕ торговать</h2>
+            <span class="doc-section-num">11 / stop list</span>
+            <h2>When NOT to trade</h2>
           </div>
           <div class="warn-block">
-            <h3>⚠️ Красные флаги</h3>
+            <h3>⚠️ Red flags</h3>
             <ul class="warn-list">
-              <li><strong>Слабый уклон и нет одностороннего открытия</strong> — нарратива дня нет</li>
-              <li><strong>Нейтральный день вчера + открытие внутри диапазона</strong> — ловушка у края IB</li>
-              <li><strong>Важные новости в окне 09:00–11:00</strong> — пропусти или уменьши размер</li>
-              <li><strong>POC прямо у края IB</strong> — движение туда магнитное, не торговое</li>
-              <li><strong>IB &gt; 120 пунктов</strong> — тренд уже начался без тебя, момент упущен</li>
+              <li><strong>Weak lean and no one-sided open</strong> — there's no narrative for the day</li>
+              <li><strong>Yesterday was a neutral day + today opened inside the range</strong> — a trap at the IB edge</li>
+              <li><strong>Major news in the 09:00–11:00 window</strong> — skip or cut size</li>
+              <li><strong>POC sitting right at the IB edge</strong> — the move there is magnetic, not tradable</li>
+              <li><strong>IB &gt; 120 points</strong> — the trend already started without you, the moment is gone</li>
             </ul>
           </div>
         </div>
@@ -714,15 +708,15 @@
         </g>
       </svg>
       <div>
-        <p class="foot__name">Стратегия FDAX</p>
+        <p class="foot__name">FDAX Strategy</p>
         <p class="foot__sub">TPO / Market Profile · Relief</p>
       </div>
     </div>
-    <nav class="foot__nav" aria-label="Футер">
-      <a class="link" href="strategy-nq.html">Стратегия NQ</a>
-      <a class="link" href="relief.html">Relief</a>
-      <a class="link" href="pricing.html">Цены</a>
-      <a class="link" href="about.html">О нас</a>
+    <nav class="foot__nav" aria-label="Footer">
+      <a class="link" href="strategy-nq-en.html">NQ Strategy</a>
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <a class="link" href="about-en.html">About</a>
     </nav>
     <p class="foot__fine">
       <span>TPO / Market Profile · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>

@@ -1,48 +1,35 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Surface Tension — три индикатора для TradingView: Relief (Market Profile TPO), Meridian (сетапы + Undertow), Contour (6-state аукцион). PineScript v6.">
-<meta property="og:title" content="Surface Tension — Market Profile для TradingView">
-<meta property="og:description" content="Relief, Meridian и Contour — инструменты для чтения рыночной структуры на TradingView.">
+<meta name="description" content="Surface Tension — three TradingView indicators: Relief (Market Profile TPO), Meridian (setups + Undertow), Contour (6-state auction). PineScript v6.">
+<meta property="og:title" content="Surface Tension — Market Profile instruments for TradingView">
+<meta property="og:description" content="Relief, Meridian, and Contour — tools for reading market structure on TradingView.">
 <meta property="og:type" content="website">
-<meta property="og:locale" content="ru_RU">
+<meta property="og:locale" content="en_US">
 <meta name="theme-color" content="#E7DCC4">
-<title>Surface Tension — Market Profile Instruments для TradingView</title>
+<title>Surface Tension — Market Profile Instruments for TradingView</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<style>
-  /*
-    RU typography (two fonts):
-      --font-display / --font-mono → JetBrains Mono  (headings, FAQ Q, UI labels)
-      --font-text                   → Rubik           (body copy)
-    Exception: Latin brand wordmark in hero keeps Space Grotesk.
-  */
-  :root {
-    --font-display: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-    --font-text:    'Rubik', system-ui, -apple-system, sans-serif;
-    --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  }
-  .hero__title { font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif; }
-</style>
+<!-- EN typography: Space Grotesk only (see --font-* defaults in styles.css) -->
 </head>
 <body>
 
 <div class="atmosphere" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
-<a href="#main" class="skip-link">Перейти к содержимому</a>
+<a href="#main" class="skip-link">Skip to content</a>
 
 <!-- ── NAV ── -->
 <header class="runhead">
   <div class="wrap">
-    <a class="runhead__home" href="index.html" aria-label="Surface Tension Indicators">
+    <a class="runhead__home" href="en.html" aria-label="Surface Tension Indicators">
       <div class="runhead__logo-mark">
         <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g style="isolation:isolate">
@@ -62,20 +49,20 @@
         <span class="runhead__lockup-sub">Indicators</span>
       </div>
     </a>
-    <button class="runhead__toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="runhead-menu">
+    <button class="runhead__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="runhead-menu">
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
     </button>
-    <nav class="runhead__nav" id="runhead-menu" aria-label="Основная навигация">
-      <span class="lang-switch"><a href="index.html" class="active">RU</a><span class="lang-switch__sep">/</span><a href="en.html">EN</a></span>
-      <a class="link" href="relief.html">Relief</a>
-      <a class="link" href="meridian.html">Meridian</a>
-      <a class="link" href="contour.html">Contour</a>
-      <a class="link" href="free.html">Free</a>
-      <a class="link" href="pricing.html">Цены</a>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Main navigation">
+      <span class="lang-switch"><a href="index.html">RU</a><span class="lang-switch__sep">/</span><a href="en.html" class="active">EN</a></span>
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link" href="meridian-en.html">Meridian</a>
+      <a class="link" href="contour-en.html">Contour</a>
+      <a class="link" href="free-en.html">Free</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
       <a class="link" href="#faq">FAQ</a>
-      <a class="button" href="https://ru.tradingview.com/script/zW96uPe2-relief-by-robotlegs/" target="_blank" rel="noopener">
+      <a class="button" href="https://www.tradingview.com/script/zW96uPe2-relief-by-robotlegs/" target="_blank" rel="noopener">
         TradingView
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
@@ -120,29 +107,29 @@
     <div class="hero__grid">
       <div class="hero__left">
         <p class="hero__eyebrow reveal" style="--i:0">
-          PineScript v6 <span class="accent-dot" aria-hidden="true">·</span> Любой инструмент и таймфрейм
+          PineScript v6 <span class="accent-dot" aria-hidden="true">·</span> Any instrument, any timeframe
         </p>
         <h1 class="hero__title reveal" style="--i:1">Surface Tension<sup class="hero__sup">read the surface</sup></h1>
         <p class="hero__sub reveal" style="--i:2">
-          Три самостоятельных инструмента для чтения структуры рынка на TradingView.
-          <span class="hero__term" style="--acc:var(--relief);--acc-deep:var(--relief-deep);--acc-tint:var(--relief-tint);--acc-border:var(--relief-border)">Relief</span> — Market Profile на 1m с TPO-профилем A–Z.
-          <span class="hero__term" style="--acc:var(--meridian);--acc-deep:var(--meridian-deep);--acc-tint:var(--meridian-tint);--acc-border:var(--meridian-border)">Meridian</span> — сетапы структуры и сигнал Undertow с Resonance-подтверждением.
-          <span class="hero__term" style="--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-tint:var(--contour-tint);--acc-border:var(--contour-border)">Contour</span> — 6 состояний аукциона по 30-минутным периодам с сигналом, отфильтрованным по состоянию.
+          Three standalone tools for reading market structure on TradingView.
+          <span class="hero__term" style="--acc:var(--relief);--acc-deep:var(--relief-deep);--acc-tint:var(--relief-tint);--acc-border:var(--relief-border)">Relief</span> — Market Profile on 1m with an A–Z TPO profile.
+          <span class="hero__term" style="--acc:var(--meridian);--acc-deep:var(--meridian-deep);--acc-tint:var(--meridian-tint);--acc-border:var(--meridian-border)">Meridian</span> — structure setups plus the Undertow signal with Resonance confirmation.
+          <span class="hero__term" style="--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-tint:var(--contour-tint);--acc-border:var(--contour-border)">Contour</span> — a 6-state auction read on 30-minute periods, with the signal filtered by state.
         </p>
         <div class="hero__cta reveal" style="--i:3">
           <a class="button" href="#indicators">
-            Смотреть инструменты
+            See the indicators
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
-          <a class="link" href="pricing.html">Посмотреть цены</a>
+          <a class="link" href="pricing-en.html">View pricing</a>
         </div>
       </div>
 
       <div class="hero__right">
         <div class="console-stack">
-          <p class="console-stack__label reveal" style="--i:3">Консоль <span class="accent-dot" aria-hidden="true">·</span> 3 инструмента</p>
+          <p class="console-stack__label reveal" style="--i:3">Console <span class="accent-dot" aria-hidden="true">·</span> 3 instruments</p>
 
-          <a class="signal-panel reveal" href="relief.html" data-mark="R" style="--i:4;--acc:var(--relief);--acc-deep:var(--relief-deep);--acc-glow:var(--relief-glow);--acc-tint:var(--relief-tint)">
+          <a class="signal-panel reveal" href="relief-en.html" data-mark="R" style="--i:4;--acc:var(--relief);--acc-deep:var(--relief-deep);--acc-glow:var(--relief-glow);--acc-tint:var(--relief-tint)">
             <div class="signal-panel__bar">
               <svg class="signal-panel__hex" width="18" height="18" viewBox="0 6 28 12" xmlns="http://www.w3.org/2000/svg">
                 <g style="isolation:isolate">
@@ -166,7 +153,7 @@
             </div>
           </a>
 
-          <a class="signal-panel reveal" href="meridian.html" data-mark="M" style="--i:5;--acc:var(--meridian);--acc-deep:var(--meridian-deep);--acc-glow:var(--meridian-glow);--acc-tint:var(--meridian-tint)">
+          <a class="signal-panel reveal" href="meridian-en.html" data-mark="M" style="--i:5;--acc:var(--meridian);--acc-deep:var(--meridian-deep);--acc-glow:var(--meridian-glow);--acc-tint:var(--meridian-tint)">
             <div class="signal-panel__bar">
               <svg class="signal-panel__hex" width="15" height="18" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
                 <g style="isolation:isolate">
@@ -190,7 +177,7 @@
             </div>
           </a>
 
-          <a class="signal-panel reveal" href="contour.html" data-mark="C" style="--i:6;--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-glow:var(--contour-glow);--acc-tint:var(--contour-tint)">
+          <a class="signal-panel reveal" href="contour-en.html" data-mark="C" style="--i:6;--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-glow:var(--contour-glow);--acc-tint:var(--contour-tint)">
             <div class="signal-panel__bar">
               <svg class="signal-panel__hex" width="15" height="18" viewBox="0 -3 28 31" xmlns="http://www.w3.org/2000/svg">
                 <g style="isolation:isolate">
@@ -223,11 +210,11 @@
   <section class="wrap-section" id="indicators" aria-labelledby="indicators-head">
     <div class="wrap">
       <div class="sec-head">
-        <span class="sec-head__label" id="indicators-head">Индикаторы</span>
+        <span class="sec-head__label" id="indicators-head">Indicators</span>
         <span class="sec-head__rule" aria-hidden="true"></span>
-        <span class="sec-head__no">3 самостоятельных инструмента <span class="accent-dot" aria-hidden="true">·</span> IND-01…03</span>
+        <span class="sec-head__no">3 standalone tools <span class="accent-dot" aria-hidden="true">·</span> IND-01…03</span>
       </div>
-      <p class="sec-sub">Каждый решает свою задачу и работает отдельно. Вместе — полная картина структуры рынка.</p>
+      <p class="sec-sub">Each one solves a different problem and works on its own. Together, a full read on market structure.</p>
 
       <div class="modules-grid is-3col">
         <div class="mod-card reveal" style="--i:0;--acc:var(--relief);--acc-deep:var(--relief-deep);--acc-tint:var(--relief-tint);--acc-border:var(--relief-border)">
@@ -243,19 +230,19 @@
           </div>
           <h3>Relief</h3>
           <p class="mod-card__tag">Market Profile · 1m · TPO A–Z · Zigzag</p>
-          <p>Полноценный Market Profile на 1-минутном графике. TPO-профиль из 30-минутных периодов A–Z, POC и Value Area по алгоритму TV TPO, nPOC глубиной до 60 дней. Raid, EQH/EQL, Initial Balance с расширениями и типом открытия, балльный Bias, инфо-панель, зигзаг с BOS и CHoCH.</p>
+          <p>A full Market Profile on the 1-minute chart. A–Z TPO periods, POC and Value Area computed with TV's own TPO algorithm, nPOC going back up to 60 days. Raid, EQH/EQL, Initial Balance with extensions and open type, a scored Bias, an info panel, and a zigzag with BOS and CHoCH.</p>
           <div class="mod-card__chips">
             <span class="chip on">POC / VAH / VAL</span>
             <span class="chip on">Raid G / Raid S</span>
             <span class="chip on">IB Ext · A-HL · OD</span>
             <span class="chip on">Bias ▲ L n/5</span>
-            <span class="chip on">EQH/EQL + магнит</span>
+            <span class="chip on">EQH/EQL + magnet</span>
             <span class="chip on">Zigzag + BOS + CHoCH</span>
           </div>
           <div class="mod-card__till">
             <span class="mod-card__price">PineScript v6</span>
-            <a class="link mod-card__more" href="relief.html">
-              Подробнее
+            <a class="link mod-card__more" href="relief-en.html">
+              Learn more
               <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="display:inline;vertical-align:-1px"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           </div>
@@ -273,19 +260,19 @@
             </svg>
           </div>
           <h3>Meridian</h3>
-          <p class="mod-card__tag">Сетапы структуры + Undertow · Resonance</p>
-          <p>Четыре паттерна структуры — Transit, Fulcrum, Needle, Volatile Bar — в одном движке с сигнальным слоем Undertow. Совпадение сетапа и Undertow в общем окне даёт усиленную метку Resonance. Плюс зоны Undertow старшего таймфрейма и зигзаг с BOS.</p>
+          <p class="mod-card__tag">Structure setups + Undertow · Resonance</p>
+          <p>Four structure patterns — Transit, Fulcrum, Needle, Volatile Bar — in one engine alongside the Undertow signal layer. When a setup and Undertow line up in the same window, you get an upgraded Resonance mark. Plus higher-timeframe Undertow zones and a zigzag with BOS.</p>
           <div class="mod-card__chips">
             <span class="chip on">Transit · Fulcrum · Needle · VB</span>
             <span class="chip on">Undertow Standard/Precision</span>
-            <span class="chip on">Resonance-подтверждение</span>
-            <span class="chip on">Undertow HTF зоны</span>
+            <span class="chip on">Resonance confirmation</span>
+            <span class="chip on">Undertow HTF zones</span>
             <span class="chip on">Zigzag + BOS</span>
           </div>
           <div class="mod-card__till">
             <span class="mod-card__price">PineScript v6</span>
-            <a class="link mod-card__more" href="meridian.html">
-              Подробнее
+            <a class="link mod-card__more" href="meridian-en.html">
+              Learn more
               <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="display:inline;vertical-align:-1px"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           </div>
@@ -304,19 +291,19 @@
             </svg>
           </div>
           <h3>Contour</h3>
-          <p class="mod-card__tag">6-state аукцион по 30m-периодам · Undertow</p>
-          <p>Классифицирует каждый закрытый 30-минутный период по собственной 6-ступенчатой шкале аукциона и пропускает сигнал Undertow только через разрешённые состояния. Плюс сетап Fulcrum и фильтр ликвидности.</p>
+          <p class="mod-card__tag">6-state auction on 30m periods · Undertow</p>
+          <p>Classifies every closed 30-minute period on its own 6-step auction scale, and lets the Undertow signal through only in the states it allows. Plus a Fulcrum setup and a liquidity filter.</p>
           <div class="mod-card__chips">
-            <span class="chip on">6 состояний аукциона</span>
-            <span class="chip on">Undertow state-filtered</span>
+            <span class="chip on">6 auction states</span>
+            <span class="chip on">Undertow, state-filtered</span>
             <span class="chip on">Liquidity bypass</span>
             <span class="chip on">Fulcrum</span>
             <span class="chip on">Standard/Precision</span>
           </div>
           <div class="mod-card__till">
             <span class="mod-card__price">PineScript v6</span>
-            <a class="link mod-card__more" href="contour.html">
-              Подробнее
+            <a class="link mod-card__more" href="contour-en.html">
+              Learn more
               <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="display:inline;vertical-align:-1px"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           </div>
@@ -341,24 +328,24 @@
         </div>
         <div class="free-panel__body">
           <div class="free-panel__meta">
-            <span class="free-panel__badge"><span class="status-dot" aria-hidden="true"></span>Бесплатно</span>
+            <span class="free-panel__badge"><span class="status-dot" aria-hidden="true"></span>Free</span>
             <span class="free-panel__stamp">$0 · PUBLIC</span>
           </div>
           <h3 id="free-head">TPO Periods</h3>
-          <p>Публичный индикатор — только суть TPO без лишних модулей. Для тех, кто хочет начать работать с Market Profile.</p>
+          <p>A public indicator — just the TPO essentials, no extra modules. For anyone looking to start working with Market Profile.</p>
           <div class="free-panel__chips">
-            <span class="chip on">Периоды A–Z · 30 мин</span>
-            <span class="chip">Цветовая маркировка</span>
-            <span class="chip">Любой инструмент</span>
-            <span class="chip">Без Premium</span>
+            <span class="chip on">A–Z periods · 30 min</span>
+            <span class="chip">Colour-coded</span>
+            <span class="chip">Any instrument</span>
+            <span class="chip">No Premium</span>
           </div>
         </div>
         <div class="free-panel__cta">
-          <a class="button" href="https://ru.tradingview.com/script/iEBE9mSm-tpo-periods/" target="_blank" rel="noopener">
-            Открыть на TradingView
+          <a class="button" href="https://www.tradingview.com/script/iEBE9mSm-tpo-periods/" target="_blank" rel="noopener">
+            Open on TradingView
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
-          <span class="free-panel__hint">Старт без оплаты · 1 клик</span>
+          <span class="free-panel__hint">No payment · 1 click</span>
         </div>
       </div>
     </div>
@@ -370,95 +357,95 @@
       <div class="sec-head">
         <span class="sec-head__label" id="faq-head">FAQ</span>
         <span class="sec-head__rule" aria-hidden="true"></span>
-        <span class="sec-head__no">Частые вопросы</span>
+        <span class="sec-head__no">Frequently asked</span>
       </div>
 
       <div class="faq-groups">
 
         <div>
-          <p class="faq-group__label">Начало работы</p>
+          <p class="faq-group__label">Getting started</p>
           <div class="faq-list">
             <div class="faq-row">
-              <div class="faq-row__q"><span>Какой таймфрейм нужен и почему именно 1m?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Relief работает только на 1-минутном графике — TPO-периоды длятся 30 минут, и для точных кубиков нужны 1m-свечи. На старших ТФ кубики будут неточными или не появятся вовсе. Проверь параметр «Старт сессии» — время должно совпадать с открытием твоего рынка (например 8:00 CET для GER40).</p></div>
+              <div class="faq-row__q"><span>What timeframe do I need, and why 1m?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>Relief only runs on the 1-minute chart. TPO periods last 30 minutes, and the profile needs 1m candles to build accurately — on higher timeframes the cubes come out wrong or don't appear at all. Check the "Session start" setting matches your market's open (e.g. 8:00 CET for GER40).</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>Что такое «Ticks per row»?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Размер одного TPO-ряда в тиках. Должен совпадать со значением «Ticks per row» в стандартном TPO-индикаторе TradingView — иначе профили разъедутся.</p></div>
+              <div class="faq-row__q"><span>What's "Ticks per row"?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>The size of one TPO row in ticks. It has to match the "Ticks per row" setting in TradingView's own TPO indicator, or the profiles won't line up.</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>Нужен ли TradingView Premium?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Да, для части функций. Данные индексов (GER40, S&amp;P 500 и другие) доступны только на Premium+. Режим Precision сигнала Undertow в Meridian использует внутренние API для младших таймфреймов и bid/ask — тоже нужен Premium и выше. Сам TPO-профиль Relief и Contour работает на любом плане; ограничение бесплатного — глубина истории 1m (~1500 баров).</p></div>
+              <div class="faq-row__q"><span>Do I need TradingView Premium?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>Yes, for some features. Index data (GER40, S&amp;P 500, etc.) is Premium+ only. Meridian's Undertow Precision mode uses internal TradingView APIs for lower timeframes and bid/ask, which also needs Premium or above. Relief and Contour's core TPO profile work on any plan — the free plan's real limit is 1m history depth (~1,500 bars).</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>Как получить доступ к индикаторам?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Индикаторы закрытые — свяжись с автором после выбора тарифа.</p></div>
+              <div class="faq-row__q"><span>How do I get access to the indicators?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>The indicators are closed-source/invite-only. Get in touch with the author after picking a plan.</p></div>
             </div>
           </div>
         </div>
 
         <div>
-          <p class="faq-group__label">Уровни и зоны</p>
+          <p class="faq-group__label">Levels &amp; zones</p>
           <div class="faq-list">
             <div class="faq-row">
-              <div class="faq-row__q"><span>Что такое Poor High / Poor Low?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Экстремум сессии, на котором отметилось менее двух TPO-периодов — признак незавершённого аукциона. Такие зоны часто переписываются: используй как цель или зону разворота.</p></div>
+              <div class="faq-row__q"><span>What are Poor High / Poor Low?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>A session extreme touched by fewer than two TPO periods — a sign of an unfinished auction. These zones often get revisited, so treat them as a target or a reversal zone.</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>nPOC — что это и какие у него состояния?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>POC предыдущего дня, до которого цена ещё не добралась, — сильный магнит. Синий — нетронут. Красный — протестирован фитилём, остаётся активным. Серый — закрыт телом, заморожен на баре пробоя. Глубина истории задаётся в настройках (по умолчанию 20 дней, максимум 60).</p></div>
+              <div class="faq-row__q"><span>What's nPOC, and what do its states mean?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>The previous day's POC, still untouched by price — a strong magnet. Blue: untouched. Red: wick-tested, still active. Grey: closed through by a candle body, frozen at the break. History depth is configurable (20 days by default, 60 max).</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>Как читать pVAH/pVAL и тип открытия?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>pVAH и pVAL — границы Value Area вчерашнего дня (68% объёма). Открытие выше pVAH — бычий контекст (Outside above), ниже pVAL — медвежий (Outside below), внутри VA — двусторонний аукцион, требует осторожности.</p></div>
+              <div class="faq-row__q"><span>How do I read pVAH/pVAL and open type?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>pVAH and pVAL are yesterday's Value Area bounds (68% of volume). Opening above pVAH is a bullish context (Outside above), below pVAL is bearish (Outside below), and opening inside the VA means a two-sided auction — trade with more caution.</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>Что такое EQH/EQL и магнит?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Equal Highs/Lows — уровни повторных касаний без пробоя, за которыми стоят скопления стопов. Когда несколько EQ-уровней кластеризуются рядом, индикатор ставит метку магнита — зону повышенного притяжения цены.</p></div>
+              <div class="faq-row__q"><span>What are EQH/EQL and the magnet mark?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>Equal Highs/Lows — levels touched more than once without breaking, with stops stacked behind them. When several EQ levels cluster together, the indicator marks a magnet — a zone of elevated pull on price.</p></div>
             </div>
           </div>
         </div>
 
         <div>
-          <p class="faq-group__label">VWAP и сигналы</p>
+          <p class="faq-group__label">VWAP &amp; signals</p>
           <div class="faq-list">
             <div class="faq-row">
-              <div class="faq-row__q"><span>Что означает ★ на графике Relief?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Первый тест VWAP фитилём за сессию после периода B — самый значимый: рынок впервые возвращается к session VWAP после формирования bias. Остальные тесты отмечены обычным кружком.</p></div>
+              <div class="faq-row__q"><span>What does the ★ mean on the Relief chart?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>The session's first wick test of VWAP after period B — the most meaningful one, since it's the market's first return to session VWAP after bias has formed. Every other test gets a plain circle.</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>В чём разница Raid G и Raid S?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Оба — снятие ликвидности с экстремумов прошлого периода. Raid G (Grab) — цена вышла и быстро вернулась: ложный пробой, вероятный разворот. Raid S (Sweep) — цена задержалась за уровнем N баров: возможное продолжение.</p></div>
+              <div class="faq-row__q"><span>What's the difference between Raid G and Raid S?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>Both are liquidity grabs off the previous period's extremes. Raid G (Grab) — price pushed through and snapped back fast: a false break, likely reversal. Raid S (Sweep) — price stayed past the level for N bars: possible continuation.</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>Что означает HL Sweep?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Появляется после серии из N периодов одного направления, когда следующий период выходит за последний экстремум и быстро возвращается. Число в метке — длина серии; чем она длиннее, тем значимее сигнал истощения тренда.</p></div>
+              <div class="faq-row__q"><span>What does HL Sweep mean?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>It appears after a run of N periods in the same direction, when the next period breaks the last extreme and snaps back quickly. The number in the mark is the run length — the longer it is, the more it signals trend exhaustion.</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>Как работает Bias на периоде B?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>В конце периода B считается балльная оценка ▲L n/5 или ▼S n/5: позиция close относительно VWAP плюс до 4 баллов за направление A/B, пробой IBH/IBL и позицию к IB Mid. Это самостоятельная метка-контекст, не часть инфо-панели.</p></div>
+              <div class="faq-row__q"><span>How does Bias work on period B?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>At the close of period B, Relief scores a ▲L n/5 or ▼S n/5 read: close position relative to VWAP, plus up to 4 more points for A/B direction, an IBH/IBL break, and position versus IB Mid. It's a standalone context mark, not part of the info panel.</p></div>
             </div>
           </div>
         </div>
 
         <div>
-          <p class="faq-group__label">Дополнительно</p>
+          <p class="faq-group__label">More</p>
           <div class="faq-list">
             <div class="faq-row">
-              <div class="faq-row__q"><span>Работают ли индикаторы на других инструментах, кроме GER40?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Да, на любом инструменте TradingView. Настрой под свой рынок: старт сессии (час/минуты CET), Ticks per row (согласовать со стандартным TPO TV) и VA % (обычно 68%).</p></div>
+              <div class="faq-row__q"><span>Do the indicators work on instruments other than GER40?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>Yes, on any TradingView instrument. Tune it to your market: session start (hour/minute CET), Ticks per row (match TradingView's own TPO), and VA % (usually 68%).</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>Сколько истории хранится?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>nPOC — до 60 дней (настраивается). Ограничение по факту — глубина 1m-данных TradingView: на бесплатном плане это 1500–5000 баров. Если ранние периоды не видны — это лимит платформы, не индикатора.</p></div>
+              <div class="faq-row__q"><span>How much history is kept?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>nPOC goes back up to 60 days (configurable). The real limit is TradingView's own 1m data depth — 1,500–5,000 bars on the free plan. If early periods aren't showing, that's a platform limit, not the indicator.</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>Почему некоторые сигналы исчезают через пару свечей?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Это подтверждение Raid: индикатор ждёт N свечей (по умолчанию 3) после Grab/Sweep. Если разворота не случилось — сигнал признаётся ложным и удаляется. Отключается параметром подтверждения = 0.</p></div>
+              <div class="faq-row__q"><span>Why do some signals disappear after a few candles?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>That's Raid confirmation: the indicator waits N candles (3 by default) after a Grab/Sweep. If price hasn't reversed by then, the signal is marked false and removed. Set the confirmation parameter to 0 to disable it.</p></div>
             </div>
             <div class="faq-row">
-              <div class="faq-row__q"><span>Можно ли торговать по одному сигналу?</span><span class="faq-row__icon">+</span></div>
-              <div class="faq-row__a"><p>Технически можно, но без контекста (тип открытия, Bias, VWAP) эффективность заметно ниже. Сильнее всего сетапы, где совпадают несколько сигналов — например Raid G по Bias на pVAH при Outside-открытии.</p></div>
+              <div class="faq-row__q"><span>Can I trade off a single signal?</span><span class="faq-row__icon">+</span></div>
+              <div class="faq-row__a"><p>Technically, yes — but without context (open type, Bias, VWAP) it performs noticeably worse. The strongest setups are where several signals line up, e.g. a Raid G in the direction of Bias at pVAH on an Outside open.</p></div>
             </div>
           </div>
         </div>
@@ -489,17 +476,17 @@
         <p class="foot__sub">PineScript v6 · TradingView</p>
       </div>
     </div>
-    <nav class="foot__nav" aria-label="Футер">
-      <a class="link" href="relief.html">Relief</a>
-      <a class="link" href="meridian.html">Meridian</a>
-      <a class="link" href="contour.html">Contour</a>
-      <a class="link" href="free.html">Free</a>
-      <a class="link" href="pricing.html">Цены</a>
-      <a class="link" href="about.html">О нас</a>
-      <a class="link" href="legacy.html">Архив</a>
+    <nav class="foot__nav" aria-label="Footer">
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link" href="meridian-en.html">Meridian</a>
+      <a class="link" href="contour-en.html">Contour</a>
+      <a class="link" href="free-en.html">Free</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <a class="link" href="about-en.html">About</a>
+      <a class="link" href="legacy-en.html">Archive</a>
     </nav>
     <p class="foot__fine">
-      <span>3 инструмента · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
+      <span>3 instruments · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
     </p>
   </div>
 </footer>

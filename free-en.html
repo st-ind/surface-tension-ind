@@ -1,41 +1,35 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Бесплатные инструменты Surface Tension: TPO Periods — публичный индикатор для TradingView, плюс FDAX TPO Verdict, Risk Calculator и FDAX Guide. Без подписки, без Premium.">
-<meta property="og:title" content="Free — открытые инструменты · Surface Tension">
-<meta property="og:description" content="TPO Periods на TradingView бесплатно, плюс три веб-инструмента: FDAX TPO Verdict, Risk Calculator и FDAX Guide.">
+<meta name="description" content="Free Surface Tension tools: TPO Periods — a public TradingView indicator, plus FDAX TPO Verdict, Risk Calculator, and FDAX Guide. No subscription, no Premium required.">
+<meta property="og:title" content="Free — open tools · Surface Tension">
+<meta property="og:description" content="TPO Periods on TradingView for free, plus three web tools: FDAX TPO Verdict, Risk Calculator, and FDAX Guide.">
 <meta property="og:type" content="website">
-<meta property="og:locale" content="ru_RU">
+<meta property="og:locale" content="en_US">
 <meta name="theme-color" content="#E7DCC4">
-<title>Free — открытые инструменты · Surface Tension</title>
+<title>Free — open tools · Surface Tension</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<style>
-  :root {
-    --font-display: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-    --font-text:    'Rubik', system-ui, -apple-system, sans-serif;
-    --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  }
-</style>
+<!-- EN typography: Space Grotesk only (see --font-* defaults in styles.css) -->
 </head>
 <body>
 
 <div class="atmosphere" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
-<a href="#main" class="skip-link">Перейти к содержимому</a>
+<a href="#main" class="skip-link">Skip to content</a>
 
 <!-- ── NAV ── -->
 <header class="runhead">
   <div class="wrap">
-    <a class="runhead__home" href="index.html" aria-label="Surface Tension Indicators">
+    <a class="runhead__home" href="en.html" aria-label="Surface Tension Indicators">
       <div class="runhead__logo-mark">
         <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g style="isolation:isolate">
@@ -55,29 +49,29 @@
         <span class="runhead__lockup-sub">Indicators</span>
       </div>
     </a>
-    <button class="runhead__toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="runhead-menu">
+    <button class="runhead__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="runhead-menu">
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
     </button>
-    <nav class="runhead__nav" id="runhead-menu" aria-label="Основная навигация">
-      <span class="lang-switch"><a href="free.html" class="active">RU</a><span class="lang-switch__sep">/</span><a href="free-en.html">EN</a></span>
-      <a class="link" href="relief.html">Relief</a>
-      <a class="link" href="meridian.html">Meridian</a>
-      <a class="link" href="contour.html">Contour</a>
-      <a class="link is-current" href="free.html">Free</a>
-      <a class="link" href="pricing.html">Цены</a>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Main navigation">
+      <span class="lang-switch"><a href="free.html">RU</a><span class="lang-switch__sep">/</span><a href="free-en.html" class="active">EN</a></span>
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link" href="meridian-en.html">Meridian</a>
+      <a class="link" href="contour-en.html">Contour</a>
+      <a class="link is-current" href="free-en.html">Free</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
       <div class="runhead__dropdown" data-dropdown>
         <button class="runhead__dropdown-btn" type="button" aria-expanded="false">
-          На странице
+          On this page
           <svg class="runhead__dropdown-caret" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <ul class="runhead__dropdown-menu">
           <li><a href="#tpo">TPO Periods</a></li>
-          <li><a href="#tools">Инструменты</a></li>
+          <li><a href="#tools">Tools</a></li>
         </ul>
       </div>
-      <a class="button" href="https://ru.tradingview.com/script/iEBE9mSm-tpo-periods/" target="_blank" rel="noopener">
+      <a class="button" href="https://www.tradingview.com/script/iEBE9mSm-tpo-periods/" target="_blank" rel="noopener">
         TradingView
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
@@ -119,9 +113,9 @@
       </svg>
     </div>
     <div class="wrap">
-      <p class="page-head__eyebrow reveal" style="--i:0">Бесплатно <span class="accent-dot" aria-hidden="true">·</span> Без регистрации</p>
-      <h1 class="reveal" style="--i:1">Открытый доступ.<br><em>Без Premium.</em></h1>
-      <p class="reveal" style="--i:2">Публичный индикатор для TradingView и три веб-инструмента — без подписки и без ограничений по плану. Для тех, кто только начинает или хочет попробовать подход Surface Tension.</p>
+      <p class="page-head__eyebrow reveal" style="--i:0">Free <span class="accent-dot" aria-hidden="true">·</span> No signup</p>
+      <h1 class="reveal" style="--i:1">Open access.<br><em>No Premium.</em></h1>
+      <p class="reveal" style="--i:2">A public TradingView indicator plus three web tools — no subscription, no plan restrictions. For anyone just starting out or trying the Surface Tension approach.</p>
     </div>
   </div>
 
@@ -129,9 +123,9 @@
   <section class="wrap-section" id="tpo" aria-labelledby="tpo-head">
     <div class="wrap">
       <div class="sec-head">
-        <span class="sec-head__label" id="tpo-head">Индикатор</span>
+        <span class="sec-head__label" id="tpo-head">Indicator</span>
         <span class="sec-head__rule" aria-hidden="true"></span>
-        <span class="sec-head__no">TradingView <span class="accent-dot" aria-hidden="true">·</span> Публичный доступ</span>
+        <span class="sec-head__no">TradingView <span class="accent-dot" aria-hidden="true">·</span> Public access</span>
       </div>
 
       <div class="free-panel reveal">
@@ -147,24 +141,24 @@
         </div>
         <div class="free-panel__body">
           <div class="free-panel__meta">
-            <span class="free-panel__badge"><span class="status-dot" aria-hidden="true"></span>Бесплатно</span>
+            <span class="free-panel__badge"><span class="status-dot" aria-hidden="true"></span>Free</span>
             <span class="free-panel__stamp">$0 · PUBLIC</span>
           </div>
           <h3>TPO Periods</h3>
-          <p>Бесплатный порт периодного движка Relief: цветные 30-минутные блоки A–Z прямо поверх свечей, A-High / A-Low, обратный отсчёт до открытия C и подсветка IB Extension с отметками ✓. Работает на любом плане TradingView — без Premium.</p>
+          <p>A free port of Relief's period engine: colored 30-minute A–Z blocks right on the candle chart, A-High / A-Low, a countdown to the C period open, and IB Extension highlights with ✓ marks. Works on any TradingView plan — no Premium required.</p>
           <div class="free-panel__chips">
-            <span class="chip on">Периоды A–Z · 30 мин</span>
+            <span class="chip on">A–Z periods · 30 min</span>
             <span class="chip">A-High / A-Low</span>
             <span class="chip">IB Extension</span>
-            <span class="chip">Countdown до C</span>
+            <span class="chip">Countdown to C</span>
           </div>
         </div>
         <div class="free-panel__cta">
-          <a class="button" href="https://ru.tradingview.com/script/iEBE9mSm-tpo-periods/" target="_blank" rel="noopener">
-            Открыть на TradingView
+          <a class="button" href="https://www.tradingview.com/script/iEBE9mSm-tpo-periods/" target="_blank" rel="noopener">
+            Open on TradingView
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
-          <span class="free-panel__hint">Старт без оплаты · 1 клик</span>
+          <span class="free-panel__hint">Free to start · 1 click</span>
         </div>
       </div>
     </div>
@@ -174,9 +168,9 @@
   <section class="wrap-section wrap-section--no-top" id="tools" aria-labelledby="tools-head">
     <div class="wrap">
       <div class="sec-head">
-        <span class="sec-head__label" id="tools-head">Инструменты</span>
+        <span class="sec-head__label" id="tools-head">Tools</span>
         <span class="sec-head__rule" aria-hidden="true"></span>
-        <span class="sec-head__no">3 веб-приложения <span class="accent-dot" aria-hidden="true">·</span> Без TradingView</span>
+        <span class="sec-head__no">3 web apps <span class="accent-dot" aria-hidden="true">·</span> No TradingView needed</span>
       </div>
 
       <div class="modules-grid is-3col">
@@ -186,15 +180,15 @@
             <span class="mod-card__no">TOOL-01</span><span class="mod-card__icon">🎯</span>
           </div>
           <h3>FDAX TPO Verdict</h3>
-          <p>Интерактивный структурный вердикт по Market Profile FDAX: тип открытия, положение цены, VWAP, Raid — выбери текущие параметры и получи вывод Long, Short или Нейтрально.</p>
+          <p>An interactive structural verdict on FDAX Market Profile: open type, price position, VWAP, Raid — pick the current parameters and get a Long, Short, or Neutral read.</p>
           <div class="mod-card__chips">
             <span class="chip on">FDAX · GER40</span>
             <span class="chip">Market Profile</span>
             <span class="chip">TPO</span>
           </div>
           <div class="mod-card__till">
-            <span class="mod-card__price">Веб-инструмент</span>
-            <span class="link mod-card__more">Открыть инструмент →</span>
+            <span class="mod-card__price">Web tool</span>
+            <span class="link mod-card__more">Open tool →</span>
           </div>
         </a>
 
@@ -203,15 +197,15 @@
             <span class="mod-card__no">TOOL-02</span><span class="mod-card__icon">📐</span>
           </div>
           <h3>Risk Calculator</h3>
-          <p>Калькулятор размера позиции для проп-трейдинга с правилом 10% максимального убытка. Введи размер счёта и риск на сделку — получи лот, стоп в пунктах и потенциальную прибыль.</p>
+          <p>A position-size calculator for prop trading with a 10% max-drawdown rule. Enter account size and risk per trade — get lot size, stop in points, and potential profit.</p>
           <div class="mod-card__chips">
             <span class="chip on">Challenge 10%</span>
             <span class="chip">Prop trading</span>
             <span class="chip">GER40</span>
           </div>
           <div class="mod-card__till">
-            <span class="mod-card__price">Калькулятор</span>
-            <span class="link mod-card__more">Открыть калькулятор →</span>
+            <span class="mod-card__price">Calculator</span>
+            <span class="link mod-card__more">Open calculator →</span>
           </div>
         </a>
 
@@ -220,15 +214,15 @@
             <span class="mod-card__no">TOOL-03</span><span class="mod-card__icon">📖</span>
           </div>
           <h3>FDAX Guide</h3>
-          <p>Пошаговый чеклист торгового дня FDAX: разметка уровней, контекст вчерашнего дня, тип открытия, TPO-анализ, сетапы входа от уровней и IB — от открытия до первого входа.</p>
+          <p>A step-by-step FDAX trading-day checklist: level mapping, prior-day context, open type, TPO analysis, entry setups off levels and the IB — from open to first entry.</p>
           <div class="mod-card__chips">
             <span class="chip on">FDAX · GER40</span>
             <span class="chip">Market Profile</span>
             <span class="chip">Checklist</span>
           </div>
           <div class="mod-card__till">
-            <span class="mod-card__price">Гайд</span>
-            <span class="link mod-card__more">Открыть гайд →</span>
+            <span class="mod-card__price">Guide</span>
+            <span class="link mod-card__more">Open guide →</span>
           </div>
         </a>
 
@@ -255,18 +249,18 @@
       </svg>
       <div>
         <p class="foot__name">Free</p>
-        <p class="foot__sub">Открытые инструменты · Без подписки</p>
+        <p class="foot__sub">Open tools · No subscription</p>
       </div>
     </div>
-    <nav class="foot__nav" aria-label="Футер">
-      <a class="link" href="relief.html">Relief</a>
-      <a class="link" href="meridian.html">Meridian</a>
-      <a class="link" href="contour.html">Contour</a>
-      <a class="link" href="pricing.html">Цены</a>
-      <a class="link" href="about.html">О нас</a>
+    <nav class="foot__nav" aria-label="Footer">
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link" href="meridian-en.html">Meridian</a>
+      <a class="link" href="contour-en.html">Contour</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <a class="link" href="about-en.html">About</a>
     </nav>
     <p class="foot__fine">
-      <span>4 инструмента · Открытый доступ</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
+      <span>4 tools · Open access</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
     </p>
   </div>
 </footer>

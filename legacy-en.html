@@ -1,28 +1,24 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Архив Surface Tension — предыдущие версии индикаторов: Penumbra и Scaffold. Их функции продолжают жить в Meridian и Contour.">
-<meta property="og:title" content="Архив — Surface Tension">
-<meta property="og:description" content="Penumbra и Scaffold остаются рабочими на TradingView. Их функции перенесены и развиваются дальше в составе Meridian и Contour.">
+<meta name="description" content="Surface Tension archive — earlier indicator versions: Penumbra and Scaffold. Their functionality lives on in Meridian and Contour.">
+<meta property="og:title" content="Archive — Surface Tension">
+<meta property="og:description" content="Penumbra and Scaffold still work on TradingView. Their features have moved on and keep evolving inside Meridian and Contour.">
 <meta property="og:type" content="website">
-<meta property="og:locale" content="ru_RU">
+<meta property="og:locale" content="en_US">
 <meta name="theme-color" content="#E7DCC4">
-<title>Архив — Surface Tension</title>
+<title>Archive — Surface Tension</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- EN typography: Space Grotesk only (see --font-* defaults in styles.css) -->
 <style>
-  :root {
-    --font-display: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-    --font-text:    'Rubik', system-ui, -apple-system, sans-serif;
-    --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  }
   .legacy-map {
     display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap;
     font-family: var(--font-mono); font-size: 0.85rem; color: var(--haze);
@@ -41,12 +37,12 @@
 <div class="atmosphere" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
-<a href="#main" class="skip-link">Перейти к содержимому</a>
+<a href="#main" class="skip-link">Skip to content</a>
 
 <!-- ── NAV ── -->
 <header class="runhead">
   <div class="wrap">
-    <a class="runhead__home" href="index.html" aria-label="Surface Tension Indicators">
+    <a class="runhead__home" href="en.html" aria-label="Surface Tension Indicators">
       <div class="runhead__logo-mark">
         <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g style="isolation:isolate">
@@ -66,20 +62,20 @@
         <span class="runhead__lockup-sub">Indicators</span>
       </div>
     </a>
-    <button class="runhead__toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="runhead-menu">
+    <button class="runhead__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="runhead-menu">
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
     </button>
-    <nav class="runhead__nav" id="runhead-menu" aria-label="Основная навигация">
-      <span class="lang-switch"><a href="legacy.html" class="active">RU</a><span class="lang-switch__sep">/</span><a href="legacy-en.html">EN</a></span>
-      <a class="link" href="relief.html">Relief</a>
-      <a class="link" href="meridian.html">Meridian</a>
-      <a class="link" href="contour.html">Contour</a>
-      <a class="link" href="free.html">Free</a>
-      <a class="link is-current" href="legacy.html" style="--acc:var(--contour);--acc-deep:var(--contour-deep)">Архив</a>
-      <a class="link" href="pricing.html">Цены</a>
-      <a class="button" href="index.html">← Главная</a>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Main navigation">
+      <span class="lang-switch"><a href="legacy.html">RU</a><span class="lang-switch__sep">/</span><a href="legacy-en.html" class="active">EN</a></span>
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link" href="meridian-en.html">Meridian</a>
+      <a class="link" href="contour-en.html">Contour</a>
+      <a class="link" href="free-en.html">Free</a>
+      <a class="link is-current" href="legacy-en.html" style="--acc:var(--contour);--acc-deep:var(--contour-deep)">Archive</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <a class="button" href="en.html">← Home</a>
     </nav>
   </div>
 </header>
@@ -118,9 +114,9 @@
       </svg>
     </div>
     <div class="wrap">
-      <p class="page-head__eyebrow reveal" style="--i:0">Archive <span class="accent-dot" aria-hidden="true">·</span> Не развиваются</p>
-      <h1 class="reveal" style="--i:1">Предыдущие<br><em>версии</em></h1>
-      <p class="reveal" style="--i:2">Penumbra и Scaffold остаются рабочими и доступны на TradingView, но их функции перенесены и развиваются дальше в составе новых индикаторов — Meridian и Contour. Держим страницы здесь для тех, кто уже на них подключён.</p>
+      <p class="page-head__eyebrow reveal" style="--i:0">Archive <span class="accent-dot" aria-hidden="true">·</span> No longer developed</p>
+      <h1 class="reveal" style="--i:1">Earlier<br><em>versions</em></h1>
+      <p class="reveal" style="--i:2">Penumbra and Scaffold are still working and available on TradingView, but their features have moved on and keep evolving inside newer indicators — Meridian and Contour. We keep these pages here for anyone still running them.</p>
       <div class="legacy-map reveal" style="--i:3">
         <span class="legacy-map__pair"><span class="legacy-map__dot" style="background:var(--meridian)"></span>Penumbra</span>
         <span class="legacy-map__arrow">→</span><strong>Meridian</strong>
@@ -135,34 +131,34 @@
   <section class="wrap-section" id="archive" aria-labelledby="archive-head">
     <div class="wrap">
       <div class="sec-head">
-        <span class="sec-head__label" id="archive-head">Архивные индикаторы</span>
+        <span class="sec-head__label" id="archive-head">Archived indicators</span>
         <span class="sec-head__rule" aria-hidden="true"></span>
-        <span class="sec-head__no">2 страницы <span class="accent-dot" aria-hidden="true">·</span> доступны на TradingView</span>
+        <span class="sec-head__no">2 pages <span class="accent-dot" aria-hidden="true">·</span> live on TradingView</span>
       </div>
 
       <div class="modules-grid">
 
-        <a class="mod-card reveal" style="--i:0;--acc:var(--meridian);--acc-deep:var(--meridian-deep);--acc-tint:var(--meridian-tint);--acc-border:var(--meridian-border)" href="legacy/penumbra.html">
+        <a class="mod-card reveal" style="--i:0;--acc:var(--meridian);--acc-deep:var(--meridian-deep);--acc-tint:var(--meridian-tint);--acc-border:var(--meridian-border)" href="legacy/penumbra-en.html">
           <div class="mod-card__kicker"><span class="mod-card__no">LEGACY-01</span></div>
           <h3>Penumbra</h3>
-          <p class="mod-card__tag">Ранняя версия сигнального слоя</p>
-          <p>Находит скрытый дисбаланс в структуре бара по интрабар-дельте и подтверждает его собственной зоной Fair Value Gap на следующих барах. Логика легла в основу сигнала Undertow в составе Meridian.</p>
+          <p class="mod-card__tag">An early version of the signal layer</p>
+          <p>Finds hidden imbalance in a bar's intrabar delta and confirms it with its own Fair Value Gap zone on the following bars. That logic became the basis for the Undertow signal inside Meridian.</p>
           <div class="mod-card__chips">
-            <span class="chip on">◆ Дельта-сигнал</span>
-            <span class="chip on">FVG-зона</span>
+            <span class="chip on">◆ Delta signal</span>
+            <span class="chip on">FVG zone</span>
             <span class="chip on">→ Meridian</span>
           </div>
           <div class="mod-card__till">
             <span class="mod-card__price">Legacy</span>
-            <span class="link mod-card__more">Открыть архив →</span>
+            <span class="link mod-card__more">Open the archive →</span>
           </div>
         </a>
 
-        <a class="mod-card reveal" style="--i:1;--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-tint:var(--contour-tint);--acc-border:var(--contour-border)" href="legacy/scaffold.html">
+        <a class="mod-card reveal" style="--i:1;--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-tint:var(--contour-tint);--acc-border:var(--contour-border)" href="legacy/scaffold-en.html">
           <div class="mod-card__kicker"><span class="mod-card__no">LEGACY-02</span></div>
           <h3>Scaffold</h3>
-          <p class="mod-card__tag">4 паттерна разворота · любой таймфрейм</p>
-          <p>Четыре независимых паттерна по структуре свечей: Transit, Fulcrum, Needle и Volatile Bar. Эта логика стала отправной точкой для Contour — сетап Fulcrum позже был вынесен из Contour в отдельный экспериментальный индикатор Sentry, а сама идея распознавания разворотов сегодня живёт в 6-стейт машине состояний Contour.</p>
+          <p class="mod-card__tag">4 reversal patterns · any timeframe</p>
+          <p>Four independent candle-structure patterns: Transit, Fulcrum, Needle, and Volatile Bar. This logic became the starting point for Contour — the Fulcrum setup was later spun out of Contour into a separate experimental indicator, Sentry, while the underlying reversal-recognition idea now lives on inside Contour's 6-state machine.</p>
           <div class="mod-card__chips">
             <span class="chip on">Transit · Fulcrum</span>
             <span class="chip on">Needle · VB</span>
@@ -170,7 +166,7 @@
           </div>
           <div class="mod-card__till">
             <span class="mod-card__price">Legacy</span>
-            <span class="link mod-card__more">Открыть архив →</span>
+            <span class="link mod-card__more">Open the archive →</span>
           </div>
         </a>
 
@@ -200,16 +196,16 @@
         <p class="foot__sub">Archive · PineScript v6</p>
       </div>
     </div>
-    <nav class="foot__nav" aria-label="Футер">
-      <a class="link" href="relief.html">Relief</a>
-      <a class="link" href="meridian.html">Meridian</a>
-      <a class="link" href="contour.html">Contour</a>
-      <a class="link" href="free.html">Free</a>
-      <a class="link" href="pricing.html">Цены</a>
-      <a class="link" href="about.html">О нас</a>
+    <nav class="foot__nav" aria-label="Footer">
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link" href="meridian-en.html">Meridian</a>
+      <a class="link" href="contour-en.html">Contour</a>
+      <a class="link" href="free-en.html">Free</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <a class="link" href="about-en.html">About</a>
     </nav>
     <p class="foot__fine">
-      <span>2 архивных индикатора · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
+      <span>2 archived indicators · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
     </p>
   </div>
 </footer>

@@ -1,34 +1,24 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="О Surface Tension: философия чтения аукциона рынка — Market Profile, дельта-дисбаланс и структурные паттерны — за тремя индикаторами для TradingView.">
-<meta property="og:title" content="О нас · Surface Tension">
-<meta property="og:description" content="Рынок говорит на языке аукциона. Surface Tension — три инструмента, чтобы читать этот язык точнее.">
+<meta name="description" content="About Surface Tension: the philosophy behind reading the market's auction — Market Profile, delta imbalance, and structure patterns — behind three TradingView indicators.">
+<meta property="og:title" content="About · Surface Tension">
+<meta property="og:description" content="The market speaks in the language of the auction. Surface Tension is three tools built to read it more precisely.">
 <meta property="og:type" content="website">
-<meta property="og:locale" content="ru_RU">
+<meta property="og:locale" content="en_US">
 <meta name="theme-color" content="#E7DCC4">
-<title>О нас · Surface Tension</title>
+<title>About · Surface Tension</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- EN typography: Space Grotesk only (see --font-* defaults in styles.css) -->
 <style>
-  /*
-    RU typography (two fonts):
-      --font-display / --font-mono → JetBrains Mono  (headings, UI labels)
-      --font-text                   → Rubik           (body copy)
-  */
-  :root {
-    --font-display: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-    --font-text:    'Rubik', system-ui, -apple-system, sans-serif;
-    --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  }
-
   /* ── ABOUT: hex-logo "assembly" hero ──
      Reuses the same 7-polygon mark + .rh-hex/.rh-hex--* modifiers as the
      header/footer brand mark, just scaled up and choreographed to fly in
@@ -75,12 +65,12 @@
 <div class="atmosphere" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
-<a href="#main" class="skip-link">Перейти к содержимому</a>
+<a href="#main" class="skip-link">Skip to content</a>
 
 <!-- ── NAV ── -->
 <header class="runhead">
   <div class="wrap">
-    <a class="runhead__home" href="index.html" aria-label="Surface Tension Indicators">
+    <a class="runhead__home" href="en.html" aria-label="Surface Tension Indicators">
       <div class="runhead__logo-mark">
         <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g style="isolation:isolate">
@@ -100,19 +90,19 @@
         <span class="runhead__lockup-sub">Indicators</span>
       </div>
     </a>
-    <button class="runhead__toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="runhead-menu">
+    <button class="runhead__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="runhead-menu">
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
     </button>
-    <nav class="runhead__nav" id="runhead-menu" aria-label="Основная навигация">
-      <span class="lang-switch"><a href="about.html" class="active">RU</a><span class="lang-switch__sep">/</span><a href="about-en.html">EN</a></span>
-      <a class="link" href="relief.html">Relief</a>
-      <a class="link" href="meridian.html">Meridian</a>
-      <a class="link" href="contour.html">Contour</a>
-      <a class="link" href="free.html">Free</a>
-      <a class="link" href="pricing.html">Цены</a>
-      <a class="button" href="index.html">← Главная</a>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Main navigation">
+      <span class="lang-switch"><a href="about.html">RU</a><span class="lang-switch__sep">/</span><a href="about-en.html" class="active">EN</a></span>
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link" href="meridian-en.html">Meridian</a>
+      <a class="link" href="contour-en.html">Contour</a>
+      <a class="link" href="free-en.html">Free</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <a class="button" href="en.html">← Home</a>
     </nav>
   </div>
 </header>
@@ -166,10 +156,10 @@
         </svg>
       </div>
 
-      <p class="page-head__eyebrow reveal" style="--i:0">Surface Tension <span class="accent-dot" aria-hidden="true">·</span> О нас</p>
-      <h1 class="reveal" style="--i:1">Рынок говорит.<br><em>Мы помогаем его слышать.</em></h1>
-      <p class="reveal" style="--i:2">За каждым движением цены стоит аукцион — борьба за справедливую стоимость между покупателем и продавцом. Market Profile, дельта-дисбаланс и структурные паттерны — это не сигналы.</p>
-      <p class="reveal" style="--i:3">Это язык, на котором рынок описывает себя сам. Surface Tension — три инструмента, чтобы читать его точнее: Relief читает профиль дня, Meridian — сетапы и дисбаланс, Contour — состояния аукциона.</p>
+      <p class="page-head__eyebrow reveal" style="--i:0">Surface Tension <span class="accent-dot" aria-hidden="true">·</span> About</p>
+      <h1 class="reveal" style="--i:1">The market speaks.<br><em>We help you hear it.</em></h1>
+      <p class="reveal" style="--i:2">Behind every price move is an auction — buyers and sellers fighting over fair value. Market Profile, delta imbalance, and structure patterns aren't signals.</p>
+      <p class="reveal" style="--i:3">They're the language the market uses to describe itself. Surface Tension is three tools built to read that language more precisely: Relief reads the day's profile, Meridian reads setups and imbalance, Contour reads the auction's state.</p>
 
       <div class="reveal" style="--i:4;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:1.6rem">
         <span class="chip on">Market Profile</span>
@@ -204,17 +194,17 @@
         <p class="foot__sub">PineScript v6 · TradingView</p>
       </div>
     </div>
-    <nav class="foot__nav" aria-label="Футер">
-      <a class="link" href="relief.html">Relief</a>
-      <a class="link" href="meridian.html">Meridian</a>
-      <a class="link" href="contour.html">Contour</a>
-      <a class="link" href="free.html">Free</a>
-      <a class="link" href="pricing.html">Цены</a>
-      <a class="link" href="about.html">О нас</a>
-      <a class="link" href="legacy.html">Архив</a>
+    <nav class="foot__nav" aria-label="Footer">
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link" href="meridian-en.html">Meridian</a>
+      <a class="link" href="contour-en.html">Contour</a>
+      <a class="link" href="free-en.html">Free</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <a class="link" href="about-en.html">About</a>
+      <a class="link" href="legacy-en.html">Archive</a>
     </nav>
     <p class="foot__fine">
-      <span>3 инструмента · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
+      <span>3 instruments · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
     </p>
   </div>
 </footer>

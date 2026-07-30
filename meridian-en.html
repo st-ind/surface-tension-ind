@@ -1,42 +1,35 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Meridian — четыре структурных сетапа (Transit, Fulcrum, Needle, Volatile Bar) и фирменный сигнал Undertow с усиленным подтверждением Resonance для TradingView.">
-<meta property="og:title" content="Meridian — Сетапы + Undertow · Surface Tension">
-<meta property="og:description" content="Transit, Fulcrum, Needle, Volatile Bar — структурные сетапы. Undertow — фирменный сигнал скрытого дисбаланса. Resonance — усиленное подтверждение, когда сетап и Undertow совпадают.">
+<meta name="description" content="Meridian — four structural setups (Transit, Fulcrum, Needle, Volatile Bar) and the signature Undertow signal, with a reinforced Resonance confirmation, for TradingView.">
+<meta property="og:title" content="Meridian — Setups + Undertow · Surface Tension">
+<meta property="og:description" content="Transit, Fulcrum, Needle, Volatile Bar — structural setups. Undertow — the signature hidden-imbalance signal. Resonance — a reinforced confirmation when a setup and Undertow line up.">
 <meta property="og:type" content="website">
-<meta property="og:locale" content="ru_RU">
+<meta property="og:locale" content="en_US">
 <meta name="theme-color" content="#E7DCC4">
-<title>Meridian — Сетапы + Undertow · Surface Tension</title>
+<title>Meridian — Setups + Undertow · Surface Tension</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<style>
-  :root {
-    --font-display: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-    --font-text:    'Rubik', system-ui, -apple-system, sans-serif;
-    --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  }
-  .hero__title { font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif; }
-</style>
+<!-- EN typography: Space Grotesk only (see --font-* defaults in styles.css) -->
 </head>
 <body>
 
 <div class="atmosphere" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
-<a href="#main" class="skip-link">Перейти к содержимому</a>
+<a href="#main" class="skip-link">Skip to content</a>
 
 <!-- ── NAV ── -->
 <header class="runhead">
   <div class="wrap">
-    <a class="runhead__home" href="index.html" aria-label="Surface Tension Indicators">
+    <a class="runhead__home" href="en.html" aria-label="Surface Tension Indicators">
       <div class="runhead__logo-mark">
         <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g style="isolation:isolate">
@@ -56,31 +49,31 @@
         <span class="runhead__lockup-sub">Indicators</span>
       </div>
     </a>
-    <button class="runhead__toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="runhead-menu">
+    <button class="runhead__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="runhead-menu">
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
       <span class="runhead__toggle-bar"></span>
     </button>
-    <nav class="runhead__nav" id="runhead-menu" aria-label="Основная навигация">
-      <span class="lang-switch"><a href="meridian.html" class="active">RU</a><span class="lang-switch__sep">/</span><a href="meridian-en.html">EN</a></span>
-      <a class="link" href="relief.html">Relief</a>
-      <a class="link is-current" href="meridian.html" style="--acc:var(--meridian);--acc-deep:var(--meridian-deep)">Meridian</a>
-      <a class="link" href="contour.html">Contour</a>
-      <a class="link" href="free.html">Free</a>
-      <a class="link" href="pricing.html">Цены</a>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Main navigation">
+      <span class="lang-switch"><a href="meridian.html">RU</a><span class="lang-switch__sep">/</span><a href="meridian-en.html" class="active">EN</a></span>
+      <a class="link" href="relief-en.html">Relief</a>
+      <a class="link is-current" href="meridian-en.html" style="--acc:var(--meridian);--acc-deep:var(--meridian-deep)">Meridian</a>
+      <a class="link" href="contour-en.html">Contour</a>
+      <a class="link" href="free-en.html">Free</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
       <div class="runhead__dropdown" data-dropdown>
         <button class="runhead__dropdown-btn" type="button" aria-expanded="false">
-          На странице
+          On this page
           <svg class="runhead__dropdown-caret" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <ul class="runhead__dropdown-menu">
-          <li><a href="#features">Функции</a></li>
-          <li><a href="#signals">Сигналы</a></li>
-          <li><a href="#requirements">Требования</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#signals">Signals</a></li>
+          <li><a href="#requirements">Requirements</a></li>
         </ul>
       </div>
-      <a class="button" href="about.html" style="--acc-deep:var(--meridian-deep)">
-        Доступ
+      <a class="button" href="about-en.html" style="--acc-deep:var(--meridian-deep)">
+        Access
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </nav>
@@ -123,7 +116,7 @@
     </div>
     <div class="hero__grid">
       <div class="hero__left">
-        <p class="hero__eyebrow reveal" style="--i:0">PineScript v6 <span class="accent-dot" aria-hidden="true">·</span> Сетапы + Undertow</p>
+        <p class="hero__eyebrow reveal" style="--i:0">PineScript v6 <span class="accent-dot" aria-hidden="true">·</span> Setups + Undertow</p>
         <h1 class="hero__title reveal" style="--i:1;display:flex;align-items:center;gap:0.6rem">
           <svg width="72" height="32" viewBox="0 6 28 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="flex-shrink:0">
             <g style="isolation:isolate">
@@ -134,30 +127,30 @@
           </svg>
           Meridian
         </h1>
-        <p class="hero__type reveal" style="--i:2">Находит: <span class="hero__type-word" id="tw" data-typewriter="Transit|Fulcrum|Needle|Volatile Bar|Undertow|Resonance|Undertow HTF|Zigzag + BOS"></span><span class="hero__type-cur">_</span></p>
+        <p class="hero__type reveal" style="--i:2">Finds: <span class="hero__type-word" id="tw" data-typewriter="Transit|Fulcrum|Needle|Volatile Bar|Undertow|Resonance|Undertow HTF|Zigzag + BOS"></span><span class="hero__type-cur">_</span></p>
 
-        <p class="hero__lead-kicker reveal" style="--i:3">Структурные сетапы + Undertow — с общим подтверждением</p>
-        <p class="hero__lead-text reveal" style="--i:3">Meridian объединяет четыре паттерна структуры (Transit, Fulcrum, Needle, Volatile Bar) с фирменным сигнальным слоем Undertow в одном движке. Когда сетап и Undertow совпадают в общем окне — рождается Resonance: усиленная метка отдельного цвета. Плюс зоны Undertow старшего таймфрейма и Zigzag с BOS для контекста верхнего порядка.</p>
+        <p class="hero__lead-kicker reveal" style="--i:3">Structural setups + Undertow — with a shared confirmation</p>
+        <p class="hero__lead-text reveal" style="--i:3">Meridian combines four structural patterns (Transit, Fulcrum, Needle, Volatile Bar) with the signature Undertow signal layer in a single engine. When a setup and Undertow line up in the same window, Resonance is born — a reinforced mark in a distinct colour. Plus higher-timeframe Undertow zones and a Zigzag with BOS for higher-order context.</p>
         <ul class="hero__spec-list reveal" style="--i:4">
-          <li><span class="hero__spec-lbl">Сетапы</span><span class="hero__spec-val">Transit · Fulcrum · Needle · Volatile Bar</span></li>
+          <li><span class="hero__spec-lbl">Setups</span><span class="hero__spec-val">Transit · Fulcrum · Needle · Volatile Bar</span></li>
           <li><span class="hero__spec-lbl">Undertow</span><span class="hero__spec-val">Standard · Precision</span></li>
-          <li><span class="hero__spec-lbl">Resonance</span><span class="hero__spec-val">сетап + Undertow в одном окне</span></li>
-          <li><span class="hero__spec-lbl">Структура</span><span class="hero__spec-val">Undertow HTF · Zigzag + BOS</span></li>
+          <li><span class="hero__spec-lbl">Resonance</span><span class="hero__spec-val">setup + Undertow in one window</span></li>
+          <li><span class="hero__spec-lbl">Structure</span><span class="hero__spec-val">Undertow HTF · Zigzag + BOS</span></li>
         </ul>
 
         <div class="hero__cta reveal" style="--i:5">
-          <a class="button" href="about.html">
-            Получить доступ
+          <a class="button" href="about-en.html">
+            Get access
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
-          <a class="link" href="#features">Как это работает</a>
-          <a class="link" href="index.html">← Назад</a>
+          <a class="link" href="#features">How it works</a>
+          <a class="link" href="en.html">← Back</a>
         </div>
 
         <div class="hero__stats reveal" style="--i:6">
-          <div class="hero__stat"><span class="hero__stat-val">4</span><span class="hero__stat-lbl">Сетапа</span></div>
-          <div class="hero__stat"><span class="hero__stat-val">Undertow</span><span class="hero__stat-lbl">Сигнал</span></div>
-          <div class="hero__stat"><span class="hero__stat-val">Resonance</span><span class="hero__stat-lbl">Подтверждение</span></div>
+          <div class="hero__stat"><span class="hero__stat-val">4</span><span class="hero__stat-lbl">Setups</span></div>
+          <div class="hero__stat"><span class="hero__stat-val">Undertow</span><span class="hero__stat-lbl">Signal</span></div>
+          <div class="hero__stat"><span class="hero__stat-val">Resonance</span><span class="hero__stat-lbl">Confirmation</span></div>
         </div>
       </div>
 
@@ -184,9 +177,9 @@
 
             <div class="signal-panel__lbl">Signals</div>
             <div class="signal-panel__feed">
-              <p class="feed-row">◆ Transit ↑ структурная пауза</p>
+              <p class="feed-row">◆ Transit ↑ structural pause</p>
               <p class="feed-row is-clay">⬡ Resonance — Fulcrum + Undertow ↑</p>
-              <p class="feed-row">◆ Undertow сигнал слабости ↓</p>
+              <p class="feed-row">◆ Undertow weakness signal ↓</p>
               <p class="feed-row is-muted">▦ Undertow HTF zone active</p>
             </div>
           </div>
@@ -200,103 +193,103 @@
   <section class="wrap-section wrap-section--no-top" id="features" aria-labelledby="features-head">
     <div class="wrap">
       <div class="sec-head">
-        <span class="sec-head__label" id="features-head">Как работает Meridian</span>
+        <span class="sec-head__label" id="features-head">How Meridian works</span>
         <span class="sec-head__rule" aria-hidden="true"></span>
-        <span class="sec-head__no">9 модулей <span class="accent-dot" aria-hidden="true">·</span> FEAT-01…09</span>
+        <span class="sec-head__no">9 modules <span class="accent-dot" aria-hidden="true">·</span> FEAT-01…09</span>
       </div>
-      <p class="sec-sub">Сетапы структуры и фирменный сигнальный слой Undertow — в одном движке с общим подтверждением.</p>
+      <p class="sec-sub">Structural setups and the signature Undertow signal layer — one engine, one shared confirmation.</p>
 
       <div class="modules-grid" style="--acc:var(--meridian);--acc-deep:var(--meridian-deep);--acc-tint:var(--meridian-tint);--acc-border:var(--meridian-border)">
 
         <div class="mod-card reveal" style="--i:0">
           <div class="mod-card__kicker"><span class="mod-card__no">FEAT-01</span><span class="mod-card__icon">◆</span></div>
           <h3>◆ — Undertow</h3>
-          <p>Фиксирует момент скрытого дисбаланса в структуре бара — до того, как это становится очевидным на графике. Собственный алгоритм, закрытая методология.</p>
+          <p>Catches the moment a hidden imbalance builds up inside a bar's structure — before it becomes obvious on the chart. A proprietary algorithm, closed methodology.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Закрытая методология</span>
-            <span class="chip on">Собственный алгоритм</span>
-            <span class="chip on">◆ метка</span>
+            <span class="chip on">Closed methodology</span>
+            <span class="chip on">Proprietary algorithm</span>
+            <span class="chip on">◆ mark</span>
           </div>
         </div>
 
         <div class="mod-card reveal" style="--i:1">
           <div class="mod-card__kicker"><span class="mod-card__no">FEAT-02</span><span class="mod-card__icon">⬜</span></div>
-          <h3>Zone-подтверждение</h3>
-          <p>Сигнал Undertow подтверждается собственной зоной на следующих барах. Состояния зоны: активна и протестирована — с маркером ▲/▼ на баре теста.</p>
+          <h3>Zone confirmation</h3>
+          <p>An Undertow signal gets confirmed by its own zone on the following bars. Zone states: active and tested — with a ▲/▼ marker on the test bar.</p>
           <div class="mod-card__chips">
             <span class="chip on">Active / Tested</span>
-            <span class="chip on">▲/▼ маркер теста</span>
+            <span class="chip on">▲/▼ test marker</span>
           </div>
         </div>
 
         <div class="mod-card reveal" style="--i:2">
           <div class="mod-card__kicker"><span class="mod-card__no">FEAT-03</span><span class="mod-card__icon">⬡</span></div>
-          <h3>Resonance — общее подтверждение</h3>
-          <p>Когда сетап (Transit / Fulcrum / Needle) и Undertow появляются в одном временном окне — рождается Resonance. Обычная ◆-метка скрывается, вместо неё рисуется усиленная оранжевая метка сетапа.</p>
+          <h3>Resonance — shared confirmation</h3>
+          <p>When a setup (Transit / Fulcrum / Needle) and Undertow both fire within the same window, Resonance is born. The regular ◆ mark is hidden, replaced by a reinforced orange setup mark.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Сетап + Undertow</span>
-            <span class="chip on">Оранжевая метка</span>
-            <span class="chip on">Общее окно</span>
+            <span class="chip on">Setup + Undertow</span>
+            <span class="chip on">Orange mark</span>
+            <span class="chip on">Shared window</span>
           </div>
         </div>
 
         <div class="mod-card reveal" style="--i:3">
           <div class="mod-card__kicker"><span class="mod-card__no">FEAT-04</span><span class="mod-card__icon">↑↓</span></div>
           <h3>Transit</h3>
-          <p>Структурная пауза: движение в одну сторону сменяется решительным ответом с другой. Опционально проверяется через Undertow.</p>
+          <p>A structural pause: a move in one direction gives way to a decisive response from the other side. Optionally cross-checked against Undertow.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Структурная пауза</span>
-            <span class="chip on">Опц. подтверждение Undertow</span>
+            <span class="chip on">Structural pause</span>
+            <span class="chip on">Optional Undertow check</span>
           </div>
         </div>
 
         <div class="mod-card reveal" style="--i:4">
           <div class="mod-card__kicker"><span class="mod-card__no">FEAT-05</span><span class="mod-card__icon">⚖</span></div>
           <h3>Fulcrum</h3>
-          <p>Накопление в «седле» из нескольких баров — и решительный ответ. Момент, когда инициатива переходит к другой стороне.</p>
+          <p>Accumulation in a multi-bar "seat" — followed by a decisive response. The moment initiative shifts to the other side.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Седло N баров</span>
-            <span class="chip on">Смена инициативы</span>
+            <span class="chip on">N-bar seat</span>
+            <span class="chip on">Initiative shift</span>
           </div>
         </div>
 
         <div class="mod-card reveal" style="--i:5">
           <div class="mod-card__kicker"><span class="mod-card__no">FEAT-06</span><span class="mod-card__icon">📍</span></div>
           <h3>Needle</h3>
-          <p>Одиночный резкий отказ продолжения — длинный фитиль, тело предыдущего бара накрывает зону разворота. Опциональное подтверждение на следующем баре.</p>
+          <p>A single sharp rejection of continuation — a long wick, with the previous bar's body covering the reversal zone. Optional confirmation on the next bar.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Длинный фитиль</span>
-            <span class="chip on">Подтверждение +1 бар</span>
+            <span class="chip on">Long wick</span>
+            <span class="chip on">+1 bar confirmation</span>
           </div>
         </div>
 
         <div class="mod-card reveal" style="--i:6">
           <div class="mod-card__kicker"><span class="mod-card__no">FEAT-07</span><span class="mod-card__icon">⚡</span></div>
           <h3>Volatile Bar</h3>
-          <p>Контекстный детектор: бар с диапазоном выше N предыдущих. Питает Transit, Fulcrum и окно Resonance, самостоятельным сигналом не является.</p>
+          <p>A contextual detector: a bar with a range bigger than the previous N. Feeds Transit, Fulcrum, and the Resonance window — not a standalone signal.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Контекстный детектор</span>
-            <span class="chip on">Питает Transit / Fulcrum</span>
+            <span class="chip on">Contextual detector</span>
+            <span class="chip on">Feeds Transit / Fulcrum</span>
           </div>
         </div>
 
         <div class="mod-card reveal" style="--i:7">
           <div class="mod-card__kicker"><span class="mod-card__no">FEAT-08</span><span class="mod-card__icon">▦</span></div>
           <h3>Undertow · HTF</h3>
-          <p>Зоны Undertow старшего таймфрейма поверх рабочего графика — тот же фирменный сигнал, но с более широким контекстом.</p>
+          <p>Higher-timeframe Undertow zones layered on top of the working chart — the same signature signal, with wider context.</p>
           <div class="mod-card__chips">
-            <span class="chip on">Старший таймфрейм</span>
-            <span class="chip on">Тот же алгоритм</span>
+            <span class="chip on">Higher timeframe</span>
+            <span class="chip on">Same algorithm</span>
           </div>
         </div>
 
         <div class="mod-card reveal" style="--i:8">
           <div class="mod-card__kicker"><span class="mod-card__no">FEAT-09</span><span class="mod-card__icon">⋀⋁</span></div>
           <h3>Zigzag + BOS</h3>
-          <p>Структура свингов старшего порядка. Break of Structure рисуется один раз на ногу — только когда появляется реальный сигнал в её направлении.</p>
+          <p>Higher-order swing structure. Break of Structure is drawn once per leg — only when an actual signal appears in its direction.</p>
           <div class="mod-card__chips">
             <span class="chip on">Zigzag</span>
-            <span class="chip on">1 BOS на ногу</span>
+            <span class="chip on">1 BOS per leg</span>
           </div>
         </div>
 
@@ -308,71 +301,71 @@
   <section class="wrap-section" id="signals" aria-labelledby="signals-head">
     <div class="wrap">
       <div class="sec-head">
-        <span class="sec-head__label" id="signals-head">Сигналы</span>
+        <span class="sec-head__label" id="signals-head">Signals</span>
         <span class="sec-head__rule" aria-hidden="true"></span>
-        <span class="sec-head__no">Метки на графике</span>
+        <span class="sec-head__no">Marks on the chart</span>
       </div>
-      <p class="sec-sub">Все метки появляются прямо на графике — без отдельного окна.</p>
+      <p class="sec-sub">Every mark shows up right on the chart — no separate panel.</p>
 
       <div class="info-rows">
 
         <div class="info-row reveal" style="--i:0">
           <div>
             <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.7rem">
-              <span class="info-row__badge tag-bull">◆ сигнал</span>
+              <span class="info-row__badge tag-bull">◆ signal</span>
               <span class="info-row__badge tag-info">⬡ Resonance</span>
               <span class="info-row__badge tag-neutral">Zone</span>
             </div>
-            <h3>Как читать метки</h3>
-            <p>◆ — базовый сигнал Undertow. Если в том же окне сработал сетап Transit / Fulcrum / Needle — ◆ скрывается, вместо неё появляется усиленная оранжевая метка Resonance.</p>
+            <h3>Reading the marks</h3>
+            <p>◆ is the base Undertow signal. If a Transit / Fulcrum / Needle setup fires in the same window, ◆ is hidden and replaced by a reinforced orange Resonance mark.</p>
           </div>
         </div>
 
         <div class="info-row reveal" style="--i:1">
           <span class="info-row__badge tag-bull">◆</span>
           <div>
-            <h3>Undertow — сигнал скрытого дисбаланса</h3>
-            <p>Фирменный алгоритм ловит момент, когда в структуре бара накапливается скрытый дисбаланс — раньше, чем это становится заметно на самом графике.</p>
+            <h3>Undertow — the hidden-imbalance signal</h3>
+            <p>The proprietary algorithm catches the moment a hidden imbalance builds up inside a bar's structure — earlier than it becomes visible on the chart itself.</p>
           </div>
         </div>
 
         <div class="info-row reveal" style="--i:2">
           <span class="info-row__badge tag-info">⬡ Resonance</span>
           <div>
-            <h3>Resonance — общее подтверждение</h3>
-            <p>Сетап (Transit / Fulcrum / Needle) и Undertow совпали в одном временном окне — рождается усиленная оранжевая метка вместо обычной ◆.</p>
+            <h3>Resonance — shared confirmation</h3>
+            <p>A setup (Transit / Fulcrum / Needle) and Undertow lined up in the same window — a reinforced orange mark is born in place of the regular ◆.</p>
           </div>
         </div>
 
         <div class="info-row reveal" style="--i:3">
           <span class="info-row__badge tag-struct">Active / Tested</span>
           <div>
-            <h3>Zone-подтверждение</h3>
-            <p>После сигнала Undertow на графике появляется собственная зона. Она либо остаётся активной, либо получает маркер ▲/▼ на баре первого теста.</p>
+            <h3>Zone confirmation</h3>
+            <p>After an Undertow signal, its own zone appears on the chart. It either stays active or gets a ▲/▼ marker on the bar of its first test.</p>
           </div>
         </div>
 
         <div class="info-row reveal" style="--i:4">
           <span class="info-row__badge tag-bull">Transit · Fulcrum · Needle</span>
           <div>
-            <h3>Сетапы структуры</h3>
-            <p>Три паттерна с собственными лейблами на графике: структурная пауза (Transit), накопление в седле (Fulcrum), одиночный резкий отказ продолжения (Needle).</p>
+            <h3>Structural setups</h3>
+            <p>Three patterns, each with its own chart label: a structural pause (Transit), accumulation in a seat (Fulcrum), a single sharp rejection of continuation (Needle).</p>
           </div>
         </div>
 
         <div class="info-row reveal" style="--i:5">
           <span class="info-row__badge tag-neutral">⚡ VB</span>
           <div>
-            <h3>Volatile Bar — контекст, не сигнал</h3>
-            <p>Бар с диапазоном выше N предыдущих. Питает детекцию Transit, Fulcrum и окно Resonance, но собственной метки-сигнала не ставит.</p>
+            <h3>Volatile Bar — context, not a signal</h3>
+            <p>A bar with a range bigger than the previous N. Feeds the Transit and Fulcrum detection and the Resonance window, but doesn't place its own signal mark.</p>
           </div>
         </div>
 
         <div class="info-row reveal" style="--i:6">
           <span class="info-row__badge tag-info">Precision / Standard</span>
           <div>
-            <h3>Режим Undertow</h3>
-            <p>Standard работает на любом плане TradingView. Precision — более гранулярный источник данных для сигнала, требует Premium.</p>
+            <h3>Undertow mode</h3>
+            <p>Standard works on any TradingView plan. Precision — a more granular data source for the signal, requires Premium.</p>
           </div>
         </div>
 
@@ -380,7 +373,7 @@
           <span class="info-row__badge tag-struct">▦ HTF</span>
           <div>
             <h3>Undertow · HTF</h3>
-            <p>Тот же фирменный алгоритм, но на старшем таймфрейме — зоны накладываются поверх рабочего графика как более широкий контекст.</p>
+            <p>The same signature algorithm, but on a higher timeframe — zones are overlaid on the working chart as wider context.</p>
           </div>
         </div>
 
@@ -388,7 +381,7 @@
           <span class="info-row__badge tag-struct">BOS</span>
           <div>
             <h3>Zigzag + BOS</h3>
-            <p>Break of Structure рисуется один раз на ногу зигзага — только когда в её направлении появляется реальный сигнал, а не на каждом формальном пробое.</p>
+            <p>Break of Structure is drawn once per zigzag leg — only when an actual signal appears in its direction, not on every formal break.</p>
           </div>
         </div>
 
@@ -400,27 +393,27 @@
   <section class="wrap-section" id="requirements" aria-labelledby="requirements-head">
     <div class="wrap">
       <div class="sec-head">
-        <span class="sec-head__label" id="requirements-head">Требования</span>
+        <span class="sec-head__label" id="requirements-head">Requirements</span>
         <span class="sec-head__rule" aria-hidden="true"></span>
-        <span class="sec-head__no">Подписка TradingView</span>
+        <span class="sec-head__no">TradingView subscription</span>
       </div>
-      <p class="sec-sub">Что нужно для полного набора сигналов.</p>
+      <p class="sec-sub">What's needed for the full set of signals.</p>
 
       <div class="info-rows">
 
         <div class="info-row reveal" style="--i:0">
           <span class="info-row__badge tag-info">Premium</span>
           <div>
-            <h3>Режим Precision</h3>
-            <p>Режим <strong>Precision</strong> сигнала Undertow требует Premium. Также нужен для данных индексов (GER40, S&amp;P 500 и др.).</p>
+            <h3>Precision mode</h3>
+            <p>Undertow's <strong>Precision</strong> mode requires Premium. Also required for index data (GER40, S&amp;P 500, and others).</p>
           </div>
         </div>
 
         <div class="info-row reveal" style="--i:1">
           <span class="info-row__badge tag-bull">Any plan</span>
           <div>
-            <h3>Всё остальное</h3>
-            <p>Сетапы <strong>Transit, Fulcrum, Needle, Volatile Bar</strong>, зоны Undertow HTF и Zigzag + BOS работают на любом плане.</p>
+            <h3>Everything else</h3>
+            <p>The <strong>Transit, Fulcrum, Needle, Volatile Bar</strong> setups, Undertow HTF zones, and Zigzag + BOS work on any plan.</p>
           </div>
         </div>
 
@@ -447,16 +440,16 @@
       </svg>
       <div>
         <p class="foot__name">Meridian</p>
-        <p class="foot__sub">Сетапы + Undertow · PineScript v6</p>
+        <p class="foot__sub">Setups + Undertow · PineScript v6</p>
       </div>
     </div>
-    <nav class="foot__nav" aria-label="Футер">
-      <a class="link" href="#features">Функции</a>
-      <a class="link" href="pricing.html">Цены</a>
-      <a class="link" href="about.html">О нас</a>
+    <nav class="foot__nav" aria-label="Footer">
+      <a class="link" href="#features">Features</a>
+      <a class="link" href="pricing-en.html">Pricing</a>
+      <a class="link" href="about-en.html">About</a>
     </nav>
     <p class="foot__fine">
-      <span>9 модулей · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
+      <span>9 modules · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
     </p>
   </div>
 </footer>
