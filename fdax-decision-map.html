@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Карта решений FDAX — дерево решений торгового дня по TPO / Market Profile и интерактивный мастер: отвечаешь по ходу дня, получаешь вердикт по сделке.">
+<meta property="og:title" content="Карта решений FDAX · Surface Tension">
+<meta property="og:description" content="Все решения торгового дня FDAX в одном дереве — от подготовки до вердикта по входу. Плюс пошаговый мастер с карточкой сделки.">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ru_RU">
+<meta name="theme-color" content="#E7DCC4">
+<title>Карта решений FDAX · Surface Tension</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+<!--
+  ═══════════════════════════════════════════════════════════════════════
+  КАК ПРАВИТЬ ЭТУ СТРАНИЦУ
+
+  Страница = два представления ОДНОЙ И ТОЙ ЖЕ логики решений:
+    вкладка «Дерево» — статический HTML ниже (печатается, виден весь день)
+    вкладка «Мастер» — генерится из массива STEPS в <script> внизу
+
+  ⚠ ПРАВИШЬ ЛОГИКУ — ПРАВЬ В ОБОИХ МЕСТАХ, иначе они разъедутся.
+
+  Источник правды по смыслу правил — fdax-playbook.html.
+  Здесь только развилки; обоснования и цифры остаются там.
+
+  Дерево:  .dm-stage (этап) > .dm-node (вопрос) > .dm-branch (ответ → исход)
+           Модификаторы ветки: .dm-branch--ok / --warn / --stop
+  Мастер:  STEPS[] — шаги; у опции могут быть stop (жёсткий стоп),
+           warn (предупреждение в вердикт), set (флаги состояния).
+           when: (st) => bool — условный пропуск шага.
+           Вердикт собирает verdict(st).
+  ═══════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+  :root {
+    --font-display: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    --font-text:    'Rubik', system-ui, -apple-system, sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    --ok:   #1a9e78;
+    --ok-d: #157a5c;
+    --warn: #b8861e;
+    --warn-d: #8a6a1e;
+    --stop: #b84040;
+    --stop-d: #a23a3a;
+  }
+  .hero__title { font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif; }
+
+  /* ── HERO ── */
+  .doc-hero { padding: clamp(2.4rem,5vw,3.2rem) 0 clamp(1.2rem,2vw,1.6rem); text-align: center; }
+  .doc-hero .wrap { display: flex; flex-direction: column; align-items: center; }
+  .doc-hero__badge { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; color: var(--acc-deep); background: var(--acc-tint); border: 1px solid var(--acc-border); padding: 5px 12px; border-radius: 100px; vertical-align: middle; }
+  .doc-hero h1 { margin-bottom: 1rem; }
+  .doc-hero__sibling { font-family: var(--font-mono); font-size: 0.74rem; font-weight: 600; color: var(--acc-deep); text-decoration: none; border: 1px dashed var(--acc-border); border-radius: 100px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 5px; margin-top: 1.1rem; }
+  .doc-hero__sibling:hover { background: var(--acc-tint); }
+
+  /* ── ВКЛАДКИ ── */
+  .dm-tabs { display: flex; gap: 6px; justify-content: center; margin: 0 auto 26px; background: rgba(43,33,24,0.05); border: 1px solid var(--line-strong); border-radius: 100px; padding: 5px; width: fit-content; }
+  .dm-tab { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em; color: var(--haze); background: none; border: 0; border-radius: 100px; padding: 9px 22px; cursor: pointer; transition: all .18s ease; }
+  .dm-tab:hover { color: var(--ink-900); }
+  .dm-tab[aria-selected="true"] { background: var(--acc-deep); color: #fff; box-shadow: 0 1px 6px rgba(43,33,24,0.16); }
+  .dm-panel[hidden] { display: none; }
+
+  /* ── ЭТАП ── */
+  .dm-stage { display: grid; grid-template-columns: 96px 1fr; gap: 0 18px; }
+  .dm-stage__side { display: flex; flex-direction: column; align-items: center; }
+  .dm-stage__time { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; color: var(--seg-c, var(--acc-deep)); background: var(--seg-bg, var(--acc-tint)); border: 1px solid var(--seg-border, var(--acc-border)); border-radius: 100px; padding: 5px 10px; white-space: nowrap; margin-top: 2px; }
+  .dm-stage__line { flex: 1; width: 2px; background: var(--line-strong); margin: 8px 0 0; }
+  .dm-stage:last-child .dm-stage__line { display: none; }
+  .dm-stage__body { padding-bottom: 22px; }
+  .dm-stage__name { font-family: var(--font-display); font-size: 1.02rem; font-weight: 500; color: var(--ink-900); margin: 0 0 3px; }
+  .dm-stage__sub { font-size: 0.82rem; color: var(--whisper); line-height: 1.55; margin: 0 0 14px; }
+  @media (max-width: 620px) {
+    .dm-stage { grid-template-columns: 1fr; gap: 0; }
+    .dm-stage__side { flex-direction: row; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .dm-stage__line { display: none !important; }
+  }
+
+  /* ── УЗЕЛ-ВОПРОС ── */
+  .dm-node { background: var(--cream); border: 1px solid var(--line-strong); border-radius: var(--r); padding: 15px 17px 16px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(43,33,24,0.05); break-inside: avoid; }
+  .dm-node__q { font-family: var(--font-mono); font-size: 0.86rem; font-weight: 600; color: var(--ink-900); line-height: 1.45; margin: 0 0 12px; display: flex; gap: 9px; align-items: baseline; }
+  .dm-node__q::before { content: '?'; flex-shrink: 0; width: 19px; height: 19px; border-radius: 50%; background: var(--acc-tint); border: 1px solid var(--acc-border); color: var(--acc-deep); font-size: 0.68rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; transform: translateY(2px); }
+  .dm-node__note { font-size: 0.78rem; color: var(--whisper); line-height: 1.6; margin: 11px 0 0; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .dm-node__note strong { color: var(--haze); font-weight: 600; }
+
+  /* ── ВЕТКА ── */
+  .dm-branch { display: grid; grid-template-columns: 190px 1fr; gap: 3px 14px; align-items: baseline; padding: 8px 0 8px 11px; border-left: 2px solid var(--line-strong); margin-bottom: 3px; }
+  .dm-branch:last-of-type { margin-bottom: 0; }
+  .dm-branch__a { font-family: var(--font-mono); font-size: 0.76rem; font-weight: 700; line-height: 1.45; color: var(--ink-900); }
+  .dm-branch__o { font-size: 0.82rem; color: var(--haze); line-height: 1.6; }
+  .dm-branch__o strong { color: var(--ink-900); font-weight: 600; }
+  .dm-branch--ok   { border-left-color: var(--ok);   background: rgba(26,158,120,0.05); }
+  .dm-branch--ok   .dm-branch__a { color: var(--ok-d); }
+  .dm-branch--warn { border-left-color: var(--warn); background: rgba(184,134,30,0.06); }
+  .dm-branch--warn .dm-branch__a { color: var(--warn-d); }
+  .dm-branch--stop { border-left-color: var(--stop); background: rgba(184,64,64,0.06); }
+  .dm-branch--stop .dm-branch__a { color: var(--stop-d); }
+  @media (max-width: 620px) { .dm-branch { grid-template-columns: 1fr; } }
+
+  /* ── ИТОГОВЫЙ УЗЕЛ ЭТАПА ── */
+  .dm-out { display: flex; gap: 10px; align-items: flex-start; font-size: 0.82rem; line-height: 1.6; color: var(--haze); background: var(--acc-tint); border: 1px solid var(--acc-border); border-radius: var(--r); padding: 12px 15px; margin-top: 12px; break-inside: avoid; }
+  .dm-out::before { content: '→'; font-family: var(--font-mono); font-weight: 700; color: var(--acc-deep); flex-shrink: 0; }
+  .dm-out strong { color: var(--ink-900); font-weight: 600; }
+  .dm-out--stop { background: rgba(184,64,64,0.06); border-color: rgba(184,64,64,0.3); }
+  .dm-out--stop::before { content: '⛔'; }
+
+  /* ── МАСТЕР ── */
+  .wz { max-width: 720px; margin: 0 auto; }
+  .wz-bar { height: 4px; background: rgba(43,33,24,0.08); border-radius: 100px; overflow: hidden; margin-bottom: 18px; }
+  .wz-bar__fill { height: 100%; background: var(--acc-deep); border-radius: 100px; transition: width .28s ease; }
+  .wz-card { background: var(--cream); border: 1px solid var(--line-strong); border-radius: 18px; padding: 26px 28px 24px; box-shadow: 0 2px 14px rgba(43,33,24,0.07); }
+  .wz-step { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acc-deep); margin-bottom: 10px; }
+  .wz-q { font-family: var(--font-display); font-size: 1.16rem; font-weight: 500; color: var(--ink-900); line-height: 1.45; margin: 0 0 5px; }
+  .wz-hint { font-size: 0.82rem; color: var(--whisper); line-height: 1.6; margin: 0 0 18px; }
+  .wz-opts { display: grid; gap: 9px; }
+  .wz-opt { text-align: left; background: var(--paper); border: 1px solid var(--line-strong); border-radius: 12px; padding: 13px 16px; cursor: pointer; font-family: var(--font-text); transition: all .15s ease; width: 100%; }
+  .wz-opt:hover { border-color: var(--acc-deep); background: var(--acc-tint); transform: translateX(2px); }
+  .wz-opt__t { display: block; font-size: 0.9rem; font-weight: 600; color: var(--ink-900); line-height: 1.4; }
+  .wz-opt__d { display: block; font-size: 0.79rem; color: var(--whisper); line-height: 1.55; margin-top: 3px; }
+  .wz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .wz-back, .wz-restart { font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; color: var(--whisper); background: none; border: 0; cursor: pointer; padding: 6px 0; }
+  .wz-back:hover, .wz-restart:hover { color: var(--acc-deep); }
+  .wz-back[disabled] { opacity: 0.3; cursor: default; }
+  .wz-trail { font-family: var(--font-mono); font-size: 0.7rem; color: var(--whisper); }
+
+  /* ── ВЕРДИКТ ── */
+  .vd { border-radius: 18px; border: 1px solid; padding: 0; overflow: hidden; box-shadow: 0 2px 14px rgba(43,33,24,0.08); }
+  .vd--go   { border-color: rgba(26,158,120,0.4); background: var(--cream); }
+  .vd--no   { border-color: rgba(184,64,64,0.4);  background: var(--cream); }
+  .vd--wait { border-color: rgba(184,134,30,0.4); background: var(--cream); }
+  .vd__head { padding: 20px 26px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .vd--go   .vd__head { background: rgba(26,158,120,0.1);  border-bottom: 1px solid rgba(26,158,120,0.28); }
+  .vd--no   .vd__head { background: rgba(184,64,64,0.09);  border-bottom: 1px solid rgba(184,64,64,0.28); }
+  .vd--wait .vd__head { background: rgba(184,134,30,0.11); border-bottom: 1px solid rgba(184,134,30,0.3); }
+  .vd__mark { font-size: 1.5rem; line-height: 1; }
+  .vd__title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 500; margin: 0; }
+  .vd--go   .vd__title { color: var(--ok-d); }
+  .vd--no   .vd__title { color: var(--stop-d); }
+  .vd--wait .vd__title { color: var(--warn-d); }
+  .vd__dir { font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; padding: 5px 13px; border-radius: 100px; margin-left: auto; }
+  .vd__dir--l { background: rgba(26,158,120,0.18); color: var(--ok-d); }
+  .vd__dir--s { background: rgba(184,64,64,0.16);  color: var(--stop-d); }
+  .vd__body { padding: 20px 26px 24px; }
+  .vd-row { display: grid; grid-template-columns: 130px 1fr; gap: 4px 16px; font-size: 0.86rem; line-height: 1.6; color: var(--haze); padding: 9px 0; border-top: 1px solid var(--line); }
+  .vd-row:first-child { border-top: 0; padding-top: 0; }
+  .vd-row > b { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--whisper); padding-top: 3px; }
+  .vd-row strong { color: var(--ink-900); font-weight: 600; }
+  @media (max-width: 560px) { .vd-row { grid-template-columns: 1fr; } }
+  .vd-list { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+  .vd-list li { font-size: 0.83rem; line-height: 1.6; color: var(--haze); padding: 10px 14px; border-radius: var(--r); display: flex; gap: 10px; }
+  .vd-list li strong { color: var(--ink-900); font-weight: 600; }
+  .vd-list li::before { flex-shrink: 0; font-weight: 700; }
+  .vd-list--stop li { background: rgba(184,64,64,0.07);  border: 1px solid rgba(184,64,64,0.24); }
+  .vd-list--stop li::before { content: '⛔'; }
+  .vd-list--warn li { background: rgba(184,134,30,0.08); border: 1px solid rgba(184,134,30,0.26); }
+  .vd-list--warn li::before { content: '⚠'; color: var(--warn-d); }
+  .vd__foot { font-size: 0.79rem; color: var(--whisper); line-height: 1.6; margin: 18px 0 0; padding-top: 14px; border-top: 1px dashed var(--line); }
+  .vd__foot a { color: var(--acc-deep); font-weight: 600; text-decoration: none; }
+
+  /* ── ПЕЧАТЬ ── */
+  @media print {
+    .runhead, .foot, .dm-tabs, .doc-hero__sibling, .atmosphere, .grain, .skip-link, #panel-wizard { display: none !important; }
+    body { background: #fff; }
+    .dm-node, .dm-stage, .dm-out { break-inside: avoid; box-shadow: none; }
+    .doc-hero { padding: 0 0 14px; }
+  }
+</style>
+</head>
+<body style="--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-tint:var(--contour-tint);--acc-border:var(--contour-border)">
+
+<div class="atmosphere" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<a href="#main" class="skip-link">Перейти к содержимому</a>
+
+<header class="runhead">
+  <div class="wrap">
+    <a class="runhead__home" href="index.html" aria-label="Surface Tension Indicators">
+      <div class="runhead__logo-mark">
+        <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g style="isolation:isolate">
+            <polygon class="rh-hex rh-hex--ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#D07C3C" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#97431F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#B5532E" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#E8A94F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#B5532E" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#97431F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#6E2E12" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="runhead__lockup">
+        <span class="runhead__lockup-l1">Surface</span>
+        <span class="runhead__lockup-l2">Tension</span>
+        <span class="runhead__lockup-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="runhead__toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="runhead-menu">
+      <span class="runhead__toggle-bar"></span>
+      <span class="runhead__toggle-bar"></span>
+      <span class="runhead__toggle-bar"></span>
+    </button>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Основная навигация">
+      <a class="link is-current" href="fdax-decision-map.html">Карта решений</a>
+      <a class="link" href="fdax-playbook.html">FDAX Playbook</a>
+      <a class="link" href="strategy-fdax.html" style="--acc:#2E8CB8;--acc-deep:#215E7A">Стратегия FDAX</a>
+      <a class="link" href="relief.html">Relief</a>
+      <a class="button" href="relief.html">
+        Открыть Relief
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- ── HERO ── -->
+  <section class="page-head doc-hero">
+    <div class="wrap">
+      <p class="page-head__eyebrow reveal" style="--i:0">Все развилки дня <span class="accent-dot" aria-hidden="true">·</span> TPO / Market Profile</p>
+      <h1 class="reveal" style="--i:1">Карта решений <span class="doc-hero__badge">FDAX · GER40</span></h1>
+      <p class="reveal" style="--i:2;max-width:56ch;margin:0 auto">
+        Тот же <a href="fdax-playbook.html" style="color:var(--acc-deep);font-weight:600">плейбук</a>, но развёрнутый в развилки:
+        каждый вопрос дня, все ответы и куда каждый из них ведёт. <strong>Дерево</strong> — весь день на одном экране и на печать.
+        <strong>Мастер</strong> — тот же поток по шагам, с карточкой сделки в конце.
+      </p>
+      <a class="doc-hero__sibling reveal" style="--i:2" href="fdax-playbook.html">← Правила и обоснования в плейбуке</a>
+    </div>
+  </section>
+
+  <div class="wrap" style="padding-bottom:3.5rem">
+
+    <!-- ── ВКЛАДКИ ── -->
+    <div class="dm-tabs" role="tablist" aria-label="Представление карты">
+      <button class="dm-tab" id="tab-tree"   role="tab" aria-selected="true"  aria-controls="panel-tree"   type="button">Дерево</button>
+      <button class="dm-tab" id="tab-wizard" role="tab" aria-selected="false" aria-controls="panel-wizard" type="button">Мастер</button>
+    </div>
+
+    <!-- ══════════════ ПАНЕЛЬ: ДЕРЕВО ══════════════ -->
+    <div class="dm-panel" id="panel-tree" role="tabpanel" aria-labelledby="tab-tree">
+
+      <!-- ЭТАП 1 -->
+      <div class="dm-stage" style="--seg-c:var(--whisper);--seg-bg:rgba(43,33,24,0.06);--seg-border:var(--line-strong)">
+        <div class="dm-stage__side"><span class="dm-stage__time">08:00</span><span class="dm-stage__line"></span></div>
+        <div class="dm-stage__body">
+          <h2 class="dm-stage__name">Подготовка</h2>
+          <p class="dm-stage__sub">Четыре вопроса до открытия. Ответы на них не дают входа, но определяют, какие входы сегодня вообще допустимы.</p>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Что сегодня в календаре?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Ничего важного</span>
+              <span class="dm-branch__o">Работаем по плану, размер обычный</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">Ifo или flash PMI в 10:00</span>
+              <span class="dm-branch__o">Релиз падает <strong>прямо в период C</strong>. Флэт за 5–10 минут до, входы не раньше чем через 15–30 минут после — то есть главное окно фактически съедено</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">US-данные в 14:30</span>
+              <span class="dm-branch__o">Утро обычное. Ко второму окну структура утра может быть отменена — в 15:25 перечитываем день заново</span>
+            </div>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">День ECB</span>
+              <span class="dm-branch__o">Утро торгуем, <strong>после 14:00 — нет</strong>. Второе окно пропускаем целиком</span>
+            </div>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Где цена относительно вчерашней Value Area?</p>
+            <div class="dm-branch">
+              <span class="dm-branch__a">Выше pVAH</span>
+              <span class="dm-branch__o">Дисбаланс вверх. Живы два сценария: принятие новых цен или возврат внутрь VA. Дальше решают периоды A и B</span>
+            </div>
+            <div class="dm-branch">
+              <span class="dm-branch__a">Ниже pVAL</span>
+              <span class="dm-branch__o">Зеркально: принятие вниз или возврат внутрь VA</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">Внутри VA</span>
+              <span class="dm-branch__o">Двусторонний аукцион. Торгуем <strong>только от краёв</strong>, не от середины. Правило рассинхрона сегодня не считается</span>
+            </div>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Размер гэпа к закрытию Xetra 17:30?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">До 50 пунктов</span>
+              <span class="dm-branch__o">Закрывается в 72–82% дней. Возврат к вчерашнему закрытию — рабочая цель</span>
+            </div>
+            <div class="dm-branch">
+              <span class="dm-branch__a">50–100</span>
+              <span class="dm-branch__o">57% — монетка. Гэп не аргумент ни за, ни против</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">Больше 100</span>
+              <span class="dm-branch__o">Закрывается лишь в 16–29% дней. Возврата не ждём, работаем <strong>по направлению гэпа</strong>. Вход — не в погоне за открытием, а на неудавшейся попытке закрыть гэп</span>
+            </div>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Где прошла ночь относительно вчерашнего закрытия?</p>
+            <div class="dm-branch">
+              <span class="dm-branch__a">Вся выше</span>
+              <span class="dm-branch__o">Инвентарь перекошен в лонг: за ночь накопились покупки. На открытии повышены шансы <strong>коррекции перекоса</strong> вниз</span>
+            </div>
+            <div class="dm-branch">
+              <span class="dm-branch__a">Вся ниже</span>
+              <span class="dm-branch__o">Перекос в шорт. Зеркально: возможен отскок на закрытии шортов</span>
+            </div>
+            <div class="dm-branch">
+              <span class="dm-branch__a">Вокруг закрытия</span>
+              <span class="dm-branch__o">Инвентарь сбалансирован, ранней подсказки нет</span>
+            </div>
+            <p class="dm-node__note"><strong>Развилка внутри развилки:</strong> открылись с перекосом, а коррекции нет 30–60 минут → рынок принял ночное направление, присоединяемся и не фадим. И помним ловушку: рост после ночи-вниз часто просто закрытие шортов — новые деньги подтверждает смещение зоны стоимости, а не сам ход.</p>
+          </div>
+
+          <div class="dm-out">Итог этапа: <strong>отмечены ONH / ONL, карта nPOC выше и ниже, выбрана главная цель дня</strong> — вчерашний POC, если он ещё не протестирован.</div>
+        </div>
+      </div>
+
+      <!-- ЭТАП 2 -->
+      <div class="dm-stage" style="--seg-c:#215E7A;--seg-bg:rgba(46,140,184,0.08);--seg-border:rgba(46,140,184,0.28)">
+        <div class="dm-stage__side"><span class="dm-stage__time">09:00</span><span class="dm-stage__line"></span></div>
+        <div class="dm-stage__body">
+          <h2 class="dm-stage__name">Период A — читаем открытие</h2>
+          <p class="dm-stage__sub">Входов здесь нет. Один вопрос, но он задаёт уровень доверия к направлению на весь день.</p>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Как рынок пошёл после 09:00?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Уехал в одну сторону и к открытию не вернулся<br><span style="font-weight:400;color:var(--whisper)">Open Drive</span></span>
+              <span class="dm-branch__o">Самый сильный тип. <strong>Не фадим весь день.</strong> Вход — первый откат к зоне A, стоп за экстремум A, цели: вчерашний POC → край вчерашней VA. Экстремум открытия обычно держится до закрытия</span>
+            </div>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Сходил на уровень, отбился, поехал через открытие<br><span style="font-weight:400;color:var(--whisper)">Open Test Drive</span></span>
+              <span class="dm-branch__o">Почти так же сильно. Вход — на движении обратно через цену открытия, стоп за экстремум теста: он часто и оказывается экстремумом дня</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">Вяло сходил, отвергли, развернуло<br><span style="font-weight:400;color:var(--whisper)">Open Rejection Reverse</span></span>
+              <span class="dm-branch__o">Средняя уверенность, день скорее ротационный. Разворот торгуем, но <strong>цели скромные</strong> — это не трендовая заявка</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">Крутится вокруг открытия<br><span style="font-weight:400;color:var(--whisper)">Open Auction</span></span>
+              <span class="dm-branch__o"><strong>Внутри</strong> вчерашнего диапазона — убеждения нет: торгуем от краёв, открытие работает магнитом. <strong>Снаружи</strong> — обманчиво: рынок может тихо принимать новые цены, пробой возможен позже</span>
+            </div>
+            <p class="dm-node__note"><strong>Отмена типа:</strong> откат внутрь зоны периода A снимает ярлык Drive — трендовая ставка на нём больше не держится.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ЭТАП 3 -->
+      <div class="dm-stage" style="--seg-c:var(--contour-deep);--seg-bg:var(--contour-tint);--seg-border:var(--contour-border)">
+        <div class="dm-stage__side"><span class="dm-stage__time">09:30</span><span class="dm-stage__line"></span></div>
+        <div class="dm-stage__body">
+          <h2 class="dm-stage__name">Период B — уклон и IB</h2>
+          <p class="dm-stage__sub">Три вопроса. Здесь становится ясно, торгуем ли мы сегодня вообще и каким размером.</p>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Открылись за VA — куда суммарно смотрят периоды A и B?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">К VA, против стороны открытия<br><span style="font-weight:400;color:var(--whisper)">Sync</span></span>
+              <span class="dm-branch__o">Рынок принимает возврат к значению. Сценарий возврата жив — торгуем обычно</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">От VA, по стороне открытия<br><span style="font-weight:400;color:var(--whisper)">Desync</span></span>
+              <span class="dm-branch__o">Дисбаланс принят, возврата не будет. Только <strong>усиленный вход</strong>: внешний триггер (пробой IB или снятие ликвидности) плюс ◆ + FVG в ту же сторону</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">Гасят друг друга или оба серые<br><span style="font-weight:400;color:var(--whisper)">Mixed</span></span>
+              <span class="dm-branch__o">Направления нет. <strong>Трактуем как Desync</strong> — тоже только усиленный вход</span>
+            </div>
+            <p class="dm-node__note"><strong>Не считается,</strong> если открылись внутри VA — считать нечего. <strong>Расхождение с индикатором:</strong> он показывает Mixed нейтральным, без ⚠ и без штрафа к оценке — в такой момент значок не загорится, отслеживаем глазами.</p>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Насколько согласован уклон — VWAP, период A, период B, границы IB?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Всё в одну сторону</span>
+              <span class="dm-branch__o">Сильный уклон. Торгуем продолжение <strong>полным размером</strong></span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">Картина есть, но не идеальная</span>
+              <span class="dm-branch__o">Умеренный. Торгуем <strong>уменьшенным размером</strong></span>
+            </div>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">Источники расходятся</span>
+              <span class="dm-branch__o">Слабый уклон — <strong>нарратива дня нет, входить не от чего.</strong> Ждём более чистый сетап или пропускаем окно</span>
+            </div>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Ширина IB в долях ATR(14)?</p>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">Меньше 0.25 — узкий</span>
+              <span class="dm-branch__o">Сжатие, жди расширения. Но узкий IB даёт и <strong>больше двусторонних пробоев</strong>: это обещание движения, а не готовое направление</span>
+            </div>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">0.25–0.45 — нормальный</span>
+              <span class="dm-branch__o">Медиана DAX ≈ 0.35. Рабочий сценарий пробоя IB</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">0.45–0.6 — широкий</span>
+              <span class="dm-branch__o">Заметная часть дневного хода пройдена — <strong>цели режем</strong></span>
+            </div>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">Больше 0.6</span>
+              <span class="dm-branch__o"><strong>Пробой не торгуем.</strong> Движение состоялось без нас, момент упущен</span>
+            </div>
+            <p class="dm-node__note"><strong>Две бесплатные подсказки о направлении:</strong> час IB закрылся выше своей середины → чаще пробивается верх (ниже — низ). И пробой обычно идёт <strong>против первого экстремума</strong> IB: лой утра встал первым — пробой вероятнее вверх.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ЭТАП 4 -->
+      <div class="dm-stage" style="--seg-c:var(--meridian-deep);--seg-bg:var(--meridian-tint);--seg-border:var(--meridian-border)">
+        <div class="dm-stage__side"><span class="dm-stage__time">10:00</span><span class="dm-stage__line"></span></div>
+        <div class="dm-stage__body">
+          <h2 class="dm-stage__name">Период C — главное окно</h2>
+          <p class="dm-stage__sub">Здесь проходит большинство входов. Сначала сетап, потом подтверждение, потом арифметика — и только затем кнопка.</p>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Какой сетап на экране?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Пробой IB с закреплением</span>
+              <span class="dm-branch__o">«Закрепилась» = закрытие 30-минутного периода за границей, в идеале двух. Вход — откат к краю IB, стоп за ближнюю структуру внутри IB, цели 0.5× → 1× (на тренде до 1.5–2×)</span>
+            </div>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Снятие ликвидности с возвратом</span>
+              <span class="dm-branch__o">Здесь «вернулась» = закрытие бара обратно за уровнем: свипу нужна скорость, а не время. Вход на откате, стоп за уровень снятия, цели nPOC → вчерашний POC → противоположный край VA</span>
+            </div>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Неудачный аукцион</span>
+              <span class="dm-branch__o">IB пробит, но цена закрылась обратно внутрь, уклон против пробоя. Вход внутрь IB в сторону уклона, цели середина IB → nPOC → вчерашний POC</span>
+            </div>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Принятие VA</span>
+              <span class="dm-branch__o">Два подряд периода закрылись внутри вчерашней VA (вошедший считается первым). Вход — закрытие второго, стоп за край откуда пришли, цель — касание противоположного края, дедлайн 17:30</span>
+            </div>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">Ничего из перечисленного</span>
+              <span class="dm-branch__o"><strong>Окно пропускается.</strong> Других входов в этом окне не существует</span>
+            </div>
+            <p class="dm-node__note"><strong>Отсекающие условия для пробоя:</strong> вчера был нейтральный день — не торгуем; первый пробой оказался ложным — второго шанса от него не ждём.</p>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Пробой IB: насколько глубоко откатило после выхода за границу?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Меньше 25% ширины IB</span>
+              <span class="dm-branch__o">Сильнейший из известных фильтров: такие дни закрываются в сторону пробоя в 94% случаев и <strong>ни разу</strong> не пробивают вторую сторону</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">25–50%</span>
+              <span class="dm-branch__o">Серая зона. Держим, но цели режем и не добавляем</span>
+            </div>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">50% и глубже</span>
+              <span class="dm-branch__o"><strong>Сетап мёртв — выходим, не дожидаясь стопа.</strong> Каждый второй такой день пробивает и вторую сторону</span>
+            </div>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Принятие VA: где именно оно произошло внутри VA?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">В ближней трети</span>
+              <span class="dm-branch__o">Цель далеко, стоп близко — RR около 2:1 и выше. <strong>Вход есть</strong></span>
+            </div>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">Дальше трети</span>
+              <span class="dm-branch__o"><strong>Пропуск.</strong> Цель приближается, стоп растёт, RR проваливается ниже порога</span>
+            </div>
+            <p class="dm-node__note"><strong>Приоритет:</strong> если A и B дали Mixed, но оба периода закрылись внутри VA — принятие побеждает, вход есть. Факт возврата цены сильнее нетто-направления периодов.</p>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Есть ◆ + FVG в сторону уклона?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Да</span>
+              <span class="dm-branch__o">Сигнал указывает <strong>бар входа</strong>: вход по закрытию сигнального бара или на откате в зону FVG, стоп за экстремум бара с ◆</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">Нет, но сетап чистый</span>
+              <span class="dm-branch__o">Входим по сетапу — сигнал лишь подтверждение и сам по себе основанием не является. <strong>Но при Desync и Mixed без ◆ + FVG входа нет</strong></span>
+            </div>
+            <p class="dm-node__note"><strong>Отмена идеи:</strong> цена пробила зону FVG и закрепилась за ней — сделки больше нет. Не усредняемся.</p>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Стоп и цель посчитаны до входа. Что с RR?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">1.5 и выше</span>
+              <span class="dm-branch__o">Порог пройден. Считаем размер: <strong>контракты = риск в € ÷ (стоп в пунктах × стоимость пункта)</strong>, риск 0.5–1% счёта</span>
+            </div>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">Ниже 1.5</span>
+              <span class="dm-branch__o"><strong>Сделки нет</strong>, каким бы красивым ни был сетап. Если цель приходится двигать, чтобы дотянуть RR — сетапа не было</span>
+            </div>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Дневной лимит риска — что там?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Запас есть</span>
+              <span class="dm-branch__o">Входим</span>
+            </div>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">Уже −2R или 3 стопа подряд</span>
+              <span class="dm-branch__o"><strong>День закончен.</strong> Терминал закрывается физически. Это единственное правило с сильными доказательствами: 71% провалов проп-трейдеров — пробой именно дневного лимита</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ЭТАП 5 -->
+      <div class="dm-stage" style="--seg-c:var(--whisper);--seg-bg:rgba(43,33,24,0.06);--seg-border:var(--line-strong)">
+        <div class="dm-stage__side"><span class="dm-stage__time">в позиции</span><span class="dm-stage__line"></span></div>
+        <div class="dm-stage__body">
+          <h2 class="dm-stage__name">Управление</h2>
+          <p class="dm-stage__sub">Решения после входа. Здесь чаще всего и утекает матожидание.</p>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Цена прошла в плюс — двигать ли стоп?</p>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">В безубыток, «уже можно»</span>
+              <span class="dm-branch__o"><strong>Нет.</strong> Цена входа для рынка не значит ничего — стоп на ней выбивается обычным шумом</span>
+            </div>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Появилась новая структура</span>
+              <span class="dm-branch__o">Новый свинг или край value — <strong>переносим стоп за неё</strong>. Это единственная причина двигать стоп</span>
+            </div>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Дошли до цели — фиксировать целиком?</p>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Сделка к магниту (nPOC, край VA)</span>
+              <span class="dm-branch__o"><strong>Полный выход на цели.</strong> Банковать половину на полпути — отдать заметную часть матожидания ради красивого винрейта</span>
+            </div>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Трендовый день</span>
+              <span class="dm-branch__o">Единственный случай, когда оставляем runner. Держим, пока периоды идут лесенкой (one-timeframing); первый период, торгующий за экстремум предыдущего в обратную сторону, — сигнал фиксировать</span>
+            </div>
+          </div>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Что закрывает позицию независимо от стопа?</p>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">Снятие против позиции</span>
+              <span class="dm-branch__o">Выход немедленно</span>
+            </div>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">Лесенка против</span>
+              <span class="dm-branch__o">Второй подряд 30-минутный период обновляет экстремум против нас — выход, стопа не ждём</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">3+ периода боковика</span>
+              <span class="dm-branch__o">Движение выдохлось, держать нечего</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ЭТАП 6 -->
+      <div class="dm-stage" style="--seg-c:#8a6a1e;--seg-bg:rgba(224,138,46,0.09);--seg-border:rgba(224,138,46,0.28)">
+        <div class="dm-stage__side"><span class="dm-stage__time">15:25</span></div>
+        <div class="dm-stage__body">
+          <h2 class="dm-stage__name">Второе окно — новый аукцион</h2>
+          <p class="dm-stage__sub">Не продолжение утра: американцы открывают свою сессию и переоценивают всё, что Европа наторговала. Наше утро для них — то же, что для нас ночь.</p>
+
+          <div class="dm-node">
+            <p class="dm-node__q">Торгуем ли второе окно сегодня?</p>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">День ECB</span>
+              <span class="dm-branch__o"><strong>Нет.</strong> Решение, пресс-конференция и US-открытие сливаются в один шторм</span>
+            </div>
+            <div class="dm-branch dm-branch--warn">
+              <span class="dm-branch__a">В 14:30 были US-данные</span>
+              <span class="dm-branch__o">Только после переоценки: структура утра могла быть отменена целиком</span>
+            </div>
+            <div class="dm-branch dm-branch--stop">
+              <span class="dm-branch__a">Дневной лимит выбран</span>
+              <span class="dm-branch__o">День закончен ещё утром</span>
+            </div>
+            <div class="dm-branch dm-branch--ok">
+              <span class="dm-branch__a">Чисто</span>
+              <span class="dm-branch__o">Reset: где цена относительно IB, VWAP и value area. Первые 15–30 минут US-открытия — свой мини-IB, за его края и торгуем. Стопы жёстче утренних: до конца дня меньше времени</span>
+            </div>
+            <p class="dm-node__note"><strong>Почему окно живое:</strong> полные расширения IB чаще всего добираются именно после обеда, вместе с американским объёмом.</p>
+          </div>
+
+          <div class="dm-out">Конец дня: до <strong>17:30</strong>. Не дошло до цели — закрываем по факту, а не переносим.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════ ПАНЕЛЬ: МАСТЕР ══════════════ -->
+    <div class="dm-panel" id="panel-wizard" role="tabpanel" aria-labelledby="tab-wizard" hidden>
+      <div class="wz">
+        <div class="wz-bar"><div class="wz-bar__fill" id="wzBar" style="width:0%"></div></div>
+        <div id="wzMount"></div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__mark">
+      <svg class="foot__mark-icon" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+        <g style="isolation:isolate">
+          <polygon points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#D07C3C" style="mix-blend-mode:multiply"/>
+          <polygon points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#97431F" style="mix-blend-mode:multiply"/>
+          <polygon points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#B5532E" style="mix-blend-mode:multiply"/>
+          <polygon points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#E8A94F" style="mix-blend-mode:multiply"/>
+          <polygon points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#B5532E" style="mix-blend-mode:multiply"/>
+          <polygon points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#97431F" style="mix-blend-mode:multiply"/>
+          <polygon points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#6E2E12" style="mix-blend-mode:multiply"/>
+        </g>
+      </svg>
+      <div>
+        <p class="foot__name">Карта решений FDAX</p>
+        <p class="foot__sub">Развилки дня · TPO / Market Profile</p>
+      </div>
+    </div>
+    <nav class="foot__nav" aria-label="Футер">
+      <a class="link" href="fdax-playbook.html">FDAX Playbook</a>
+      <a class="link" href="strategy-fdax.html">Стратегия FDAX</a>
+      <a class="link" href="relief.html">Relief</a>
+      <a class="link" href="pricing.html">Цены</a>
+    </nav>
+    <p class="foot__fine">
+      <span>TPO / Market Profile · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
+    </p>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ── ВКЛАДКИ ── */
+  var tabs = [document.getElementById('tab-tree'), document.getElementById('tab-wizard')];
+  var panels = [document.getElementById('panel-tree'), document.getElementById('panel-wizard')];
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t, j) {
+        t.setAttribute('aria-selected', String(i === j));
+        panels[j].hidden = i !== j;
+      });
+      if (i === 1 && !wzStarted) { wzStarted = true; render(); }
+    });
+  });
+
+  /* ══ ДАННЫЕ СЕТАПОВ ══ */
+  var SETUPS = {
+    brk: {
+      name: 'Пробой IB',
+      entry: 'Откат к краю IB',
+      stop: 'За ближнюю структуру внутри IB',
+      tgt: 'Расширения 0.5× → 1× от края пробоя; на трендовом дне до 1.5–2×'
+    },
+    raid: {
+      name: 'Снятие ликвидности',
+      entry: 'Откат после возврата за уровень',
+      stop: 'За уровень снятия',
+      tgt: 'Непротестированный POC → вчерашний POC → противоположный край VA'
+    },
+    fail: {
+      name: 'Неудачный аукцион',
+      entry: 'Внутрь IB, в сторону уклона',
+      stop: 'За экстремум ложного пробоя',
+      tgt: 'Середина IB → непротестированный POC → вчерашний POC'
+    },
+    va: {
+      name: 'Принятие VA',
+      entry: 'Закрытие второго периода внутри VA',
+      stop: 'За тот край VA, откуда пришли, плюс буфер',
+      tgt: 'Касание противоположного края VA · дедлайн 17:30'
+    }
+  };
+
+  /* ══ ШАГИ ══ */
+  var STEPS = [
+    {
+      id: 'news', stage: '08:00 · подготовка',
+      q: 'Что сегодня в календаре?',
+      hint: 'Самое серьёзное событие дня. Проверяется до открытия, а не когда уже дёрнуло.',
+      opts: [
+        { v: 'clear', t: 'Ничего важного', d: 'Работаем по плану' },
+        { v: 'c', t: 'Ifo или flash PMI в 10:00', d: 'Релиз падает прямо в период C',
+          warn: 'Релиз в 10:00 съедает главное окно: флэт за 5–10 минут до, входы не раньше чем через 15–30 минут после.' },
+        { v: 'us', t: 'US-данные в 14:30 (CPI, NFP)', d: 'За час до второго окна',
+          warn: 'После 14:30 структура утра может быть отменена — в 15:25 перечитать день заново.' },
+        { v: 'ecb', t: 'День ECB', d: 'Решение 14:15, пресс-конференция 14:45',
+          warn: 'Утро торгуем как обычно, но после 14:00 — ничего. Второе окно пропускаем целиком.' }
+      ]
+    },
+    {
+      id: 'va', stage: '08:00 · подготовка',
+      q: 'Где цена относительно вчерашней Value Area?',
+      hint: 'От этого зависит базовый сценарий дня и считается ли сегодня рассинхрон.',
+      opts: [
+        { v: 'above', t: 'Выше pVAH', d: 'Дисбаланс вверх' },
+        { v: 'below', t: 'Ниже pVAL', d: 'Дисбаланс вниз' },
+        { v: 'inside', t: 'Внутри VA', d: 'Двусторонний аукцион',
+          warn: 'Открылись внутри VA: торгуем только от краёв, не от середины. Правило рассинхрона сегодня не считается.' }
+      ]
+    },
+    {
+      id: 'gap', stage: '08:00 · подготовка',
+      q: 'Размер гэпа к закрытию Xetra 17:30?',
+      hint: 'Гэп есть почти каждый день, поэтому важен только его размер.',
+      opts: [
+        { v: 'small', t: 'До 50 пунктов', d: 'Закрывается в 72–82% дней' },
+        { v: 'mid', t: '50–100 пунктов', d: '57% — монетка' },
+        { v: 'big', t: 'Больше 100 пунктов', d: 'Закрывается лишь в 16–29% дней',
+          warn: 'Большой гэп: возврата не ждём, работаем по направлению гэпа. Вход — на неудавшейся попытке его закрыть, а не в погоне за открытием.' }
+      ]
+    },
+    {
+      id: 'inv', stage: '08:00 · подготовка',
+      q: 'Где прошла ночь относительно вчерашнего закрытия?',
+      hint: 'Пока Xetra спала, фьючерс торговал — к открытию у рынка уже накоплены позиции.',
+      opts: [
+        { v: 'long', t: 'Вся выше закрытия', d: 'Инвентарь перекошен в лонг',
+          warn: 'Перекос инвентаря в лонг: на открытии повышены шансы коррекции вниз. Нет коррекции за 30–60 минут — присоединяемся к ночному направлению.' },
+        { v: 'short', t: 'Вся ниже закрытия', d: 'Инвентарь перекошен в шорт',
+          warn: 'Перекос инвентаря в шорт: возможен отскок на закрытии шортов. Помним ловушку — рост может быть просто short covering, а не новыми покупками.' },
+        { v: 'flat', t: 'Вокруг закрытия', d: 'Инвентарь сбалансирован' }
+      ]
+    },
+    {
+      id: 'open', stage: '09:00 · период A',
+      q: 'Как рынок пошёл после 09:00?',
+      hint: 'Тип открытия задаёт уровень доверия к направлению на весь день.',
+      opts: [
+        { v: 'drive', t: 'Уехал в одну сторону и к открытию не вернулся', d: 'Open Drive — самый сильный тип' },
+        { v: 'test', t: 'Сходил на уровень, отбился, поехал через открытие', d: 'Open Test Drive' },
+        { v: 'orr', t: 'Вяло сходил, отвергли, развернуло через открытие', d: 'Open Rejection Reverse',
+          warn: 'Открытие типа Rejection Reverse: день скорее ротационный, цели держим скромные — это не трендовая заявка.' },
+        { v: 'auction', t: 'Крутится вокруг открытия без направления', d: 'Open Auction',
+          warn: 'Открытие типа Auction: убеждения у рынка нет. Внутри вчерашнего диапазона — только от краёв; снаружи — возможен тихий пробой позже.' }
+      ]
+    },
+    {
+      id: 'sync', stage: '09:30 · период B',
+      when: function (st) { return st.va !== 'inside'; },
+      q: 'Куда суммарно смотрят периоды A и B?',
+      hint: 'Считается по нетто пары, а не «оба совпали». Серый период не голосует.',
+      opts: [
+        { v: 'sync', t: 'К VA, против стороны открытия', d: 'Sync — рынок принимает возврат' },
+        { v: 'desync', t: 'От VA, по стороне открытия', d: 'Desync — дисбаланс принят',
+          warn: 'Рассинхрон: возврата к значению не будет. Вход только усиленный — внешний триггер плюс ◆ + FVG.' },
+        { v: 'mixed', t: 'Гасят друг друга или оба серые', d: 'Mixed — трактуем как Desync',
+          warn: 'Mixed: направления нет, трактуем как рассинхрон. Индикатор в этот момент значок не покажет — отслеживаем глазами.' }
+      ]
+    },
+    {
+      id: 'lean', stage: '09:30 · период B',
+      q: 'Насколько согласован уклон дня?',
+      hint: 'Четыре источника: VWAP, период A, период B, границы IB.',
+      opts: [
+        { v: 'strong', t: 'Всё в одну сторону', d: 'Сильный — полный размер' },
+        { v: 'mod', t: 'Картина есть, но не идеальная', d: 'Умеренный — уменьшенный размер' },
+        { v: 'weak', t: 'Источники расходятся', d: 'Слабый',
+          stop: 'Слабый уклон: нарратива дня нет, входить не от чего.' }
+      ]
+    },
+    {
+      id: 'dir', stage: '09:30 · период B',
+      q: 'В какую сторону смотрит уклон?',
+      opts: [
+        { v: 'long', t: 'Вверх — работаем лонг', d: '' },
+        { v: 'short', t: 'Вниз — работаем шорт', d: '' }
+      ]
+    },
+    {
+      id: 'ibw', stage: '09:30 · период B',
+      q: 'Ширина IB в долях ATR(14)?',
+      hint: 'Медиана DAX ≈ 0.35. При ATR ≈ 300 это примерно 105 пунктов.',
+      opts: [
+        { v: 'narrow', t: 'Меньше 0.25 — узкий', d: 'Сжатие, жди расширения',
+          warn: 'Узкий IB обещает расширение диапазона, но не направление: у таких дней самая высокая доля двусторонних пробоев.' },
+        { v: 'norm', t: '0.25–0.45 — нормальный', d: 'Рабочий сценарий пробоя' },
+        { v: 'wide', t: '0.45–0.6 — широкий', d: 'Часть хода уже пройдена',
+          warn: 'Широкий IB: заметная часть дневного хода уже пройдена — цели режем.' },
+        { v: 'xwide', t: 'Больше 0.6', d: 'Очень широкий — пробой отпадает' }
+      ]
+    },
+    {
+      id: 'setup', stage: '10:00 · период C',
+      q: 'Какой сетап на экране?',
+      hint: 'Других входов в этом окне не существует.',
+      opts: [
+        { v: 'brk', t: 'Пробой IB с закреплением', d: 'Закрытие 30-минутного периода за границей' },
+        { v: 'raid', t: 'Снятие ликвидности с возвратом', d: 'Закрытие бара обратно за уровнем' },
+        { v: 'fail', t: 'Неудачный аукцион', d: 'Пробили IB и закрылись обратно внутрь' },
+        { v: 'va', t: 'Принятие VA', d: 'Два подряд периода закрылись внутри вчерашней VA' },
+        { v: 'none', t: 'Ничего из перечисленного', d: '',
+          stop: 'Сетапа на экране нет — окно пропускается.' }
+      ]
+    },
+    {
+      id: 'pull', stage: '10:00 · период C',
+      when: function (st) { return st.setup === 'brk'; },
+      q: 'Насколько глубоко откатило после пробоя?',
+      hint: 'Самый сильный из известных фильтров продолжения.',
+      opts: [
+        { v: 'shallow', t: 'Меньше 25% ширины IB', d: '94% таких дней закрываются в сторону пробоя' },
+        { v: 'mid', t: '25–50%', d: 'Серая зона',
+          warn: 'Откат в серой зоне 25–50%: держим, но цели режем и не добавляемся.' },
+        { v: 'deep', t: '50% и глубже', d: '',
+          stop: 'Откат глубже половины IB: сетап мёртв, выходим не дожидаясь стопа.' }
+      ]
+    },
+    {
+      id: 'third', stage: '10:00 · период C',
+      when: function (st) { return st.setup === 'va'; },
+      q: 'Где именно произошло принятие внутри VA?',
+      hint: 'Ширина VA = W, расстояние от ближнего края = d. Порог RR 1.5 даёт d ≤ 0.4·W.',
+      opts: [
+        { v: 'near', t: 'В ближней трети VA', d: 'Цель далеко, стоп близко' },
+        { v: 'far', t: 'Дальше трети', d: '',
+          stop: 'Принятие произошло дальше ближней трети VA: цель близко, стоп велик, RR ниже порога.' }
+      ]
+    },
+    {
+      id: 'sig', stage: '10:00 · период C',
+      q: 'Есть ◆ + FVG в сторону уклона?',
+      hint: 'Сигнал подтверждает картину и указывает бар входа. Сетап он не заменяет.',
+      opts: [
+        { v: 'yes', t: 'Да, сигнал есть', d: 'Вход по закрытию бара или на откате в зону FVG' },
+        { v: 'no', t: 'Нет, но сетап чистый', d: 'Входим по сетапу' }
+      ]
+    },
+    {
+      id: 'rr', stage: '10:00 · период C',
+      q: 'Стоп и цель посчитаны. Что с RR?',
+      hint: 'Считается до входа. Если цель приходится двигать ради нужного числа — сетапа не было.',
+      opts: [
+        { v: 'ok', t: '1.5 и выше', d: 'Порог пройден' },
+        { v: 'bad', t: 'Ниже 1.5', d: '',
+          stop: 'RR ниже 1.5 — сделки нет, каким бы красивым ни был сетап.' }
+      ]
+    },
+    {
+      id: 'limit', stage: 'риск',
+      q: 'Дневной лимит риска — что там?',
+      hint: 'Самое доказанное правило плейбука: 71% провалов проп-трейдеров — пробой именно дневного лимита.',
+      opts: [
+        { v: 'ok', t: 'Запас есть', d: '' },
+        { v: 'hit', t: 'Уже −2R или 3 стопа подряд', d: '',
+          stop: 'Дневной лимит выбран — день закончен, терминал закрывается.' }
+      ]
+    }
+  ];
+
+  /* ══ СОСТОЯНИЕ ══ */
+  var st = {}, path = [], idx = 0, wzStarted = false;
+  var stops = [], warns = [];
+
+  function visible(i) {
+    var s = STEPS[i];
+    return !s.when || s.when(st);
+  }
+  function nextIdx(from) {
+    var i = from;
+    while (i < STEPS.length && !visible(i)) i++;
+    return i;
+  }
+
+  /* ══ ВЕРДИКТ ══ */
+  function verdict() {
+    var hard = stops.slice();
+    var soft = warns.slice();
+    var setup = SETUPS[st.setup];
+    var desync = st.sync === 'desync' || st.sync === 'mixed';
+
+    // Очень широкий IB убивает пробой, но не отменяет возвратные сетапы
+    if (st.ibw === 'xwide') {
+      if (st.setup === 'brk') {
+        hard.push('IB шире 0.6 × ATR: движение состоялось без нас — пробой не торгуем.');
+      } else if (st.setup) {
+        soft.push('IB шире 0.6 × ATR: дневной ход в основном пройден — цели режем, размер уменьшаем.');
+      }
+    }
+
+    // Приоритет принятия VA над рассинхроном
+    if (desync && st.setup === 'va') {
+      soft.push('A и B дали рассинхрон, но принятие VA его перебивает: факт возврата цены сильнее нетто-направления периодов.');
+    } else if (desync && (st.setup === 'brk' || st.setup === 'raid')) {
+      if (st.sig !== 'yes') {
+        hard.push('Рассинхрон требует усиленного входа: внешний триггер есть, но нет ◆ + FVG в ту же сторону.');
+      } else {
+        soft.push('Усиленный вход выполнен: внешний триггер плюс ◆ + FVG. Это минимум, ниже которого при рассинхроне входа нет.');
+      }
+    } else if (desync && st.setup === 'fail') {
+      hard.push('При рассинхроне нужен внешний триггер — пробой IB или снятие ликвидности. Неудачный аукцион на эту роль не годится.');
+    }
+
+    // Открытие типа Drive против направления сделки
+    if (st.open === 'drive') {
+      soft.push('Открытие типа Drive: против его направления не входим весь день, даже если сетап выглядит убедительно.');
+    }
+
+    var go = hard.length === 0;
+    var size = st.lean === 'strong' ? 'Полный' : 'Уменьшенный';
+    if (go && (st.news === 'c' || st.ibw === 'wide' || st.pull === 'mid')) size = 'Уменьшенный';
+
+    var h = [];
+    h.push('<div class="vd ' + (go ? 'vd--go' : 'vd--no') + '">');
+    h.push('<div class="vd__head">');
+    h.push('<span class="vd__mark">' + (go ? '✓' : '⛔') + '</span>');
+    h.push('<h2 class="vd__title">' + (go ? 'Вход есть' : 'Сделки нет') + '</h2>');
+    if (go && st.dir) {
+      h.push('<span class="vd__dir vd__dir--' + (st.dir === 'long' ? 'l' : 's') + '">' +
+             (st.dir === 'long' ? '▲ ЛОНГ' : '▼ ШОРТ') + '</span>');
+    }
+    h.push('</div><div class="vd__body">');
+
+    if (go && setup) {
+      h.push(row('Сетап', '<strong>' + setup.name + '</strong>'));
+      h.push(row('Вход', setup.entry + (st.sig === 'yes' ? ' · бар входа подтверждён ◆ + FVG' : '')));
+      h.push(row('Стоп', setup.stop));
+      h.push(row('Цель', setup.tgt));
+      h.push(row('Главная цель дня', 'Непротестированный POC: сначала вчерашний, если он ещё не тронут, иначе ближайший непротестированный по ходу сделки'));
+      h.push(row('Размер', '<strong>' + size + '</strong> · контракты = риск в € ÷ (стоп в пунктах × стоимость пункта), риск 0.5–1% счёта'));
+      h.push(row('Отмена идеи', 'Цена закрепилась за зоной FVG с обратной стороны — сделки больше нет, не усредняемся'));
+    }
+
+    if (hard.length) {
+      h.push('<ul class="vd-list vd-list--stop">');
+      hard.forEach(function (s) { h.push('<li><span>' + s + '</span></li>'); });
+      h.push('</ul>');
+    }
+    if (soft.length) {
+      h.push('<ul class="vd-list vd-list--warn">');
+      soft.forEach(function (s) { h.push('<li><span>' + s + '</span></li>'); });
+      h.push('</ul>');
+    }
+
+    h.push('<p class="vd__foot">Вердикт собран по правилам из <a href="fdax-playbook.html">плейбука</a> — обоснования и источники цифр там. ' +
+           'После входа остаются решения по управлению: безубыток только за новую структуру, полный выход на цели, ' +
+           'выход по лесенке против позиции. Они на вкладке «Дерево».</p>');
+    h.push('</div></div>');
+
+    h.push('<div class="wz-nav"><button class="wz-back" type="button" id="wzBack">← изменить последний ответ</button>' +
+           '<button class="wz-restart" type="button" id="wzRestart">начать заново</button></div>');
+    return h.join('');
+  }
+  function row(k, v) { return '<div class="vd-row"><b>' + k + '</b><span>' + v + '</span></div>'; }
+
+  /* ══ РЕНДЕР ══ */
+  var mount = document.getElementById('wzMount');
+  var bar = document.getElementById('wzBar');
+
+  function render() {
+    var i = nextIdx(idx);
+    var total = STEPS.filter(function (s, n) { return visible(n); }).length;
+    var done = path.length;
+    bar.style.width = Math.round(done / (total || 1) * 100) + '%';
+
+    if (i >= STEPS.length) {
+      bar.style.width = '100%';
+      mount.innerHTML = verdict();
+      document.getElementById('wzBack').addEventListener('click', back);
+      document.getElementById('wzRestart').addEventListener('click', restart);
+      return;
+    }
+
+    var s = STEPS[i];
+    var h = ['<div class="wz-card">'];
+    h.push('<p class="wz-step">' + s.stage + ' · шаг ' + (done + 1) + ' из ' + total + '</p>');
+    h.push('<h2 class="wz-q">' + s.q + '</h2>');
+    if (s.hint) h.push('<p class="wz-hint">' + s.hint + '</p>');
+    h.push('<div class="wz-opts">');
+    s.opts.forEach(function (o, n) {
+      h.push('<button class="wz-opt" type="button" data-n="' + n + '">' +
+             '<span class="wz-opt__t">' + o.t + '</span>' +
+             (o.d ? '<span class="wz-opt__d">' + o.d + '</span>' : '') +
+             '</button>');
+    });
+    h.push('</div>');
+    h.push('<div class="wz-nav"><button class="wz-back" type="button" id="wzBack"' + (done ? '' : ' disabled') + '>← назад</button>' +
+           '<span class="wz-trail">' + (done ? 'ответов дано: ' + done : 'начало') + '</span></div>');
+    h.push('</div>');
+    mount.innerHTML = h.join('');
+
+    Array.prototype.forEach.call(mount.querySelectorAll('.wz-opt'), function (btn) {
+      btn.addEventListener('click', function () { choose(i, +btn.dataset.n); });
+    });
+    document.getElementById('wzBack').addEventListener('click', back);
+  }
+
+  function choose(i, n) {
+    var s = STEPS[i], o = s.opts[n];
+    st[s.id] = o.v;
+    path.push({ i: i, stop: o.stop || null, warn: o.warn || null });
+    if (o.stop) stops.push(o.stop);
+    if (o.warn) warns.push(o.warn);
+    // жёсткий стоп — дальше спрашивать нечего, сразу вердикт
+    idx = o.stop ? STEPS.length : i + 1;
+    render();
+  }
+
+  function back() {
+    var last = path.pop();
+    if (!last) return;
+    if (last.stop) { var si = stops.indexOf(last.stop); if (si > -1) stops.splice(si, 1); }
+    if (last.warn) { var wi = warns.indexOf(last.warn); if (wi > -1) warns.splice(wi, 1); }
+    delete st[STEPS[last.i].id];
+    idx = last.i;
+    render();
+  }
+
+  function restart() {
+    st = {}; path = []; idx = 0; stops = []; warns = [];
+    render();
+  }
+})();
+</script>
+</body>
+</html>

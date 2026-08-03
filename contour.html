@@ -394,72 +394,76 @@
       </div>
       <p class="sec-sub">Каждый закрытый период проверяется сверху вниз по шести правилам — побеждает первое совпавшее. Strong Trend подтверждается сразу; остальные пять — только после того, как период N+1 не опроверг чтение.</p>
 
-      <!-- Hex-cycle diagram: 6 states as a typical auction path, real internal `reason` strings shown as flavor -->
-      <div class="reveal" style="--i:1;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:0.35rem;margin-top:clamp(1.6rem,3vw,2.2rem)">
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#1a9e78" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#0e6b52;background:rgba(26,158,120,0.14);border-color:rgba(26,158,120,0.32)">1</span>
-          <strong>Strong Trend</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">Сильный тренд. OTF-стрик ≥2, |RF|=2, экстеншн держится, откат &lt;50%.</span>
-          <span class="chip" style="font-size:8px">"OTF×3 RF+2 ext held"</span>
+      <div class="states-grid reveal" style="--i:1">
+        <div class="state-card" style="--st:#1a9e78">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#1a9e78" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Strong Trend</span>
+            <span class="state-card__no" style="color:#0e6b52">1</span>
+          </div>
+          <p class="state-card__txt">Сильный тренд. OTF-стрик ≥2, |RF|=2, экстеншн держится, откат &lt;50%.</p>
+          <span class="chip">"OTF×3 RF+2 ext held"</span>
         </div>
 
-        <span aria-hidden="true" style="align-self:center;color:var(--haze);font-size:1.3rem;padding:0 0.2rem">→</span>
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#c99a45" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#8a6a2e;background:rgba(201,154,69,0.16);border-color:rgba(201,154,69,0.32)">2</span>
-          <strong>Pullback</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">Откат. Тело держится в зоне Single Print, откат 30–60% без пробоя.</span>
-          <span class="chip" style="font-size:8px">"pullback 42% SP hold"</span>
+        <div class="state-card" style="--st:#c99a45">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#c99a45" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Pullback</span>
+            <span class="state-card__no" style="color:#8a6a2e">2</span>
+          </div>
+          <p class="state-card__txt">Откат. Тело держится в зоне Single Print, откат 30–60% без пробоя.</p>
+          <span class="chip">"pullback 42% SP hold"</span>
         </div>
 
-        <span aria-hidden="true" style="align-self:center;color:var(--haze);font-size:1.3rem;padding:0 0.2rem">→</span>
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#e08a2e" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#97431f;background:rgba(224,138,46,0.16);border-color:rgba(224,138,46,0.32)">3</span>
-          <strong>Fading</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">Угасание. 2+ из 5 признаков истощения: decay, растущий overlap, хвост, POC не следует, RF упал.</span>
-          <span class="chip" style="font-size:8px">"fade vote 3/5"</span>
+        <div class="state-card" style="--st:#e08a2e">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#e08a2e" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Fading</span>
+            <span class="state-card__no" style="color:#97431f">3</span>
+          </div>
+          <p class="state-card__txt">Угасание. 2+ из 5 признаков истощения: decay, растущий overlap, хвост, POC не следует, RF упал.</p>
+          <span class="chip">"fade vote 3/5"</span>
         </div>
 
-        <span aria-hidden="true" style="align-self:center;color:var(--haze);font-size:1.3rem;padding:0 0.2rem">→</span>
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#c85a20" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#9a3f12;background:rgba(200,90,32,0.16);border-color:rgba(200,90,32,0.32)">4</span>
-          <strong>Reversal</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">Разворот. Закрытие пробивает старый экстремум ПОСЛЕ угасания — подтверждённая смена стороны.</span>
-          <span class="chip" style="font-size:8px">"OTF break after fade, RF+1"</span>
+        <div class="state-card" style="--st:#c85a20">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#c85a20" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Reversal</span>
+            <span class="state-card__no" style="color:#9a3f12">4</span>
+          </div>
+          <p class="state-card__txt">Разворот. Закрытие пробивает старый экстремум ПОСЛЕ угасания — подтверждённая смена стороны.</p>
+          <span class="chip">"OTF break after fade, RF+1"</span>
         </div>
 
-        <span aria-hidden="true" style="align-self:center;color:var(--haze);font-size:1.3rem;padding:0 0.2rem">→</span>
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#ff9800" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#a35800;background:rgba(255,152,0,0.16);border-color:rgba(255,152,0,0.32)">5</span>
-          <strong>Sweep</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">Вынос. Пробой без предварительного угасания — либо фитиль проколол уровень и закрылся обратно.</span>
-          <span class="chip" style="font-size:8px">"wick pierce, closed back"</span>
+        <div class="state-card" style="--st:#ff9800">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#ff9800" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Sweep</span>
+            <span class="state-card__no" style="color:#a35800">5</span>
+          </div>
+          <p class="state-card__txt">Вынос. Пробой без предварительного угасания — либо фитиль проколол уровень и закрылся обратно.</p>
+          <span class="chip">"wick pierce, closed back"</span>
         </div>
 
-        <span aria-hidden="true" style="align-self:center;color:var(--haze);font-size:1.3rem;padding:0 0.2rem">→</span>
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#8a8a8a" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#5c5c5c;background:rgba(43,33,24,0.08);border-color:rgba(43,33,24,0.2)">6</span>
-          <strong>Balance</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">Баланс. Два периода подряд перекрываются ≥70% диапазона, |RF|≤1 — преимущества ни у кого.</span>
-          <span class="chip" style="font-size:8px">"overlap 78% ×2"</span>
+        <div class="state-card" style="--st:#8a8a8a">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#8a8a8a" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Balance</span>
+            <span class="state-card__no" style="color:#5c5c5c">6</span>
+          </div>
+          <p class="state-card__txt">Баланс. Два периода подряд перекрываются ≥70% диапазона, |RF|≤1 — преимущества ни у кого.</p>
+          <span class="chip">"overlap 78% ×2"</span>
         </div>
 
-      </div>
+        <div class="state-card state-card--none">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="none" stroke="var(--line-strong)" stroke-width="3" stroke-dasharray="5 5"/></svg>
+            <span class="state-card__name">Undefined</span>
+            <span class="state-card__no">0</span>
+          </div>
+          <p class="state-card__txt">Ни одно из шести правил не подошло. Период остаётся без чтения: без разрешённого направления и без уровня инвалидации.</p>
+        </div>
 
-      <div class="reveal" style="--i:2;display:flex;align-items:center;justify-content:center;gap:0.6rem;margin-top:1.4rem;padding:0.75rem 1.2rem;border:1px dashed var(--line-strong);border-radius:var(--r);max-width:34rem;margin-left:auto;margin-right:auto;background:color-mix(in srgb, var(--cream) 50%, transparent)">
-        <svg width="34" height="30" viewBox="0 0 60 52" aria-hidden="true" style="flex-shrink:0"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="none" stroke="var(--line-strong)" stroke-width="2" stroke-dasharray="4 4"/></svg>
-        <span style="font-size:0.82rem;color:var(--haze)"><strong style="color:var(--ink-900)">0 · Undefined</strong> — ни одно из шести правил не подошло. Период остаётся без чтения: без разрешённого направления и без уровня инвалидации.</span>
       </div>
 
       <p class="sec-sub" style="margin-top:1.6rem;max-width:var(--measure)">Reversal — единственное чтение, которое умеет себя переобувать: если период N+1 закрывается обратно за уровень пробоя, чтение задним числом становится Sweep. Не подтвердился разворот — не подтвердился, без исключений.</p>
@@ -476,6 +480,37 @@
       </div>
       <p class="sec-sub">Бейдж не просто говорит «сигнал прошёл» — он показывает ПОЧЕМУ. Каждый пройденный байпас клеится к направлению отдельным тегом через точку.</p>
 
+      <div class="settings-wrap reveal" style="margin-bottom:1.6rem">
+        <table class="settings-table">
+          <thead>
+            <tr><th>Буква</th><th>Значит</th><th>Когда появляется</th></tr>
+          </thead>
+          <tbody>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-bull">Направление — первым</span></td></tr>
+            <tr><td>↑ / ↓</td><td class="def">лонг / шорт</td><td>Дельта-бар с подтверждённым Fair Value Gap.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-info">Байпасы — через «·» после стрелки</span></td></tr>
+            <tr><td>F</td><td class="def">пробой VWAP</td><td>Первый сигнал после N подтверждающих закрытий за VWAP, в сторону пробоя.</td></tr>
+            <tr><td>V</td><td class="def">Volatile Bar</td><td>Сигнал в окне цветной точки VB. Считается и если в окно попал только дельта-бар, а FVG дозрел позже.</td></tr>
+            <tr><td>Eq</td><td class="def">EQ-ликвидность</td><td>Дельта-бар сам сформировал значимый equal high/low, совпадающий с цветом live-периода.</td></tr>
+            <tr><td>FR · LDN</td><td class="def">сессионный уровень</td><td>Снят хай/лой Франкфурта или Лондона. Хай — за шорты, лой — за лонги.</td></tr>
+            <tr><td>PD · PW</td><td class="def">уровень дня / недели</td><td>То же для pdH/pdL и pwH/pwL. Трекается и при скрытых линиях.</td></tr>
+            <tr><td>RS</td><td class="def">повторное снятие</td><td>Уровень, оставленный дельта-баром прошлого FR/LDN/PD/PW-сигнала, снят ещё раз.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-struct">Сценарий — всегда последним</span></td></tr>
+            <tr><td>T</td><td class="def">1 · Strong Trend</td><td>Продолжение тренда, только в сторону OTF.</td></tr>
+            <tr><td>P</td><td class="def">2 · Pullback</td><td>Откат в тренде, якорь — Single Print или край периода.</td></tr>
+            <tr><td>D</td><td class="def">3 · Fading</td><td>Отбой против выдыхающегося тренда. D (fa<strong>D</strong>ing), а не F — F в бейдже уже занята пробоем VWAP.</td></tr>
+            <tr><td>R</td><td class="def">4 · Reversal</td><td>Только в сторону пробоя, якорь — ретест уровня слома.</td></tr>
+            <tr><td>W</td><td class="def">5 · Sweep</td><td>Возврат после выноса, якорь — снятый уровень. W (s<strong>W</strong>eep), а не S — S занята шортом.</td></tr>
+            <tr><td>B</td><td class="def">6 · Balance</td><td>Только от края: верхняя треть — шорты, нижняя — лонги, середина мертва.</td></tr>
+            <tr><td><em>ничего</em></td><td class="def">0 · Undefined</td><td>Чтения нет — называть нечего.</td></tr>
+
+          </tbody>
+        </table>
+      </div>
+
       <div class="info-rows">
 
         <div class="info-row reveal" style="--i:0">
@@ -490,53 +525,6 @@
           </div>
         </div>
 
-        <div class="info-row reveal" style="--i:1">
-          <span class="info-row__badge tag-info">F</span>
-          <div>
-            <h3>После пробоя VWAP</h3>
-            <p>Первый сигнал любого направления после N подтверждающих закрытий за VWAP. Направление сигнала должно совпасть с направлением пробоя — иначе тег не клеится, а вооружение просто сбрасывается.</p>
-          </div>
-        </div>
-
-        <div class="info-row reveal" style="--i:2">
-          <span class="info-row__badge tag-info">V</span>
-          <div>
-            <h3>Окно Volatile Bar</h3>
-            <p>Сигнал в направлении цветной (не серой) точки VB — в окне из N баров, начиная с самого бара VB. Работает и если только дельта-бар сигнала попал в окно, а FVG дозрел позже.</p>
-          </div>
-        </div>
-
-        <div class="info-row reveal" style="--i:3">
-          <span class="info-row__badge tag-info">Eq</span>
-          <div>
-            <h3>EQ-ликвидность</h3>
-            <p>Дельта-бар сигнала сам сформировал значимый равный хай/лоу — но тег клеится только если это совпадает с текущим цветом формирующегося периода.</p>
-          </div>
-        </div>
-
-        <div class="info-row reveal" style="--i:4">
-          <span class="info-row__badge tag-info">FR · LDN</span>
-          <div>
-            <h3>Снятие сессионного уровня</h3>
-            <p>Снятие хая Франкфурта/Лондона вооружает шорты, снятие лоя — лонги (mean-reversion). Держится без ограничения по времени до следующего прошедшего сигнала.</p>
-          </div>
-        </div>
-
-        <div class="info-row reveal" style="--i:5">
-          <span class="info-row__badge tag-info">PD · PW</span>
-          <div>
-            <h3>Снятие уровня дня / недели</h3>
-            <p>Та же логика для pdH/pdL и pwH/pwL: снятие хая — шорты, снятие лоя — лонги. Трекается независимо от того, включены ли сами линии на графике.</p>
-          </div>
-        </div>
-
-        <div class="info-row reveal" style="--i:6">
-          <span class="info-row__badge tag-info">RS</span>
-          <div>
-            <h3>Повторное снятие (re-sweep)</h3>
-            <p>У любого FR/LDN/PD/PW-сигнала его собственный дельта-бар оставляет за собой уровень. Если цена снимает его ещё раз — следующий сигнал в ТОМ ЖЕ направлении получает тег RS: второй забор ликвидности поверх первого.</p>
-          </div>
-        </div>
 
         <div class="info-row reveal" style="--i:7">
           <span class="info-row__badge tag-struct">br → BR ✓ → BR ▲</span>

@@ -394,7 +394,7 @@ a.signal-panel:hover {
 
 /* ── SECTION HEADER PATTERN ── */
 .wrap-section { padding: clamp(2.6rem, 6vw, 4rem) 0; }
-.wrap-section + .wrap-section { border-top: 1px solid var(--line); }
+/* No rule between sections — each one already opens with its own .sec-head line */
 .wrap-section--no-top { border-top: none !important; }
 .sec-head { display: flex; align-items: baseline; gap: 0.7rem; margin-bottom: clamp(1.6rem, 3vw, 2.4rem); flex-wrap: wrap; }
 .sec-head__label { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-900); font-weight: 600; white-space: nowrap; }
@@ -449,6 +449,44 @@ a.signal-panel:hover {
 .mod-card__more { font-weight: 600; }
 .mod-card__more svg { transition: transform 0.25s var(--ease-cinema); }
 .mod-card__more:hover svg { transform: translateX(2px); }
+
+/* ── STATE CARDS (the 6 period reads — checked top-down, first match wins) ── */
+.states-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.7rem, 1.5vw, 1.05rem); margin-top: clamp(1.6rem, 3vw, 2.2rem);
+}
+@media (max-width: 900px) { .states-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .states-grid { grid-template-columns: 1fr; } }
+.state-card {
+  --st: var(--line-strong);
+  background: var(--cream); border: 1px solid var(--line); border-radius: var(--r);
+  border-top: 3px solid var(--st);
+  padding: clamp(0.9rem, 1.6vw, 1.15rem) clamp(0.95rem, 1.6vw, 1.2rem) clamp(0.9rem, 1.5vw, 1.1rem);
+  display: flex; flex-direction: column; gap: 0.5rem;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.5), 0 3px 10px rgba(43,33,24,0.1);
+  transition: transform 0.4s var(--ease-cinema), box-shadow 0.4s var(--ease-cinema);
+}
+.state-card:hover { transform: translateY(-2px); box-shadow: inset 0 1px 2px rgba(255,255,255,0.55), 0 8px 20px rgba(43,33,24,0.17); }
+.state-card__head { display: flex; align-items: center; gap: 0.5rem; }
+.state-card__hex { width: 22px; height: 19px; flex-shrink: 0; }
+.state-card__no {
+  font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+  color: var(--st); margin-left: auto;
+}
+.state-card__name { font-family: var(--font-display); font-size: 1.02rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15; }
+.state-card__txt { font-size: 0.79rem; color: var(--haze); line-height: 1.55; margin: 0; }
+.state-card .chip { align-self: flex-start; margin-top: auto; }
+/* "no read" is not a seventh state — it spans the full row, apart from the six */
+.state-card--none {
+  grid-column: 1 / -1;
+  background: transparent; border: 1px dashed var(--line-strong); box-shadow: none;
+  flex-direction: row; align-items: center; gap: 0.75rem;
+  padding: 0.8rem clamp(0.95rem, 1.6vw, 1.2rem);
+}
+.state-card--none:hover { transform: none; box-shadow: none; }
+.state-card--none .state-card__head { flex: 0 0 auto; }
+.state-card--none .state-card__no { margin-left: 0.15rem; color: var(--whisper); }
+@media (max-width: 560px) { .state-card--none { flex-direction: column; align-items: flex-start; gap: 0.5rem; } }
 
 /* ── CHIP (feature tag, reused in mod-cards, hero console, FAQ) ── */
 .chip {

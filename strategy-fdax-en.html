@@ -194,6 +194,8 @@
           <li><a href="#period-c">Period C</a></li>
           <li><a href="#signal">◆ + FVG</a></li>
           <li><a href="#day-types">Day types</a></li>
+          <li><a href="#risk">Risk and size</a></li>
+          <li><a href="#avoid">When not to trade</a></li>
         </ul>
       </div>
       <a class="button" href="relief-en.html" style="--acc-deep:#215E7A">
@@ -220,7 +222,7 @@
       </p>
       <a class="doc-hero__sibling reveal" style="--i:2" href="strategy-nq-en.html">NQ Strategy →</a>
       <div class="doc-hero-meta reveal" style="--i:3">
-        <div class="stat"><span class="val">80–200</span><span class="lbl">ATR, points</span></div>
+        <div class="stat"><span class="val">≈300</span><span class="lbl">ATR(14) · 2026</span></div>
         <div class="stat"><span class="val">09:00</span><span class="lbl">session open CET</span></div>
         <div class="stat"><span class="val">€25</span><span class="lbl">per point</span></div>
       </div>
@@ -244,7 +246,8 @@
         <a href="#management">8. Position management</a>
         <a href="#second-window">9. Second window</a>
         <a href="#day-types">10. Day types</a>
-        <a href="#avoid">11. When not to trade</a>
+        <a href="#risk">11. Risk and size</a>
+        <a href="#avoid">12. When not to trade</a>
       </aside>
 
       <!-- CONTENT -->
@@ -267,12 +270,15 @@
                 <tr><td>1 point</td><td class="def">€25</td></tr>
 
                 <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-teal">Volatility</span></td></tr>
-                <tr><td>Typical ATR (day)</td><td class="def">80–200 points</td></tr>
+                <tr><td>ATR(14) in 2024</td><td class="def">≈ 190 points</td></tr>
+                <tr><td>ATR(14) in 2026</td><td class="def">≈ 300 points</td></tr>
+                <tr><td>Average daily range</td><td class="def">median 270 points (2026)</td></tr>
 
-                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-amber">Initial Balance</span></td></tr>
-                <tr><td>Narrow IB</td><td class="def">&lt; 30 points</td></tr>
-                <tr><td>Normal IB</td><td class="def">30–80 points</td></tr>
-                <tr><td>Wide IB</td><td class="def">&gt; 100 points</td></tr>
+                <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-amber">Initial Balance — as a fraction of ATR</span></td></tr>
+                <tr><td>Narrow IB</td><td class="def">&lt; 0.25 × ATR14</td></tr>
+                <tr><td>Normal IB</td><td class="def">0.25–0.45 × ATR14 <span style="color:var(--whisper)">— DAX median ≈ 0.35</span></td></tr>
+                <tr><td>Wide IB</td><td class="def">&gt; 0.45 × ATR14</td></tr>
+                <tr><td>Don't trade the break</td><td class="def">&gt; 0.6 × ATR14</td></tr>
 
                 <tr class="sg-row"><td colspan="2"><span class="sg-tag sg-purple">Session</span></td></tr>
                 <tr><td>Chart</td><td class="def">1m</td></tr>
@@ -280,6 +286,14 @@
               </tbody>
             </table>
           </div>
+          <dl class="term-footnotes">
+            <dt>Why IB is measured in fractions of ATR, not in points</dt>
+            <dd>DAX volatility changes several-fold within a couple of years: ATR(14) grew from ≈190 points in 2024 to ≈300 in 2026, and the median IB
+                went from 70 to about 110 points. Any fixed point threshold goes stale with it: the old rule "IB above 120 points — don't trade" would today
+                reject <strong>roughly 40% of perfectly ordinary days</strong>. The ratio of IB to daily ATR, however, is stable: a median of 0.31–0.37 year after year —
+                so that's what we lean on. For orientation at ATR ≈ 300: narrow &lt; 75 points, normal 75–135, wide &gt; 135, don't trade &gt; 180.
+                <br><span style="color:var(--whisper)">Source: own calculation on cash DAX (Xetra 09:00–17:30), 2022–2026, 1019 days.</span></dd>
+          </dl>
         </div>
 
         <!-- 2. SCHEDULE -->
@@ -374,31 +388,95 @@
               <div class="ic">🧭</div>
               <h3>Context</h3>
               <ul class="check-list">
-                <li>Where is price relative to PDVAH/PDVAL? Outside Above / Inside / Outside Below</li>
-                <li>Is there a Naked POC nearby? → a magnet, don't trade against it</li>
-                <li>What kind of day was yesterday — Poor H/L? A return to it today is likely (≈70%)</li>
+                <li>Where is price relative to yesterday's value area — above PDVAH, inside, or below PDVAL</li>
+                <li>All <strong>untested POCs</strong> above and below are marked — the day's magnet map</li>
+                <li>The <strong>main target</strong> is chosen: yesterday's POC, if it hasn't been touched yet</li>
               </ul>
             </div>
 
             <div class="check-card reveal" style="--i:1">
               <div class="ic">🌙</div>
-              <h3><a href="#fn-overnight" class="term-note">Overnight</a></h3>
+              <h3><a href="#fn-overnight" class="term-note">Overnight inventory</a></h3>
               <ul class="check-list">
-                <li>The overnight high and low — key levels for an early break</li>
-                <li>A large gap at the open → a strong trend start is more likely</li>
+                <li>Did the night trade <strong>above or below</strong> yesterday's 17:30 close — skewed or balanced</li>
+                <li>ONH / ONL marked — the market checks those first</li>
+                <li>The gap is measured and checked against the table below</li>
               </ul>
             </div>
 
             <div class="check-card reveal" style="--i:2">
               <div class="ic">📰</div>
-              <h3>News</h3>
+              <h3>Calendar</h3>
               <ul class="check-list">
-                <li>No major news in the 09:00–11:00 window? → all clear, work the plan</li>
-                <li>News inside the window → cut size or skip the first window</li>
+                <li>Ifo or flash PMI at <strong>10:00</strong>? That lands right inside period C</li>
+                <li>Is today an <strong>ECB day</strong>? Then nothing after 14:00</li>
+                <li>US data at <strong>14:30</strong>? The second window is in question</li>
               </ul>
             </div>
 
           </div>
+
+          <div class="doc-sub-h">Overnight inventory — what it means in practice</div>
+          <p style="font-size:0.86rem;color:var(--haze);line-height:1.7;margin-top:6px">
+            The future trades almost around the clock; Xetra does not. While the cash market slept, a whole night of trading already happened,
+            and by 09:00 participants are holding positions. If the <strong>entire night traded above</strong> yesterday's close, buying accumulated overnight
+            and inventory is skewed long; entirely below — skewed short; around the close — inventory is balanced and there's no early clue.
+          </p>
+          <ul class="info-list">
+            <li>With a skew, the first half hour often starts with a <strong>correction of that skew</strong>: overnight longs take profit and price gets pushed down, and vice versa</li>
+            <li>Opened skewed and <strong>no correction comes within 30–60 minutes</strong> → the market accepted the overnight direction: join it, don't fade it</li>
+            <li><strong>The trap:</strong> a rally at the open after a night down is often just short covering, not new buying. Once the shorts are done, the rally is done. New money is confirmed by value migrating, not by the price move itself</li>
+          </ul>
+
+          <div class="doc-sub-h">Gaps: the size is what matters, not the fact</div>
+          <p style="font-size:0.86rem;color:var(--haze);line-height:1.7;margin-top:6px">
+            DAX gaps almost every single day, so the gap itself means nothing. Its size, however, tells you directly whether to expect
+            a return to yesterday's close.
+          </p>
+          <div class="settings-wrap">
+            <table class="settings-table">
+              <thead><tr><th>Gap size</th><th>Fills the same day</th><th>What to do</th></tr></thead>
+              <tbody>
+                <tr><td>up to 20 points</td><td class="def">82%</td><td>Almost always fills — plan for the return</td></tr>
+                <tr><td>20–50</td><td class="def">72%</td><td>A fill candidate</td></tr>
+                <tr><td>50–100</td><td class="def">57%</td><td>A coin flip. The gap argues neither way</td></tr>
+                <tr><td>100–200</td><td class="def">29%</td><td>More likely won't fill. Don't wait for the return</td></tr>
+                <tr><td>over 200</td><td class="def">16%</td><td>Trade with the gap direction or stand aside</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="info-list">
+            <li><strong>Entering on a large gap</strong> — don't chase the open; wait for a <strong>failed attempt to close it</strong>: price goes to fill, tempo dies, it turns back</li>
+            <li><strong>Reference point</strong> — the Xetra 17:30 close only. With the evening future (22:00) as the reference these percentages don't hold</li>
+          </ul>
+          <dl class="term-footnotes">
+            <dt>Where the numbers come from</dt>
+            <dd>Own calculation on cash DAX, 2023–2026, 910 days. Independent German FDAX backtests (2005–2017) show the same picture adjusted for
+                the lower volatility of those years — and separately confirm that the gap must be measured from the Xetra close.</dd>
+          </dl>
+
+          <div class="doc-sub-h">Calendar: what hits DAX and when</div>
+          <p style="font-size:0.86rem;color:var(--haze);line-height:1.7;margin-top:6px">
+            At the moment of a release, levels and profile temporarily stop working: the move is driven by the event, not by the auction.
+            So the calendar gets checked <strong>before</strong> the open, not after something jerks.
+          </p>
+          <div class="settings-wrap">
+            <table class="settings-table">
+              <thead><tr><th>Time CET</th><th>Event</th><th>The risk</th></tr></thead>
+              <tbody>
+                <tr><td class="def">09:30</td><td>German flash PMI</td><td>Hits period B</td></tr>
+                <tr><td class="def">10:00</td><td><strong>Ifo</strong> (~25th), eurozone flash PMI</td><td><strong>Right inside period C</strong> — the main entry window</td></tr>
+                <tr><td class="def">11:00</td><td><strong>ZEW</strong> (Tuesday, monthly)</td><td>Research ranks it the most influential German release</td></tr>
+                <tr><td class="def">14:15 · 14:45</td><td><strong>ECB</strong>: decision + press conference</td><td>8 Thursdays a year. The whole afternoon is off</td></tr>
+                <tr><td class="def">14:30</td><td>US CPI / NFP / retail sales</td><td>Exactly one hour before the second window</td></tr>
+                <tr><td class="def">20:00</td><td>FOMC</td><td>After the Xetra close, but it shapes tomorrow's gap</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="info-list">
+            <li>Release inside your entry window → flat <strong>5–10 minutes before</strong>, no new entries until <strong>15–30 minutes after</strong>. The first minutes after a release are the worst fills of the day: the spread is wide and the book is empty</li>
+            <li>ECB day → trade the morning as usual, but <strong>nothing after 14:00</strong>: the decision, the press conference and the US open merge into one continuous storm</li>
+          </ul>
         </div>
 
         <!-- 4. PERIOD A -->
@@ -421,27 +499,44 @@
             </table>
           </div>
 
-          <div class="doc-sub-h">Strong open (one-sided start)</div>
-          <div class="od-grid">
-            <div class="od-card od-long">
-              <h4>↑ Long open</h4>
-              <ul>
-                <li>All of period A moves up with no pullback → a trend day is likely</li>
-                <li>Entry: the first pullback into the period A zone</li>
-                <li>Stop: beyond period A's extreme (or 10–12 points)</li>
-                <li>Targets: yesterday's POC → the edge of yesterday's value area</li>
-              </ul>
-            </div>
-            <div class="od-card od-short">
-              <h4>↓ Short open</h4>
-              <ul>
-                <li>All of period A moves down with no pullback → a trend day is likely</li>
-                <li>Entry: the first pullback into the period A zone</li>
-                <li>Stop: beyond period A's extreme (or 10–12 points)</li>
-                <li>Targets: yesterday's POC → the edge of yesterday's value area</li>
-              </ul>
-            </div>
+          <div class="doc-sub-h">How it moved: the four open types</div>
+          <p style="font-size:0.86rem;color:var(--haze);line-height:1.7;margin-top:6px">
+            The first minutes show <strong>how convinced the market is</strong> about direction. The four types run in descending order of strength:
+            the stronger the type, the earlier you can trust the direction — and the more dangerous it is to stand against it.
+          </p>
+          <div class="settings-wrap">
+            <table class="settings-table">
+              <thead><tr><th>Type</th><th>What it looks like</th><th>What to do</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="tag tag-bull">Open Drive</span></td>
+                  <td>Opens and drives one way, <strong>never trading back through</strong> the opening price. The decision was made before the open — the strongest type</td>
+                  <td>Never fade it. Entry — the first pullback into the A zone. Stop — beyond A's extreme. Targets: yesterday's POC → edge of yesterday's VA. The open-side extreme usually holds all day</td>
+                </tr>
+                <tr>
+                  <td><span class="tag tag-bull">Open Test Drive</span></td>
+                  <td>First goes to <strong>test a known level</strong> (ONL, yesterday's low), the level holds — then it turns and drives back through the open</td>
+                  <td>Almost as strong as a Drive. Entry — on the drive back through the opening price. Stop — beyond the test extreme: it often becomes the day's extreme</td>
+                </tr>
+                <tr>
+                  <td><span class="tag tag-info">Open Rejection Reverse</span></td>
+                  <td>Moves one way <strong>weakly</strong>, gets rejected, and reverses back through the open</td>
+                  <td>Medium conviction, the day is more likely rotational. The reversal is tradeable, but with modest targets — this is not a trend-day thesis</td>
+                </tr>
+                <tr>
+                  <td><span class="tag tag-neutral">Open Auction</span></td>
+                  <td>Rotates around the open with no direction</td>
+                  <td><strong>Inside</strong> yesterday's range — a day without conviction: trade the edges, the open acts as a magnet. <strong>Outside</strong> the range — deceptively calm: the market may be quietly accepting new prices, a breakout can still come later</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+          <dl class="term-footnotes">
+            <dt>How much to trust this</dt>
+            <dd>The strength ladder Drive → Test Drive → Rejection → Auction is Dalton classics, proven by generations of profile traders
+                but never publicly quantified. Use it as a <strong>confidence scale</strong>, not as probabilities.
+                And remember: a pullback into the period A zone cancels the Drive label — the trend thesis no longer rests on it.</dd>
+          </dl>
         </div>
 
         <!-- 5. PERIOD B -->
@@ -463,6 +558,33 @@
               </tbody>
             </table>
           </div>
+
+          <div class="doc-sub-h">IB width — and what it promises</div>
+          <p style="font-size:0.86rem;color:var(--haze);line-height:1.7;margin-top:6px">
+            By 10:00 the Initial Balance is closed: it is the range of the first hour, periods A and B together. We measure it in fractions of the daily
+            ATR(14) — the reasoning is in the <a href="#overview" style="color:var(--acc-deep);font-weight:600">contract overview</a>.
+          </p>
+          <div class="settings-wrap">
+            <table class="settings-table">
+              <thead><tr><th>IB / ATR14</th><th>What it means</th></tr></thead>
+              <tbody>
+                <tr><td class="def">&lt; 0.25</td><td>Narrow. Compression → expect expansion. But careful: a narrow IB also produces <strong>more two-sided breaks</strong> — it promises movement, not a ready direction</td></tr>
+                <tr><td class="def">0.25–0.45</td><td>Normal (DAX median ≈ 0.35). The working IB-breakout scenario</td></tr>
+                <tr><td class="def">&gt; 0.45</td><td>Wide. A meaningful part of the daily move is already spent — trim targets</td></tr>
+                <tr><td class="def">&gt; 0.6</td><td><strong>Don't trade the break</strong> — the move happened without you</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="info-list">
+            <li><strong>The IB midpoint.</strong> The IB hour closed above its own midpoint → the high side gets broken noticeably more often. Below the midpoint — mirror image. The simplest early clue about which way to expect the break</li>
+            <li><strong>The first extreme.</strong> The break more often runs <strong>against the first IB extreme</strong>: if the morning low printed first, the break is more likely up, and vice versa</li>
+          </ul>
+          <dl class="term-footnotes">
+            <dt>Where the numbers come from</dt>
+            <dd>The IB/ATR tiers are our own DAX calculation. The midpoint and first-extreme rules were measured on ES and NQ
+                (2015–2025, about 5500 days, two independent sources agreeing): closing above the midpoint gives a break of the high side in 75–83% of cases.
+                The mechanics should carry over to DAX, <strong>but the exact percentages have not been measured there</strong> — treat them as orientation, not as a number.</dd>
+          </dl>
 
           <div class="doc-sub-h">What to look for in period C</div>
           <div class="od-grid">
@@ -501,14 +623,22 @@
             <div class="setup-body">
               <ol class="step-list">
                 <li>IB is closed, the day's lean is moderate or strong</li>
-                <li>Price broke the IB's upper or lower edge and held</li>
+                <li>Price broke the IB's upper or lower edge and <strong>held</strong>: for a breakout that means slow confirmation — a 30-minute period closing beyond the edge, ideally two</li>
                 <li>Entry: a pullback to the IB edge — ideally with a <strong>◆ + FVG</strong> signal in the direction of the break (<a href="#signal">see section 7</a>)</li>
-                <li>Stop: a deep return back inside IB (5+ points)</li>
+                <li>Stop: behind the nearest structure inside IB, not an arbitrary point count</li>
+                <li><strong>Check the pullback depth</strong> — the strongest post-entry filter: a first pullback of <strong>less than 25%</strong> of the IB width → continuation is close to a given; a pullback of <strong>50% or more</strong> → the setup is dead, get out without waiting for the stop</li>
                 <li>Targets: IB extensions — 0.5×, then 1× from the break edge</li>
                 <li>On a trend day — target up to 1.5–2× IB</li>
                 <li>Don't trade the breakout if yesterday was a neutral day</li>
-                <li>Be careful if the first break is false: price broke out and snapped straight back</li>
+                <li>A first break that price snapped straight back from is false. Don't expect a second chance from it</li>
               </ol>
+              <dl class="term-footnotes" style="margin-top:20px">
+                <dt>Where the numbers come from</dt>
+                <dd>Pullback depth was measured on ES and NQ, 2015–2025: with a pullback of less than a quarter of the IB width the day closes in the break
+                    direction in <strong>94% of cases</strong> and never breaks the opposite side; with a pullback of half or more, only 25% — and every second such day
+                    becomes two-sided. Same source: the first break turns out false on roughly one day in three, and a period-C close beyond the IB edge
+                    more than doubles the odds of reaching the full 1× IB extension. These percentages are not measured on DAX — we carry over the mechanics, not the numbers.</dd>
+              </dl>
             </div>
           </div>
 
@@ -519,7 +649,7 @@
             </div>
             <div class="setup-body">
               <ol class="step-list">
-                <li>Price broke the previous period's extreme and returned</li>
+                <li>Price broke the previous period's extreme and returned. Here "returned" is <strong>fast</strong> confirmation: a bar closing back beyond the level. A breakout needs time, a raid needs speed — one definition can't serve both setups</li>
                 <li>Direction matches the day's lean</li>
                 <li>Entry on the pullback after the return</li>
                 <li>Stop: beyond the raid level</li>
@@ -590,6 +720,11 @@
               <h3>VWAP</h3>
               <p>The first stop in the direction of the trade. The session's volume-weighted average price.</p>
             </div>
+            <div class="level-card reveal" style="--i:1">
+              <div class="ic">◐</div>
+              <h3>Halfback</h3>
+              <p>The midpoint of the day's or the night's range, (H+L)/2. On a trend day it is the typical pullback depth: down to halfback is normal, beyond it is a warning.</p>
+            </div>
             <div class="level-card reveal" style="--i:2">
               <div class="ic">🧲</div>
               <h3>Equal highs/lows</h3>
@@ -602,10 +737,27 @@
             </div>
           </div>
 
+          <div class="doc-sub-h">How to exit: the full target, breakeven only behind structure</div>
+          <p style="font-size:0.86rem;color:var(--haze);line-height:1.7;margin-top:6px">
+            Two habits quietly eat expectancy: moving the stop to breakeven early, and taking partials "to feel calmer".
+            Both have been backtested, and both cost money.
+          </p>
+          <ul class="info-list">
+            <li><strong>Breakeven.</strong> Don't move the stop to your entry price just "because you can". Your entry price means nothing to the market — a stop sitting there gets taken out by ordinary noise. The stop moves only once <strong>new structure</strong> appears (a new swing, a value edge), and it goes behind that</li>
+            <li><strong>Partials.</strong> A trade to a magnet (untested POC, VA edge) — <strong>full exit at the target</strong>. Banking half of it midway means giving up a meaningful slice of expectancy in exchange for a prettier win rate. Keep a runner only on a trend day</li>
+            <li><strong>Trailing on a trend.</strong> While the 30-minute periods keep stepping — each one higher than the last for a long, which is called one-timeframing — hold. The first period that trades below the prior period's low is the signal to take profit or tighten hard</li>
+          </ul>
+          <dl class="term-footnotes">
+            <dt>Where the numbers come from</dt>
+            <dd>The cost of early breakeven stops and early partials has been measured in several independent backtests (stocks, ES) — the direction of the
+                effect is consistent: win rate goes up, average winner falls further. The 30-minute period trail is profile doctrine with no published tests;
+                among formally tested alternatives, a chandelier trail at 2×ATR(15m) performs best.</dd>
+          </dl>
+
           <div class="doc-sub-h">Forced exits</div>
           <ul class="exit-list">
             <li><strong>A liquidity raid against your position</strong> — exit immediately</li>
-            <li><strong>A long run of periods against you</strong> — close the position</li>
+            <li><strong>Periods stepping against you</strong> — the second consecutive 30-minute period making a new extreme against you: exit, don't wait for the stop</li>
             <li><strong>3+ consecutive balancing periods</strong> — the move has run out of steam, no point holding</li>
           </ul>
         </div>
@@ -614,15 +766,27 @@
         <div class="doc-section" id="second-window">
           <div class="doc-section-head">
             <span class="doc-section-num">09 / second window</span>
-            <h2>Second window (15:30–17:00) — US Open overlap</h2>
-            <p>Liquidity picks up with the American session's open, giving a second chance to enter the day's trend.</p>
+            <h2>Second window (15:30–17:00) — a new auction</h2>
+            <p>15:30 is not a "continuation of the morning" but a new auction: the Americans open their session and re-price everything Europe traded before them.</p>
           </div>
+          <p style="font-size:0.86rem;color:var(--haze);line-height:1.7">
+            It helps to flip the picture: <strong>our morning is to the Americans what the night is to us</strong>. It is their overnight inventory.
+            If Europe trended up, the US open either accelerates that trend or starts by correcting the accumulated skew —
+            exactly the same logic as the <a href="#prep" style="color:var(--acc-deep);font-weight:600">overnight inventory</a> in the morning.
+          </p>
           <ul class="info-list">
-            <li>Same principles as the morning apply — the day's lean, key levels, a confirmed entry</li>
-            <li>Watch the current value area and price's position relative to VWAP</li>
+            <li><strong>Reset at 15:25.</strong> Re-read the day from scratch: where price sits relative to IB, VWAP and the value area. The first 15–30 minutes of the US open form their own mini-IB — trade its edges</li>
+            <li><strong>Why the window is alive.</strong> Full IB extensions are most often reached in the afternoon, together with American volume — entering a continuation of the day's trend here is statistically sound, not "chasing a departed train"</li>
             <li>The best entry is a <strong>◆ + FVG</strong> signal in the direction of the day's lean, once context is already in place</li>
-            <li>Stops should be tighter than usual — the day is ending, less time to play out</li>
+            <li><strong>Careful:</strong> the 14:30 data (CPI, NFP) lands an hour before the window and can invalidate the entire morning structure. On ECB days skip the window entirely</li>
+            <li>Stops tighter than usual — less time left in the day for the trade to work</li>
           </ul>
+          <dl class="term-footnotes">
+            <dt>Where the numbers come from</dt>
+            <dd>Extension timing was measured on ES and NQ: only a small share of full IB extensions is reached by midday, the bulk arrives in the afternoon.
+                DAX hourly statistics support this indirectly: the average ranges of the 15:00–17:00 hours nearly match the first hour of the session,
+                while 12:00–14:00 is a dead zone at roughly 60% of it. Reading the day as two auctions is the practice of European profile traders.</dd>
+          </dl>
         </div>
 
         <!-- 10. DAY TYPES -->
@@ -632,6 +796,11 @@
             <h2>Day types and tactics</h2>
             <p>The day type becomes clear by mid-session and sets the tactics through the close.</p>
           </div>
+          <p style="font-size:0.86rem;color:var(--haze);line-height:1.7">
+            The main thing to know before any table: <strong>roughly 7 days out of 10 rotate</strong> in both directions,
+            and a genuine trend day is about 1 in 10. So the default posture is trading <strong>from the edges toward the middle</strong>,
+            while betting on a breakout and continuation is the exception that has to prove itself: a Drive open, a narrow IB, periods stepping.
+          </p>
           <div class="daytype-grid">
             <div class="daytype-card dt-trend">
               <span class="dt-badge">Trend</span>
@@ -666,22 +835,87 @@
               <p>Enter on the retest of the VA edge from inside, target the PDPOC</p>
             </div>
           </div>
+          <div class="warn-block" style="margin-top:1.4rem">
+            <h3>⚠️ The main mistake on a trend day</h3>
+            <ul class="warn-list">
+              <li><strong>Fading the staircase.</strong> If the 30-minute periods are one-timeframing — each new one higher (or lower) than the last —
+                  do <strong>not</strong> enter against that staircase at all, however "overbought" the bars look. Trend days are rare,
+                  but they are exactly where edge-traders lose the most.</li>
+            </ul>
+          </div>
+          <dl class="term-footnotes">
+            <dt>A DAX quirk</dt>
+            <dd>DAX trends noticeably more than the US indices: it closes inside the IB on only <strong>29% of days</strong>, and extends 1× IB or more
+                on over half of them. But it also produces more two-sided breaks (about 39% of days), so false pokes are plentiful.
+                Conclusion: breakouts do work on DAX, but only together with the pullback-depth filter from the
+                <a href="#period-c" style="color:var(--acc-deep);font-weight:600">IB breakout setup</a>.
+                <br><span style="color:var(--whisper)">Source: own calculation on cash DAX, 2025–2026.</span></dd>
+          </dl>
         </div>
 
-        <!-- 11. AVOID -->
+        <!-- 11. RISK -->
+        <div class="doc-section" id="risk">
+          <div class="doc-section-head">
+            <span class="doc-section-num">11 / risk</span>
+            <h2>Risk and position size</h2>
+            <p>Structure gives the stop first, the stop gives the size second. Never the other way round.</p>
+          </div>
+
+          <div class="doc-sub-h">Risk per trade</div>
+          <p style="font-size:0.86rem;color:var(--haze);line-height:1.7;margin-top:6px">
+            The order is always the same: structure → stop → size. The stop doesn't move so the size fits,
+            and the size doesn't grow because the setup "looks really good". The arithmetic:
+            <strong>contracts = euro risk ÷ (stop in points × point value)</strong>, with risk per trade at <strong>0.5–1% of the account</strong>.
+          </p>
+          <div class="settings-wrap">
+            <table class="settings-table">
+              <thead><tr><th>Contract</th><th>Point value</th><th>Risk on a 40-pt stop</th><th>Account that carries it</th></tr></thead>
+              <tbody>
+                <tr><td>FDAX</td><td class="def">€25 (tick 0.5 = €12.50)</td><td class="def">€1000</td><td>from ~€100–200k</td></tr>
+                <tr><td>FDXM (mini)</td><td class="def">€5</td><td class="def">€200</td><td>from ~€20–40k</td></tr>
+                <tr><td>FDXS (micro)</td><td class="def">€1</td><td class="def">€40</td><td>from ~€4–8k</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="info-list">
+            <li><strong>Micros are nothing to be ashamed of.</strong> 5 FDXS = 1 FDXM. On a smaller account a partial exit is mathematically possible only with micros: you can't close one contract in pieces</li>
+          </ul>
+
+          <div class="doc-sub-h">The daily stop — the best-evidenced rule on this page</div>
+          <div class="warn-block" style="margin-top:12px">
+            <h3>🛑 −2R on the day, or 3 stops in a row → the day is over</h3>
+            <ul class="warn-list">
+              <li><strong>No exceptions, no "I'll win it back now".</strong> The terminal gets closed, physically</li>
+              <li><strong>Calibration:</strong> hitting the daily stop more than twice a month means the problem isn't the market, it's the size. Cut it in half</li>
+              <li><strong>Journal:</strong> grade every trade A/B/C <strong>on checklist adherence, not on the result</strong>. A profitable trade taken outside the rules is a C. Trust a setup's statistics after ~100 trades — before that you simply cannot tell edge from noise</li>
+            </ul>
+          </div>
+          <dl class="term-footnotes">
+            <dt>Why this rule outranks the others</dt>
+            <dd>In a study of more than 500,000 prop-trader accounts, <strong>71% of failures were daily-loss-limit breaches</strong> — not bad setups, not the market.
+                "Failing to call it a day" is the single most common behavioural issue: among traders it affects, the share who end up profitable drops roughly threefold.
+                The "more than twice a month — cut size" rule is SMB Capital prop-desk practice. The 100-trade threshold is ordinary statistics:
+                at 50 trades the 95% confidence interval on win rate is ±14 percentage points, at 100 it is ±10.
+                Everything else on this page only works together with this section.</dd>
+          </dl>
+        </div>
+
+        <!-- 12. AVOID -->
         <div class="doc-section" id="avoid">
           <div class="doc-section-head">
-            <span class="doc-section-num">11 / stop list</span>
+            <span class="doc-section-num">12 / stop list</span>
             <h2>When NOT to trade</h2>
           </div>
           <div class="warn-block">
             <h3>⚠️ Red flags</h3>
             <ul class="warn-list">
-              <li><strong>Weak lean and no one-sided open</strong> — there's no narrative for the day</li>
+              <li><strong>Weak lean, an Auction open inside the range</strong> — there's no narrative for the day, nothing to enter on</li>
               <li><strong>Yesterday was a neutral day + today opened inside the range</strong> — a trap at the IB edge</li>
-              <li><strong>Major news in the 09:00–11:00 window</strong> — skip or cut size</li>
+              <li><strong>A release inside your entry window</strong> — Ifo or PMI at 10:00, US data at 14:30, an ECB day: the move is driven by the event, not the auction</li>
               <li><strong>POC sitting right at the IB edge</strong> — the move there is magnetic, not tradable</li>
-              <li><strong>IB &gt; 120 points</strong> — the trend already started without you, the moment is gone</li>
+              <li><strong>IB &gt; 0.6 × ATR14</strong> — the trend already started without you, the moment is gone</li>
+              <li><strong>One-timeframing against your idea</strong> — periods stepping against the direction of the trade</li>
+              <li><strong>The daily limit is spent</strong> — the day is over, see <a href="#risk" style="color:#a23a3a;font-weight:600">section 11</a></li>
             </ul>
           </div>
         </div>

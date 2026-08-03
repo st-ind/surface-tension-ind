@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="FDAX Playbook — сжатые правила торговли FDAX (GER40) по TPO / Market Profile: чеклист дня, периоды A–C, сетапы, риск и управление позицией.">
+<meta property="og:title" content="FDAX Playbook — правила и нюансы · Surface Tension">
+<meta property="og:description" content="Рабочая выжимка стратегии FDAX: чеклист дня, пронумерованные правила по периодам A–C, сетапы входа, риск и управление позицией.">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ru_RU">
+<meta name="theme-color" content="#E7DCC4">
+<title>FDAX Playbook — правила и нюансы · Surface Tension</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+<!--
+  ═══════════════════════════════════════════════════════════════════════
+  КАК ПРАВИТЬ ЭТУ СТРАНИЦУ
+
+  Добавить правило → скопировать целиком блок <article class="rule"> …
+  </article> и вставить в нужный раздел <div class="doc-section">.
+
+  Номер «§N» проставляется автоматически (CSS-счётчик) — руками не писать
+  и при вставке в середину ничего не перенумеровывать.
+
+  Внутри правила доступны (все необязательны, порядок любой):
+    <p class="lede">     — одна строка сути, крупнее остального
+    <div class="rr">     — строка «Метка → текст»
+    <div class="states"> — плашки состояний: .st--ok / .st--warn / .st--mid
+    <table class="kv">   — таблица «параметр → значение»
+    <p class="note">     — врезка; .note--warn (красная) / .note--chart (что видно в Relief)
+
+  id у правила — смысловой слаг (id="sync"), на него ссылается чеклист
+  и меню «На странице» в шапке. Номер §N для ссылок не используется.
+
+  Пометки достоверности в врезках «Откуда цифры»:
+    «кэш-DAX 2023–2026» — наши расчёты по Xetra (см. docs/research/…)
+    «ES/NQ»             — большие выборки США; механика переносится, проценты не мерены на DAX
+    «доктрина»          — правило практиков, публично никем не измерено
+  ═══════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+  :root {
+    --font-display: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    --font-text:    'Rubik', system-ui, -apple-system, sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  }
+  .hero__title { font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif; }
+
+  /* ── HERO ── */
+  .doc-hero { padding: clamp(2.6rem,6vw,3.6rem) 0 clamp(1.6rem,3vw,2.2rem); text-align: center; }
+  .doc-hero .wrap { display: flex; flex-direction: column; align-items: center; }
+  .doc-hero__badge { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; color: var(--acc-deep); background: var(--acc-tint); border: 1px solid var(--acc-border); padding: 5px 12px; border-radius: 100px; vertical-align: middle; }
+  .doc-hero h1 { margin-bottom: 1rem; }
+  .doc-hero__sibling { font-family: var(--font-mono); font-size: 0.74rem; font-weight: 600; color: var(--acc-deep); text-decoration: none; border: 1px dashed var(--acc-border); border-radius: 100px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 5px; margin-top: 1.1rem; }
+  .doc-hero__sibling:hover { background: var(--acc-tint); }
+
+  /* ── АВТОНУМЕРАЦИЯ ПРАВИЛ ── */
+  .doc-content { counter-reset: rule; }
+
+  /* ── ПРАВИЛО ── */
+  .rule { background: var(--cream); border: 1px solid var(--line-strong); border-radius: var(--r); padding: 20px 22px 22px; margin-bottom: 16px; box-shadow: 0 1px 6px rgba(43,33,24,0.05); }
+  .rule > h3 { font-family: var(--font-mono); font-size: 0.98rem; font-weight: 600; color: var(--ink-900); line-height: 1.4; margin: 0 0 10px; display: flex; align-items: baseline; gap: 10px; }
+  .rule > h3::before { counter-increment: rule; content: '§' counter(rule); font-size: 0.74rem; font-weight: 700; color: var(--acc-deep); background: var(--acc-tint); border: 1px solid var(--acc-border); border-radius: 100px; padding: 3px 9px; flex-shrink: 0; }
+  .rule .lede { font-size: 0.92rem; color: var(--ink-900); line-height: 1.65; margin: 0 0 14px; }
+  .rule > *:last-child { margin-bottom: 0; }
+
+  /* строка «метка → текст» */
+  .rr { display: grid; grid-template-columns: 128px 1fr; gap: 4px 16px; font-size: 0.84rem; line-height: 1.6; color: var(--haze); padding: 7px 0; border-top: 1px solid var(--line); }
+  .rr > b { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--whisper); padding-top: 2px; }
+  .rr strong { color: var(--ink-900); font-weight: 600; }
+  @media (max-width: 560px) { .rr { grid-template-columns: 1fr; } }
+
+  /* ── ПЛАШКИ СОСТОЯНИЙ ── */
+  .states { display: grid; gap: 10px; margin: 14px 0; }
+  .st { border: 1px solid; border-radius: var(--r); padding: 12px 15px; display: grid; grid-template-columns: 150px 1fr; gap: 4px 16px; align-items: baseline; }
+  .st b { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700; }
+  .st span { font-size: 0.84rem; line-height: 1.6; color: var(--haze); }
+  .st span strong { color: var(--ink-900); font-weight: 600; }
+  .st--ok   { background: rgba(26,158,120,0.07); border-color: rgba(26,158,120,0.3); }
+  .st--ok b { color: var(--meridian-deep); }
+  .st--warn { background: rgba(184,64,64,0.07);  border-color: rgba(184,64,64,0.3); }
+  .st--warn b { color: #a23a3a; }
+  .st--mid  { background: rgba(43,33,24,0.05);   border-color: var(--line-strong); }
+  .st--mid b { color: var(--whisper); }
+  @media (max-width: 560px) { .st { grid-template-columns: 1fr; } }
+
+  /* ── ТАБЛИЦА «ПАРАМЕТР → ЗНАЧЕНИЕ» ── */
+  .kv { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.84rem; }
+  .kv th { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--whisper); text-align: left; padding: 0 12px 8px 0; border-bottom: 1px solid var(--line-strong); }
+  .kv td { padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); color: var(--haze); line-height: 1.6; vertical-align: top; }
+  .kv tr:last-child td { border-bottom: none; }
+  .kv td:first-child { color: var(--ink-900); font-weight: 600; white-space: nowrap; }
+  .kv td strong { color: var(--ink-900); font-weight: 600; }
+
+  /* ── ВРЕЗКА ── */
+  .note { font-size: 0.82rem; line-height: 1.65; color: var(--haze); background: rgba(43,33,24,0.04); border-left: 2px solid var(--line-strong); border-radius: 0 var(--r) var(--r) 0; padding: 11px 15px; margin: 14px 0 0; }
+  .note strong { color: var(--ink-900); font-weight: 600; }
+  .note--warn  { background: rgba(184,64,64,0.06); border-left-color: #a23a3a; }
+  .note--chart { background: var(--acc-tint); border-left-color: var(--acc-deep); }
+  .note b.tag { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--whisper); display: block; margin-bottom: 4px; }
+  .note--warn b.tag  { color: #a23a3a; }
+  .note--chart b.tag { color: var(--acc-deep); }
+
+  /* ── ЧЕКЛИСТ ── */
+  .checklist { background: var(--cream); border: 1px solid var(--line-strong); border-radius: var(--r); padding: 6px 22px 18px; box-shadow: 0 1px 6px rgba(43,33,24,0.05); }
+  .cl-time { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acc-deep); margin: 18px 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--acc-border); }
+  .checklist ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .checklist li { position: relative; padding-left: 24px; font-size: 0.85rem; line-height: 1.6; color: var(--haze); }
+  .checklist li::before { content: '☐'; position: absolute; left: 0; top: 0; color: var(--acc-deep); font-size: 0.92rem; line-height: 1.6; }
+  .checklist li strong { color: var(--ink-900); font-weight: 600; }
+  .checklist a { color: var(--acc-deep); font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; text-decoration: none; border-bottom: 1px dotted var(--acc-border); }
+  .checklist a:hover { border-bottom-style: solid; }
+</style>
+</head>
+<body style="--acc:var(--contour);--acc-deep:var(--contour-deep);--acc-tint:var(--contour-tint);--acc-border:var(--contour-border)">
+
+<div class="atmosphere" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<a href="#main" class="skip-link">Перейти к содержимому</a>
+
+<header class="runhead">
+  <div class="wrap">
+    <a class="runhead__home" href="index.html" aria-label="Surface Tension Indicators">
+      <div class="runhead__logo-mark">
+        <svg class="runhead__logo-svg" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g style="isolation:isolate">
+            <polygon class="rh-hex rh-hex--ctr" points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#D07C3C" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--top" points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#97431F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ur"  points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#B5532E" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--lr"  points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#E8A94F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--bot" points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#B5532E" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ll"  points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#97431F" style="mix-blend-mode:multiply"/>
+            <polygon class="rh-hex rh-hex--ul"  points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#6E2E12" style="mix-blend-mode:multiply"/>
+          </g>
+        </svg>
+      </div>
+      <div class="runhead__lockup">
+        <span class="runhead__lockup-l1">Surface</span>
+        <span class="runhead__lockup-l2">Tension</span>
+        <span class="runhead__lockup-sub">Indicators</span>
+      </div>
+    </a>
+    <button class="runhead__toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="runhead-menu">
+      <span class="runhead__toggle-bar"></span>
+      <span class="runhead__toggle-bar"></span>
+      <span class="runhead__toggle-bar"></span>
+    </button>
+    <nav class="runhead__nav" id="runhead-menu" aria-label="Основная навигация">
+            <a class="link is-current" href="fdax-playbook.html">FDAX Playbook</a>
+      <a class="link" href="fdax-decision-map.html">Карта решений</a>
+      <a class="link" href="strategy-fdax.html" style="--acc:#2E8CB8;--acc-deep:#215E7A">Стратегия FDAX</a>
+      <a class="link" href="strategy-nq.html">Стратегия NQ</a>
+      <a class="link" href="relief.html">Relief</a>
+      <div class="runhead__dropdown" data-dropdown>
+        <button class="runhead__dropdown-btn" type="button" aria-expanded="false">
+          На странице
+          <svg class="runhead__dropdown-caret" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="runhead__dropdown-menu">
+          <li><a href="#checklist">Чеклист дня</a></li>
+          <li><a href="#prep">Подготовка</a></li>
+          <li><a href="#period-a">Период A</a></li>
+          <li><a href="#period-b">Период B</a></li>
+          <li><a href="#period-c">Период C</a></li>
+          <li><a href="#entry">Сетапы и вход</a></li>
+          <li><a href="#manage">Управление</a></li>
+          <li><a href="#risk">Риск и размер</a></li>
+          <li><a href="#avoid">Не торговать</a></li>
+        </ul>
+      </div>
+      <a class="button" href="relief.html">
+        Открыть Relief
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- ── HERO ── -->
+  <section class="page-head doc-hero">
+    <div class="wrap">
+      <p class="page-head__eyebrow reveal" style="--i:0">Рабочая выжимка <span class="accent-dot" aria-hidden="true">·</span> TPO / Market Profile</p>
+      <h1 class="reveal" style="--i:1">FDAX Playbook <span class="doc-hero__badge">GER40 · Eurex</span></h1>
+      <p class="reveal" style="--i:2;max-width:54ch;margin:0 auto">
+        Сжатая версия <a href="strategy-fdax.html" style="color:var(--acc-deep);font-weight:600">стратегии FDAX</a>: только правила,
+        по одному на блок, с пометкой «где это видно на графике» и с честной пометкой, откуда каждая цифра.
+        Страница живая — сюда добираются нюансы по мере работы.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+        <a class="doc-hero__sibling reveal" style="--i:2" href="fdax-decision-map.html">Карта решений — все развилки дня →</a>
+        <a class="doc-hero__sibling reveal" style="--i:2" href="strategy-fdax.html">Полная стратегия FDAX →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DOC BODY ── -->
+  <div class="wrap">
+    <div class="doc-grid">
+
+      <!-- SIDEBAR -->
+      <aside class="doc-sidebar" id="docSidebar">
+        <div class="doc-sidebar-label">Разделы</div>
+        <a href="#checklist">Чеклист дня</a>
+        <a href="#prep">1. Подготовка</a>
+        <a href="#period-a">2. Период A</a>
+        <a href="#period-b">3. Период B</a>
+        <a href="#period-c">4. Период C</a>
+        <a href="#entry">5. Сетапы и вход</a>
+        <a href="#manage">6. Управление</a>
+        <a href="#risk">7. Риск и размер</a>
+        <a href="#avoid">8. Не торговать</a>
+      </aside>
+
+      <!-- CONTENT -->
+      <div class="doc-content">
+
+        <!-- ══ ЧЕКЛИСТ ══ -->
+        <div class="doc-section" id="checklist">
+          <div class="doc-section-head">
+            <span class="doc-section-num">00 / чеклист</span>
+            <h2>Чеклист дня</h2>
+            <p>Один экран перед сессией. Каждый пункт ведёт в правило, где он расписан.</p>
+          </div>
+          <div class="checklist">
+
+            <p class="cl-time">08:00–09:00 · до открытия</p>
+            <ul>
+              <li>Где цена относительно <strong>вчерашней Value Area</strong> — выше pVAH / внутри / ниже pVAL <a href="#open-vs-va" aria-label="К правилу">→</a></li>
+              <li><strong>Ночной инвентарь</strong>: ночь прошла выше или ниже вчерашнего закрытия? ONH / ONL отмечены <a href="#overnight" aria-label="К правилу">→</a></li>
+              <li><strong>Гэп измерен</strong> и сверен с таблицей: до 50 пунктов — кандидат на закрытие, от 100 — уже нет <a href="#gap" aria-label="К правилу">→</a></li>
+              <li>Отмечены <strong>непротестированные POC</strong> выше и ниже — карта магнитов на день <a href="#npoc" aria-label="К правилу">→</a></li>
+              <li>Выбрана <strong>главная цель</strong>: вчерашний POC или ближайший непротестированный <a href="#main-target" aria-label="К правилу">→</a></li>
+              <li><strong>Календарь</strong>: Ifo / PMI в 10:00? День ECB? US-данные в 14:30? <a href="#news" aria-label="К правилу">→</a></li>
+            </ul>
+
+            <p class="cl-time">09:00–09:30 · период A</p>
+            <ul>
+              <li>Где открылись относительно вчерашнего диапазона <a href="#open-type" aria-label="К правилу">→</a></li>
+              <li>Какой из четырёх <strong>типов открытия</strong>: Drive / Test Drive / Rejection / Auction <a href="#one-sided" aria-label="К правилу">→</a></li>
+            </ul>
+
+            <p class="cl-time">09:30–10:00 · период B</p>
+            <ul>
+              <li><strong>Sync или Desync</strong> — куда идут A и B относительно вчерашней VA <a href="#sync" aria-label="К правилу">→</a></li>
+              <li>Сила уклона дня: VWAP, A, B, IB — в одну сторону или расходятся <a href="#bias" aria-label="К правилу">→</a></li>
+              <li>Ширина <strong>IB в долях ATR</strong>: узкий / нормальный / широкий <a href="#ib-width" aria-label="К правилу">→</a></li>
+              <li>Считаю подряд идущие периоды, закрывшиеся <strong>внутри VA</strong> — два подряд дают вход <a href="#va-acceptance" aria-label="К правилу">→</a></li>
+            </ul>
+
+            <p class="cl-time">10:00–10:30 · период C</p>
+            <ul>
+              <li>Какой из трёх сетапов на экране <a href="#setups" aria-label="К правилу">→</a></li>
+              <li>Есть ли <strong>◆ + FVG</strong> в сторону уклона <a href="#signal" aria-label="К правилу">→</a></li>
+              <li>Стоп от структуры, <strong>размер от стопа</strong>, RR ≥ 1.5 <a href="#risk-size" aria-label="К правилу">→</a></li>
+            </ul>
+
+            <p class="cl-time">15:15–15:30 · перед US-открытием</p>
+            <ul>
+              <li>Утро перечитано <strong>глазами американцев</strong>: для них это «ночь» — тренд или баланс? <a href="#second-window" aria-label="К правилу">→</a></li>
+              <li>Данные <strong>14:30</strong> вышли — рынок их переварил, или структура утра отменена? <a href="#news" aria-label="К правилу">→</a></li>
+              <li>Дневной лимит не выбран — торговать ещё можно <a href="#day-stop" aria-label="К правилу">→</a></li>
+            </ul>
+
+          </div>
+        </div>
+
+        <!-- ══ 1. ПОДГОТОВКА ══ -->
+        <div class="doc-section" id="prep">
+          <div class="doc-section-head">
+            <span class="doc-section-num">01 / подготовка</span>
+            <h2>Подготовка до открытия · 08:00–09:00</h2>
+            <p>Контекст, без которого входы в периоде C будут случайными.</p>
+          </div>
+
+          <article class="rule" id="open-vs-va">
+            <h3>Положение относительно вчерашней Value Area</h3>
+            <p class="lede">Вчерашняя Value Area — зона, где рынок вчера считал цену справедливой. Первый вопрос утра: мы <strong>выше pVAH</strong>, <strong>внутри VA</strong> или <strong>ниже pVAL</strong>? Ответ задаёт базовый сценарий дня.</p>
+            <table class="kv">
+              <thead><tr><th>Положение</th><th>Базовый сценарий</th></tr></thead>
+              <tbody>
+                <tr><td>Выше pVAH</td><td>Цена оторвалась от справедливой зоны вверх. Два исхода: рынок <strong>принимает</strong> новые цены (торгует там всё дольше) — идём выше; или <strong>отвергает</strong> — возврат внутрь VA. Ждём, какой исход докажется</td></tr>
+                <tr><td>Ниже pVAL</td><td>То же самое, только вниз: принятие внизу или возврат внутрь VA</td></tr>
+                <tr><td>Внутри VA</td><td>Рынок там же, где вчера. Двусторонняя торговля: покупаем у нижнего края, продаём у верхнего, в середине не входим</td></tr>
+              </tbody>
+            </table>
+            <p class="note note--chart"><b class="tag">На графике</b>Строка <strong>Open</strong> в инфо-панели Relief — тип открытия относительно вчерашней VA. Уровни pVAH / pVAL нарисованы как линии Баланса.</p>
+          </article>
+
+          <article class="rule" id="overnight">
+            <h3>Ночной инвентарь и ONH / ONL</h3>
+            <p class="lede">Фьючерс торгует почти круглосуточно, Xetra — нет. Пока кэш спал, рынок уже наторговал целую ночь. Утром важны два вопроса: <strong>где прошла ночь</strong> относительно вчерашнего закрытия и <strong>какие уровни она оставила</strong>.</p>
+            <div class="rr"><b>Инвентарь</b><span>Вся ночь прошла <strong>выше</strong> закрытия 17:30 — за ночь накопились купленные позиции («инвентарь 100% лонг»). Вся ночь <strong>ниже</strong> — накоплены шорты. Ночь вокруг закрытия — инвентарь сбалансирован, ранней подсказки нет</span></div>
+            <div class="rr"><b>Что делать</b><span>При перекошенном инвентаре первые полчаса часто начинаются с <strong>коррекции перекоса</strong>: ночные лонги фиксируются — цена продавливается, и наоборот. А если открылись с перекосом и коррекции <strong>нет 30–60 минут</strong> — рынок принял ночное направление: присоединяемся, не фадим</span></div>
+            <div class="rr"><b>Ловушка</b><span>Рост на открытии после ночи-вниз — часто просто <strong>закрытие шортов</strong>, а не новые покупки. Закончились шорты — закончился рост. Новые деньги подтверждает смещение зоны стоимости (value), а не сам ход цены</span></div>
+            <div class="rr"><b>ONH / ONL</b><span>Ночные максимум и минимум — первые уровни, которые рынок проверяет после 09:00. Там регулярно бывают ложные пробои и быстрые развороты</span></div>
+            <p class="note"><b class="tag">Откуда цифры</b>Правило коррекции инвентаря — доктрина Dalton / FT71, числами на FDAX никем публично не измерена. Держим как рабочую линзу, не как вероятность.</p>
+            <p class="note note--chart"><b class="tag">На графике</b>ONH / ONL Relief не рисует — отмечаем руками до открытия.</p>
+          </article>
+
+          <article class="rule" id="gap">
+            <h3>Гэп: размер решает всё</h3>
+            <p class="lede">Гэп = открытие 09:00 против вчерашнего закрытия Xetra 17:30. На DAX он есть почти каждый день, поэтому сам факт гэпа не значит ничего — <strong>значение имеет размер</strong>.</p>
+            <table class="kv">
+              <thead><tr><th>Размер гэпа</th><th>Закрывается в тот же день</th></tr></thead>
+              <tbody>
+                <tr><td>до 20 пунктов</td><td><strong>82%</strong> — почти всегда. Смело закладываемся на возврат</td></tr>
+                <tr><td>20–50</td><td><strong>72%</strong> — кандидат на закрытие</td></tr>
+                <tr><td>50–100</td><td><strong>57%</strong> — уже монетка. Гэп — не аргумент ни туда, ни туда</td></tr>
+                <tr><td>100–200</td><td><strong>29%</strong> — скорее не закроется. Возврат не ждём</td></tr>
+                <tr><td>больше 200</td><td><strong>16%</strong> — работаем по направлению гэпа или стоим в стороне</td></tr>
+              </tbody>
+            </table>
+            <div class="rr"><b>Вход по гэпу</b><span>Лучший вход в направлении большого гэпа — <strong>неудавшаяся попытка его закрыть</strong>: цена пошла закрывать, темп затух, развернулись. Это сильнее, чем гнаться за открытием</span></div>
+            <div class="rr"><b>Точка отсчёта</b><span>Гэп считаем <strong>только от закрытия Xetra 17:30</strong>, не от вечернего фьючерса 22:00 — вся таблица выше про кэш, с другой точкой отсчёта проценты не работают</span></div>
+            <p class="note"><b class="tag">Откуда цифры</b>Кэш-DAX 2023–2026, 910 дней, наш расчёт. Независимые немецкие бэктесты (2005–2017) дают ту же картину с поправкой на меньшую волатильность тех лет.</p>
+          </article>
+
+          <article class="rule" id="npoc">
+            <h3>Непротестированный POC — магнит</h3>
+            <p class="lede">nPOC (naked POC) — вчерашний или более старый POC, до которого цена с тех пор ни разу не дотронулась. Рабочая гипотеза: цена к таким уровням возвращается. Против магнита не торгуем.</p>
+            <div class="rr"><b>Как читать</b><span>nPOC <strong>по ходу</strong> сделки — это и есть <a href="#main-target" style="color:var(--acc-deep);font-weight:600">главная цель дня</a>, а не просто уровень для частичной фиксации. nPOC <strong>против</strong> сделки — причина не входить или сократить цель</span></div>
+            <div class="rr"><b>Что отмечаем утром</b><span>Вчерашний POC и все непротестированные POC прошлых дней <strong>выше и ниже цены</strong>. Это карта магнитов на день</span></div>
+            <div class="rr"><b>Свежесть</b><span>Надёжность магнита <strong>падает с возрастом и расстоянием</strong>. Свежие и близкие nPOC — рабочие цели; старые и далёкие — фон, не аргумент для сделки</span></div>
+            <div class="rr"><b>Poor High / Low</b><span>Плоский край профиля без «хвоста» — незавершённый аукцион, рынок обычно возвращается его доработать. Но фильтр: <strong>настоящий Poor H/L появляется после сильного трендового дня</strong>. Плоский край после обычной ротации — просто неудачная проба, не сигнал</span></div>
+            <p class="note"><b class="tag">Откуда цифры</b>Вероятность возврата к nPOC публично никем не измерена — это самая слабо проверенная часть профильного канона. Держим как гипотезу, пока не измерим на FDAX своим инструментом.</p>
+            <p class="note note--chart"><b class="tag">На графике</b>nPOC — боксы прошлых POC; протестированные меняют цвет. Poor H/L — отдельная отметка на профиле.</p>
+          </article>
+
+          <article class="rule" id="news">
+            <h3>Календарь: что и когда бьёт по DAX</h3>
+            <p class="lede">Новость сильнее структуры: в момент выхода уровни и профиль временно не работают — движением управляет событие, а не аукцион. Поэтому календарь проверяется <strong>до</strong> открытия, а не когда уже дёрнуло.</p>
+            <table class="kv">
+              <thead><tr><th>Время CET</th><th>Событие → чем грозит</th></tr></thead>
+              <tbody>
+                <tr><td>09:30</td><td>Flash PMI Германии (раз в месяц) — бьёт по периоду B</td></tr>
+                <tr><td>10:00</td><td><strong>Ifo</strong> (~25-е число) и flash PMI еврозоны — <strong>прямо в период C</strong>, наше главное окно</td></tr>
+                <tr><td>11:00</td><td><strong>ZEW</strong> (вторник, раз в месяц) — по исследованиям самый влиятельный немецкий релиз</td></tr>
+                <tr><td>14:15 + 14:45</td><td><strong>ECB</strong>: решение + пресс-конференция, 8 четвергов в год — вся вторая половина дня выключена</td></tr>
+                <tr><td>14:30</td><td><strong>US CPI / NFP / retail sales</strong> — ровно за час до второго окна</td></tr>
+                <tr><td>20:00</td><td>FOMC — после закрытия Xetra, но формирует <strong>завтрашний гэп</strong></td></tr>
+              </tbody>
+            </table>
+            <div class="states">
+              <div class="st st--ok"><b>Чисто</b><span>Работаем по плану, полный размер</span></div>
+              <div class="st st--warn"><b>Релиз в окне входа</b><span>Флэт за <strong>5–10 минут до</strong>, новые входы не раньше чем через <strong>15–30 минут после</strong> — либо пропуск окна целиком. Первые минуты после релиза — худшие исполнения дня: спред расширен, стакан пуст</span></div>
+              <div class="st st--warn"><b>День ECB</b><span>Утро торгуем как обычно, <strong>после 14:00 — нет</strong>: решение, пресс-конференция и US-открытие сливаются в один непрерывный шторм</span></div>
+            </div>
+          </article>
+        </div>
+
+        <!-- ══ 2. ПЕРИОД A ══ -->
+        <div class="doc-section" id="period-a">
+          <div class="doc-section-head">
+            <span class="doc-section-num">02 / период A</span>
+            <h2>Период A · 09:00–09:30</h2>
+            <p>Первые полчаса задают тип дня. Входов здесь ещё нет — только чтение.</p>
+          </div>
+
+          <article class="rule" id="open-type">
+            <h3>Где открылись</h3>
+            <p class="lede">Первый вопрос периода A: где мы относительно <strong>вчерашнего диапазона</strong>? Это грубее, чем VA, но быстрее считывается.</p>
+            <table class="kv">
+              <thead><tr><th>Открытие</th><th>Что это значит</th></tr></thead>
+              <tbody>
+                <tr><td>Выше диапазона</td><td>Бычий контекст. Ждём принятия новых цен или возврата в диапазон</td></tr>
+                <tr><td>Ниже диапазона</td><td>Медвежий контекст. Зеркально</td></tr>
+                <tr><td>Внутри диапазона</td><td>Продолжаем вчерашнюю торговлю. Осторожно — только от краёв</td></tr>
+              </tbody>
+            </table>
+          </article>
+
+          <article class="rule" id="one-sided">
+            <h3>Как пошли: четыре типа открытия</h3>
+            <p class="lede">Первые минуты показывают, <strong>насколько рынок уверен</strong>. Четыре типа, по убыванию силы: чем сильнее тип, тем раньше можно доверять направлению — и тем опаснее вставать против.</p>
+            <table class="kv">
+              <thead><tr><th>Тип</th><th>Как выглядит → что делать</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>Open Drive</td>
+                  <td>Открылись и поехали в одну сторону, <strong>к цене открытия больше не возвращаемся</strong>. Самый сильный тип: решение принято ещё до открытия.<br>
+                      Не фадим. Вход — первый откат к зоне A. Стоп — за экстремум A. Цели — вчерашний POC → край вчерашней VA. Экстремум открытия обычно держится весь день</td>
+                </tr>
+                <tr>
+                  <td>Open Test Drive</td>
+                  <td>Сначала <strong>сходили проверить</strong> уровень (ONL, вчерашний лой), уровень выдержал — развернулись и поехали через открытие. Почти так же сильно, как Drive.<br>
+                      Вход — на движении обратно через цену открытия. Стоп — за экстремум теста: он часто оказывается экстремумом дня</td>
+                </tr>
+                <tr>
+                  <td>Open Rejection Reverse</td>
+                  <td>Пошли в одну сторону <strong>вяло</strong>, движение отвергли, развернуло обратно через открытие. Средняя уверенность: день скорее ротационный.<br>
+                      Торговать разворот можно, но цели скромные — это не трендовая заявка</td>
+                </tr>
+                <tr>
+                  <td>Open Auction</td>
+                  <td>Крутимся вокруг открытия без направления. <strong>Внутри</strong> вчерашнего диапазона — день без убеждения: торгуем от краёв, открытие работает магнитом. <strong>Снаружи</strong> диапазона — обманчиво спокойно: рынок может тихо принимать новые цены, возможен пробой позже</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="note note--warn"><b class="tag">Не путать</b>Старое правило «одностороннее открытие» — это Open Drive. Откат <strong>внутрь</strong> зоны периода A отменяет тип: это уже не Drive, и трендовая ставка с ним не связана.</p>
+            <p class="note"><b class="tag">Откуда цифры</b>Иерархия силы Drive → Test Drive → Rejection → Auction — классика Dalton, количественно никем не проверена. Используем как шкалу уверенности, не как вероятности.</p>
+          </article>
+        </div>
+
+        <!-- ══ 3. ПЕРИОД B ══ -->
+        <div class="doc-section" id="period-b">
+          <div class="doc-section-head">
+            <span class="doc-section-num">03 / период B</span>
+            <h2>Период B · 09:30–10:00</h2>
+            <p>К концу второго получаса становится понятен уклон дня и то, согласуется ли он с открытием.</p>
+          </div>
+
+          <article class="rule" id="sync">
+            <h3>Рассинхрон открытия дня и TPO</h3>
+            <p class="lede">Открытие <strong>за</strong> вчерашней Value Area — это дисбаланс, и базовый сценарий — возврат к значению. Периоды A и B показывают, принимает рынок этот возврат или отвергает его.</p>
+
+            <div class="rr"><b>Когда считаем</b><span>Только если день открылся <strong>выше pVAH или ниже pVAL</strong>. Открылись внутри VA — правило не применяется, считать нечего</span></div>
+            <div class="rr"><b>Направление периода</b><span><strong>H/L-треугольник приоритетен</strong> (период сделал и хай, и лой выше предыдущего → вверх). Треугольника нет — берём стрелку OC. Серый период направления не даёт и в счёт не идёт</span></div>
+            <div class="rr"><b>Вердикт</b><span>По <strong>нетто</strong> пары A + B, а не «оба совпали». Один серый период не мешает второму задать направление</span></div>
+
+            <div class="states">
+              <div class="st st--ok"><b>✓ Sync</b><span>Нетто A + B направлено <strong>к VA</strong>, против стороны открытия. Рынок принимает возврат — ждём продолжения, торгуем обычно</span></div>
+              <div class="st st--warn"><b>⚠ Desync</b><span>Нетто A + B направлено <strong>от VA</strong>, по стороне открытия. Дисбаланс принят, возврата не будет — только усиленный вход</span></div>
+              <div class="st st--mid"><b>— Mixed</b><span>Направления нет: периоды гасят друг друга или оба серые. <strong>Трактуем как Desync</strong> — усиленный вход</span></div>
+            </div>
+
+            <div class="rr"><b>Усиленный вход</b><span>Внешний триггер — <strong>пробой IB</strong> или <strong>снятие ликвидности</strong> — <strong>плюс</strong> ◆ + FVG в ту же сторону. Одного ◆ + FVG внутри диапазона недостаточно</span></div>
+
+            <p class="note note--chart"><b class="tag">На графике</b>Строка <strong>Sync</strong> в инфо-панели и суффикс <strong>⚠</strong> в Bias-лейбле периода B. Оценка фиксируется одновременно с bias-сигналом, а не по закрытию B.</p>
+            <p class="note note--warn"><b class="tag">Расхождение с индикатором</b>Индикатор считает <strong>Mixed</strong> отдельным нейтральным состоянием: показывает «— Mixed», но <strong>без ⚠ и без штрафа к оценке</strong>. По этому правилу Mixed — повод для осторожности, значок в такой момент не загорится. Отслеживаем глазами.</p>
+            <p class="note"><b class="tag">Продолжение</b>Это уровень 1 — направление, без цели и стопа. Уровень 2 — <a href="#va-acceptance" style="color:var(--acc-deep);font-weight:600">§Принятие VA</a>: цена фактически вернулась внутрь и удержалась два периода. Там уже вход, стоп и цель. При конфликте побеждает принятие.</p>
+          </article>
+
+          <article class="rule" id="bias">
+            <h3>Сила уклона дня</h3>
+            <p class="lede">Уклон складывается из четырёх источников: VWAP, период A, период B, границы IB. Чем больше согласия — тем крупнее размер.</p>
+            <div class="states">
+              <div class="st st--ok"><b>Сильный</b><span>VWAP, A, B и IB — <strong>всё в одну сторону</strong>. Торгуем продолжение, полный размер</span></div>
+              <div class="st st--mid"><b>Умеренный</b><span>Картина есть, но не идеальная. Торгуем уменьшенным размером</span></div>
+              <div class="st st--warn"><b>Слабый</b><span>Источники расходятся. Ждём более чистый сетап или пропускаем окно</span></div>
+            </div>
+            <p class="note note--chart"><b class="tag">На графике</b>Bias-лейбл периода B: «▲ L 4/5» — направление и оценка. Оценка замораживается за несколько баров до открытия C, чтобы не мигала на последних тиках.</p>
+          </article>
+
+          <article class="rule" id="ib-width">
+            <h3>Ширина IB — в долях ATR, не в пунктах</h3>
+            <p class="lede">IB = диапазон первого часа (A + B). Мерить его в пунктах бессмысленно: волатильность DAX меняется в разы за год, и любые фиксированные пороги устаревают. Мерим в долях <strong>дневного ATR(14)</strong> — это отношение стабильно во всех режимах.</p>
+            <table class="kv">
+              <thead><tr><th>IB / ATR14</th><th>Что означает</th></tr></thead>
+              <tbody>
+                <tr><td>&lt; 0.25</td><td>Узкий. Сжатие → жди расширения диапазона. Но осторожно: узкий IB даёт и <strong>больше двусторонних пробоев</strong> — это обещание движения, а не готовое направление</td></tr>
+                <tr><td>0.25–0.45</td><td>Нормальный (медиана DAX ≈ 0.35). Рабочий сценарий пробоя IB</td></tr>
+                <tr><td>&gt; 0.45</td><td>Широкий. Заметная часть дневного хода уже пройдена — цели режем</td></tr>
+                <tr><td>&gt; 0.6</td><td><strong>Пробой не торгуем</strong> — движение состоялось без нас, момент упущен</td></tr>
+              </tbody>
+            </table>
+            <div class="rr"><b>Середина IB</b><span>Час IB закрылся <strong>выше своей середины</strong> → сторона хая пробивается заметно чаще (ES/NQ: ~75–83%). Ниже середины — зеркально. Простейший ранний ориентир, в какую сторону ждать пробой</span></div>
+            <div class="rr"><b>Первый экстремум</b><span>Пробой чаще идёт <strong>против первого экстремума</strong> IB: если лой утра встал первым — пробой вероятнее вверх, и наоборот</span></div>
+            <p class="note"><b class="tag">Откуда цифры</b>Тиры IB/ATR — кэш-DAX 2023–2026 (медиана 0.31–0.37 все четыре года при удвоении пунктов). Для ориентира: при ATR ≈ 300 (лето 2026) узкий &lt; 75 п., нормальный 75–135, широкий &gt; 135, не торгуем &gt; 180. Прошлые пороги 30/80/120 писались при ATR ≈ 190 и устарели вдвое. Правила про середину и первый экстремум — ES/NQ 2015–2025, на DAX проценты не мерены.</p>
+            <p class="note note--chart"><b class="tag">На графике</b>Границы IB и расширения 0.5×–2× — линии IB в Relief, достигнутые уровни помечаются ✓.</p>
+          </article>
+        </div>
+
+        <!-- ══ 4. ПЕРИОД C ══ -->
+        <div class="doc-section" id="period-c">
+          <div class="doc-section-head">
+            <span class="doc-section-num">04 / период C</span>
+            <h2>Период C · 10:00–10:30</h2>
+            <p>IB сформирован, уклон ясен. Здесь проходит большинство входов — и по статистике именно в этом получасе случается большинство первых пробоев IB.</p>
+          </div>
+
+          <article class="rule" id="setups">
+            <h3>Три сетапа периода C</h3>
+            <p class="lede">Других входов в этом окне нет. Если на экране ни один из трёх — окно пропускается.</p>
+            <table class="kv">
+              <thead><tr><th>Сетап</th><th>Условие · вход · цель</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>Пробой IB</td>
+                  <td>Цена вышла за границу IB и <strong>закрепилась</strong>, уклон умеренный или сильный.<br>
+                      Вход — откат к краю IB. Стоп — возврат глубоко внутрь IB (за ближнюю структуру).<br>
+                      Цели — расширения 0.5× → 1× от края; на трендовом дне до 1.5–2×</td>
+                </tr>
+                <tr>
+                  <td>Снятие ликвидности</td>
+                  <td>Цена вышла за экстремум предыдущего периода и <strong>вернулась</strong>, направление совпадает с уклоном.<br>
+                      Вход — откат после возврата. Стоп — за уровень снятия.<br>
+                      Цели — nPOC → вчерашний POC → противоположный край VA</td>
+                </tr>
+                <tr>
+                  <td>Неудачный аукцион</td>
+                  <td>IB пробит, но цена <strong>закрылась обратно внутрь</strong>, уклон против пробоя.<br>
+                      Вход — внутрь IB, в сторону уклона.<br>
+                      Цели — середина IB → nPOC → вчерашний POC</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="rr"><b>Что значит «закрепилась»</b><span>Для <strong>пробоя IB</strong> — медленное подтверждение: закрытие 30-минутного периода за границей (в идеале двух). Для <strong>снятия ликвидности</strong> — быстрое: закрытие бара обратно за уровнем. Одно определение на оба сетапа не работает: пробою нужно время, свипу — скорость</span></div>
+            <div class="rr"><b>Глубина отката</b><span>Самый сильный фильтр после пробоя IB. Первый откат <strong>меньше 25%</strong> ширины IB → продолжение почти гарантировано (ES: 94% дней закрываются в сторону пробоя). Откат <strong>от 50%</strong> ширины IB → сетап мёртв: каждый второй такой день пробивает и вторую сторону. Не пересиживать</span></div>
+            <div class="rr"><b>Закрытие C</b><span>Период C закрылся <strong>за границей</strong> IB → шансы полного расширения (1× IB) вырастают больше чем вдвое. Закрылся обратно внутри → пробой под вопросом</span></div>
+            <p class="note note--warn"><b class="tag">Отсекающие условия</b>Пробой IB <strong>не торгуем</strong>, если вчера был нейтральный день. Первый пробой, из которого цена сразу вернулась, — ложный, второго шанса от него не ждём (первый пробой оказывается ложным примерно на каждом третьем дне).</p>
+            <p class="note"><b class="tag">Откуда цифры</b>Глубина отката, закрытие C, доля ложных пробоев — ES/NQ 2015–2025, большие выборки. На DAX механика должна переноситься, точные проценты — нет.</p>
+          </article>
+
+          <article class="rule" id="day-types">
+            <h3>Тип дня и тактика</h3>
+            <p class="lede">Примерно <strong>7 из 10 дней — ротация</strong> в обе стороны, настоящий тренд — примерно 1 из 10. Поэтому поза по умолчанию — торговля <strong>от краёв к центру</strong>. Ставка на пробой — исключение, которое должно доказать себя: Drive-открытие, узкий IB, периоды идут лесенкой.</p>
+            <table class="kv">
+              <thead><tr><th>Тип</th><th>Признаки → тактика</th></tr></thead>
+              <tbody>
+                <tr><td>Трендовый</td><td>Узкий IB + Drive-открытие + сильный уклон → входим на откатах, <strong>не фадим ни разу</strong>, трейлим стоп за периодами</td></tr>
+                <tr><td>Normal</td><td>Один пробой IB, умеренный уклон → сетап пробоя IB, частичная фиксация на 1× IB</td></tr>
+                <tr><td>Neutral</td><td>Оба края IB пробиты за день → фадим второй пробой, цель — середина IB</td></tr>
+                <tr><td>ORR</td><td>Открытие снаружи VA + быстрый возврат внутрь → вход на ретесте края VA изнутри, цель — вчерашний POC</td></tr>
+              </tbody>
+            </table>
+            <p class="note note--warn"><b class="tag">Главная ошибка</b>Фадить трендовый день. Если 30-минутные периоды идут лесенкой — каждый новый период выше (ниже) предыдущего, это называется one-timeframing — против этой лесенки не входим <strong>вообще</strong>, какими бы «перекупленными» ни выглядели бары.</p>
+            <p class="note"><b class="tag">Особенность DAX</b>DAX трендовее ES: закрытие внутри IB — только 29% дней, расширение ≥ 1× IB — больше половины дней. Но и двусторонние пробои чаще (~39% дней) — ложных выпадов много. Итог: пробои здесь работают, но только с фильтром глубины отката из <a href="#setups" style="color:var(--acc-deep);font-weight:600">§Три сетапа</a>. Цифры — кэш-DAX 2025–2026.</p>
+          </article>
+        </div>
+
+        <!-- ══ 5. СЕТАПЫ И ВХОД ══ -->
+        <div class="doc-section" id="entry">
+          <div class="doc-section-head">
+            <span class="doc-section-num">05 / вход</span>
+            <h2>Сетапы и вход</h2>
+            <p>Сетап даёт контекст, сигнал даёт конкретный бар. Одно без другого не работает.</p>
+          </div>
+
+          <article class="rule" id="va-acceptance">
+            <h3>Принятие VA — вход по возврату</h3>
+            <p class="lede">Продолжение <a href="#sync" style="color:var(--acc-deep);font-weight:600">§Рассинхрона</a>. Там уровень 1: «сценарий возврата жив, ищи вход». Здесь уровень 2 — цена не просто смотрит на VA, а <strong>вернулась внутрь и удержалась</strong>. Это уже конкретная сделка со стопом и целью.</p>
+
+            <div class="rr"><b>Условие</b><span>День открылся <strong>за</strong> вчерашней VA + <strong>два подряд</strong> 30-минутных периода <strong>закрылись внутри</strong> VA. Период, который вошёл в VA, считается первым из двух</span></div>
+            <div class="rr"><b>Чья VA</b><span>Вчерашняя <strong>RTH</strong> (09:00–17:30). Не полная сессия с ночью</span></div>
+            <div class="rr"><b>Вход</b><span>Закрытие второго периода внутри VA</span></div>
+            <div class="rr"><b>Стоп</b><span>За тот край VA, <strong>откуда пришли</strong>, плюс буфер</span></div>
+            <div class="rr"><b>Цель</b><span><strong>Касание</strong> противоположного края VA. Закрытие за ним не требуется</span></div>
+            <div class="rr"><b>Дедлайн</b><span>До закрытия Xetra <strong>17:30</strong>. Не дошло — закрываем по факту, а не переносим</span></div>
+            <div class="rr"><b>Частота</b><span><strong>Одно срабатывание в день</strong> — первое. Повторные заходы в VA не считаем</span></div>
+
+            <p class="lede" style="margin-top:18px">Ключевое условие, которого нет в классической формулировке — <strong>где именно</strong> внутри VA произошло принятие. От этого целиком зависит RR.</p>
+            <table class="kv">
+              <thead><tr><th>Принятие произошло</th><th>Решение</th></tr></thead>
+              <tbody>
+                <tr><td>В ближней трети VA</td><td><strong>Вход.</strong> Цель далеко, стоп близко — RR около 2:1 и выше</td></tr>
+                <tr><td>Дальше трети</td><td><strong>Пропуск.</strong> Цель приближается, стоп растёт — RR проваливается ниже порога</td></tr>
+              </tbody>
+            </table>
+            <p class="note"><b class="tag">Откуда треть</b>При ширине VA = W и принятии на расстоянии d от ближнего края: цель = W − d, стоп = d + буфер. Порог RR 1.5 даёт ровно <strong>d ≤ 0.4·W</strong> при нулевом буфере — с реальным буфером граница ещё ближе. <strong>Ближняя треть</strong> — это 0.4 с запасом.</p>
+
+            <p class="note note--warn"><b class="tag">Приоритет над §Рассинхроном</b>Если A и B дали <strong>Mixed</strong>, но оба закрылись внутри VA — <strong>принятие побеждает</strong>, вход есть. Факт возврата цены сильнее, чем нетто-направление периодов.</p>
+
+            <p class="note"><b class="tag">Откуда правило</b>Классическое <strong>«правило 80%»</strong> Далтона (Profile Reports, 1987–1991). Заявленный процент проверки не выдерживает: независимые тесты на ES дают от 40 до 60 вместо 80 — исходная формулировка допускает шесть разных прочтений, и каждое двигает результат. Выше зафиксировано <strong>одно</strong>. Своей цифры по FDAX пока нет, и до неё процент здесь не появится.</p>
+
+            <p class="note note--chart"><b class="tag">На графике</b>pVAH / pVAL — линии Баланса. Закрытие периода внутри VA видно по TPO-профилю; треть VA считается от того края, который пробили на открытии.</p>
+          </article>
+
+          <article class="rule" id="signal">
+            <h3>◆ + FVG — подтверждение, а не сетап</h3>
+            <p class="lede">Сигнал <strong>подтверждает</strong> уже сложившуюся картину и указывает бар входа. Он не заменяет сетап и сам по себе основанием для сделки не является.</p>
+            <div class="rr"><b>Предусловия</b><span>Период C, IB закрыт, уклон дня ясен, сетап из <a href="#setups" style="color:var(--acc-deep);font-weight:600">трёх сетапов периода C</a> уже на экране</span></div>
+            <div class="rr"><b>Направление</b><span>Только в сторону уклона — против направления дня сигнал отфильтрован и не показывается</span></div>
+            <div class="rr"><b>Вход</b><span>Закрытие сигнального бара <strong>или</strong> откат к зоне FVG</span></div>
+            <div class="rr"><b>Стоп</b><span>За экстремум бара с ◆</span></div>
+            <div class="rr"><b>Отмена</b><span>Цена пробила зону FVG и закрепилась за ней — идея отменена. <strong>Не усредняемся</strong></span></div>
+            <p class="note note--chart"><b class="tag">На графике</b>Бейдж <strong>L</strong> / <strong>S</strong> у дельта-бара + зона FVG. Модификаторы после точки — через какой байпас прошёл сигнал: <strong>F</strong> (первый после смены VWAP), <strong>V</strong> (окно волатильного бара), <strong>Eq</strong> (равные экстремумы), <strong>PD/PW/FR/LDN</strong> (снятие уровня). Алерт приходит на закрытии бара.</p>
+          </article>
+
+          <article class="rule" id="rr">
+            <h3>Порог RR</h3>
+            <p class="lede">Стоп и цель считаются <strong>до</strong> входа. RR ниже 1.5 — сделки нет, каким бы красивым ни был сетап. Размер позиции считается от стопа — см. <a href="#risk-size" style="color:var(--acc-deep);font-weight:600">§Риск на сделку</a>.</p>
+            <p class="note note--warn"><b class="tag">Типичная ошибка</b>Досчитывать RR после входа и «подтягивать» цель до нужного числа. Если цель приходится двигать — сетапа не было.</p>
+          </article>
+
+          <article class="rule" id="second-window">
+            <h3>Второе окно · 15:30–17:00 — новый аукцион</h3>
+            <p class="lede">15:30 — не «продолжение утра», а <strong>новый аукцион</strong>: американцы открывают свою сессию и переоценивают всё, что Европа наторговала. Утренний вывод здесь либо подтверждается, либо отменяется.</p>
+            <div class="rr"><b>Как читать</b><span>Наше утро для американцев — то же, что для нас ночь: их «инвентарь». Утро протрендило вверх → US-открытие либо разгоняет тренд дальше, либо начинает с коррекции утреннего перекоса. Читается той же линзой, что <a href="#overnight" style="color:var(--acc-deep);font-weight:600">§Ночной инвентарь</a></span></div>
+            <div class="rr"><b>Reset 15:25</b><span>Перечитать день заново: где цена относительно IB, VWAP и Value Area. Первые 15–30 минут US-открытия — свой мини-IB: за его края и торгуем</span></div>
+            <div class="rr"><b>Почему окно живое</b><span>Полные расширения IB чаще всего добираются <strong>после обеда</strong>, вместе с американским объёмом. Вход в продолжение дневного тренда здесь статистически осмыслен — это не «догоняем ушедший поезд»</span></div>
+            <div class="rr"><b>Осторожно</b><span>14:30 (CPI / NFP) — за час до окна: в дни таких релизов рынок может отменить всю утреннюю структуру. День ECB — окно пропускаем целиком</span></div>
+            <div class="rr"><b>Стопы</b><span>Жёстче утренних — до конца дня меньше времени на отработку</span></div>
+            <p class="note"><b class="tag">Откуда цифры</b>Тайминг расширений — ES/NQ; двухаукционное чтение дня — практика европейских профильных трейдеров (доктрина). Часовая статистика DAX подтверждает: диапазоны часов 15:00–17:00 почти догоняют первый час.</p>
+          </article>
+        </div>
+
+        <!-- ══ 6. УПРАВЛЕНИЕ ══ -->
+        <div class="doc-section" id="manage">
+          <div class="doc-section-head">
+            <span class="doc-section-num">06 / управление</span>
+            <h2>Управление позицией</h2>
+            <p>Куда ведём сделку, как выходим и когда закрываем принудительно.</p>
+          </div>
+
+          <article class="rule" id="main-target">
+            <h3>Главная цель дня — непротестированный POC</h3>
+            <p class="lede">Все остальные уровни — промежуточные. Основная цель, к которой ведём сделку, — <strong>непротестированный POC</strong>. Порядок выбора жёсткий, а не «какой понравится».</p>
+            <table class="kv">
+              <thead><tr><th>Приоритет</th><th>Уровень</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td><strong>POC вчерашнего дня</strong>, если он ещё не протестирован. Самый свежий и самый сильный магнит</td></tr>
+                <tr><td>2</td><td>Вчерашний POC уже протестирован → <strong>ближайший непротестированный POC</strong> прошлых дней по ходу сделки</td></tr>
+                <tr><td>3</td><td>Непротестированных POC по ходу нет вовсе → направленной цели у дня нет, работаем по промежуточным уровням и не ждём большого хода</td></tr>
+              </tbody>
+            </table>
+            <div class="rr"><b>Что значит «протестирован»</b><span>Цена доходила до уровня — <strong>любое касание, даже тенью</strong>. После касания магнит отработал и целью больше не является</span></div>
+            <div class="rr"><b>nPOC против сделки</b><span>Непротестированный POC <strong>за спиной</strong> — не цель, а риск: он тянет цену обратно. Причина сократить цель или не входить вовсе</span></div>
+            <div class="rr"><b>Сделка к цели</b><span>Цель известна <strong>до</strong> входа. Цена дошла — выходим, даже если летит дальше. Хочется остаться — оставляем малую часть по правилам <a href="#exit-style" style="color:var(--acc-deep);font-weight:600">§Как выходить</a>, но базовое правило: сделка к цели заканчивается на цели</span></div>
+            <p class="note note--warn"><b class="tag">Тай-брейк</b>Вчерашний POC приоритетнее <strong>даже если он дальше</strong>, чем непротестированный POC более старого дня. Свежесть уровня важнее близости. Исключение одно — вчерашний POC в противоположной стороне от сделки: тогда он вообще не цель, см. строку выше.</p>
+            <p class="note note--chart"><b class="tag">На графике</b>nPOC — боксы прошлых POC; протестированные меняют цвет и из кандидатов выпадают.</p>
+          </article>
+
+          <article class="rule" id="targets">
+            <h3>Промежуточные уровни</h3>
+            <p class="lede">То, что встречается по пути к главной цели. Годятся для частичной фиксации, но сами по себе целью дня не являются.</p>
+            <table class="kv">
+              <thead><tr><th>Уровень</th><th>Роль</th></tr></thead>
+              <tbody>
+                <tr><td>VWAP</td><td>Первая остановка в направлении сделки</td></tr>
+                <tr><td>Halfback</td><td>Середина диапазона дня или ночи, (H+L)/2. На трендовом дне — типичная глубина отката: откат до halfback — норма, за него — тревога</td></tr>
+                <tr><td>Равные high / low</td><td>Скопление стопов. Цель для второй частичной фиксации</td></tr>
+                <tr><td>Край вчерашней VA</td><td>Промежуточная остановка при возврате к значению</td></tr>
+                <tr><td>Незавершённые экстремумы</td><td>Рынок возвращается закрыть незавершённый аукцион в течение 1–3 дней</td></tr>
+              </tbody>
+            </table>
+          </article>
+
+          <article class="rule" id="exit-style">
+            <h3>Как выходить: цель целиком, безубыток за структуру</h3>
+            <p class="lede">Две привычки, которые тихо режут матожидание: ранний перевод стопа в безубыток и частички «для спокойствия». Обе проверены бэктестами — обе стоят денег.</p>
+            <div class="rr"><b>Безубыток</b><span>Не переносим стоп на вход «потому что уже можно». Цена входа для рынка <strong>ничего не значит</strong> — стоп на ней выбивается обычным шумом. Стоп двигается только когда появилась <strong>новая структура</strong> (новый свинг, край value) — и встаёт за неё</span></div>
+            <div class="rr"><b>Частички</b><span>Сделка к магниту (nPOC, край VA) — <strong>полный выход на цели</strong>. Банковать половину на полпути = отдать заметную часть матожидания ради красивого винрейта. Runner оставляем только на трендовом дне</span></div>
+            <div class="rr"><b>Трейл на тренде</b><span>Пока 30-минутные периоды идут лесенкой (one-timeframing) — держим. Первый период, который торганул ниже лоя предыдущего (для лонга), — сигнал тейкать или резко подтянуть стоп</span></div>
+            <p class="note"><b class="tag">Откуда цифры</b>Эффект безубытка и частичек — бэктесты на акциях/ES (направление эффекта устойчиво в нескольких независимых тестах). Трейл по периодам — профильная доктрина, из протестированных альтернатив лучший — chandelier 2×ATR(15m).</p>
+          </article>
+
+          <article class="rule" id="forced-exit">
+            <h3>Принудительные выходы</h3>
+            <p class="lede">Три ситуации, в которых позиция закрывается независимо от того, где стоп.</p>
+            <div class="states">
+              <div class="st st--warn"><b>Снятие против</b><span>Снятие ликвидности <strong>против</strong> позиции — выход немедленно</span></div>
+              <div class="st st--warn"><b>Лесенка против</b><span>Периоды пошли one-timeframing против позиции: уже <strong>второй подряд</strong> 30-минутный период обновляет экстремум против нас → выход, стопа не ждём</span></div>
+              <div class="st st--mid"><b>Боковик</b><span>3+ периода боковика подряд — движение выдохлось, держать нечего</span></div>
+            </div>
+          </article>
+        </div>
+
+        <!-- ══ 7. РИСК И РАЗМЕР ══ -->
+        <div class="doc-section" id="risk">
+          <div class="doc-section-head">
+            <span class="doc-section-num">07 / риск</span>
+            <h2>Риск и размер</h2>
+            <p>Сначала стоп от структуры, потом размер от стопа. Никогда наоборот.</p>
+          </div>
+
+          <article class="rule" id="risk-size">
+            <h3>Риск на сделку и размер позиции</h3>
+            <p class="lede">Порядок всегда один: структура даёт стоп → стоп даёт размер. Стоп не двигается, чтобы «влез размер», и размер не растёт, потому что «сетап верный».</p>
+            <div class="rr"><b>Риск на сделку</b><span><strong>0.5–1% счёта</strong>. Формула: контракты = риск в € ÷ (стоп в пунктах × стоимость пункта)</span></div>
+            <table class="kv">
+              <thead><tr><th>Контракт</th><th>Пункт · риск при стопе 40 п. · какому счёту по силам</th></tr></thead>
+              <tbody>
+                <tr><td>FDAX</td><td>€25/пункт (тик 0.5 = €12.50) · <strong>€1000</strong> · счёт от ~€100–200k</td></tr>
+                <tr><td>FDXM (mini)</td><td>€5/пункт · <strong>€200</strong> · счёт от ~€20–40k</td></tr>
+                <tr><td>FDXS (micro)</td><td>€1/пункт · <strong>€40</strong> · счёт от ~€4–8k</td></tr>
+              </tbody>
+            </table>
+            <div class="rr"><b>Микро — не стыдно</b><span>5 FDXS = 1 FDXM. На небольшом счёте частичный выход математически возможен <strong>только микрами</strong> — один контракт частями не закроешь</span></div>
+            <p class="note"><b class="tag">Откуда цифры</b>0.5–1% — конвенция, но универсальная: проп-фирмы строят лимиты именно так, чтобы одна сделка была ≈ 1/5 дневного лимита. Стоимости контрактов — спецификация Eurex.</p>
+          </article>
+
+          <article class="rule" id="day-stop">
+            <h3>Дневной стоп — самое доказанное правило страницы</h3>
+            <p class="lede">Разбор 500 000+ счетов проп-трейдеров: <strong>71% провалов — пробой дневного лимита</strong>, а не плохие сетапы. «Не смог закончить день» — самая частая ошибка вообще: у подверженных ей доля прибыльных падает втрое. Всё остальное на этой странице работает только вместе с этим правилом.</p>
+            <div class="rr"><b>Правило</b><span><strong>−2R за день или 3 стопа подряд → день закончен.</strong> Без исключений, без «сейчас отыграюсь». Терминал закрывается физически</span></div>
+            <div class="rr"><b>Калибровка</b><span>Дневной стоп выбивается <strong>чаще 2 раз в месяц</strong> → проблема не в рынке, а в размере: режем размер вдвое</span></div>
+            <div class="rr"><b>Журнал</b><span>Каждой сделке — оценка <strong>A/B/C по соблюдению чеклиста</strong>, не по результату. Прибыльная сделка мимо правил — это C. Статистике сетапа верим после ~100 сделок: раньше просто не отличить эджа от шума</span></div>
+            <p class="note"><b class="tag">Откуда цифры</b>71% и падение доли прибыльных 18% → 6% — hoc-trade, 500k+ счетов. Правило «2 раза в месяц» — SMB Capital (проп-деск). Порог 100 сделок — биномиальная математика: на 50 сделках доверительный интервал винрейта ±14 п.п., на 100 — ±10.</p>
+          </article>
+        </div>
+
+        <!-- ══ 8. НЕ ТОРГОВАТЬ ══ -->
+        <div class="doc-section" id="avoid">
+          <div class="doc-section-head">
+            <span class="doc-section-num">08 / стоп-лист</span>
+            <h2>Когда не торговать</h2>
+            <p>Любой пункт отсюда перевешивает красивый сетап.</p>
+          </div>
+
+          <article class="rule" id="red-flags">
+            <h3>Красные флаги</h3>
+            <table class="kv">
+              <thead><tr><th>Флаг</th><th>Почему</th></tr></thead>
+              <tbody>
+                <tr><td>Слабый уклон, открытие типа Auction внутри диапазона</td><td>Нарратива дня нет — входить не от чего</td></tr>
+                <tr><td>Вчера нейтральный день + открытие внутри диапазона</td><td>Ловушка у края IB</td></tr>
+                <tr><td>Релиз в окне входа: Ifo / PMI в 10:00, US-данные в 14:30, день ECB</td><td>Движение задаёт событие, а не аукцион — см. <a href="#news" style="color:var(--acc-deep);font-weight:600">§Календарь</a></td></tr>
+                <tr><td>POC прямо у края IB</td><td>Движение туда магнитное, а не торговое</td></tr>
+                <tr><td>IB &gt; 0.6 × ATR14</td><td>Тренд начался без нас — см. <a href="#ib-width" style="color:var(--acc-deep);font-weight:600">§Ширина IB</a></td></tr>
+                <tr><td>One-timeframing против идеи</td><td>Периоды идут лесенкой против направления сделки — против лесенки не входим</td></tr>
+                <tr><td>RR &lt; 1.5</td><td>См. правило <a href="#rr" style="color:var(--acc-deep);font-weight:600">«Порог RR»</a></td></tr>
+                <tr><td>Дневной лимит выбран</td><td>День закончен — см. <a href="#day-stop" style="color:var(--acc-deep);font-weight:600">§Дневной стоп</a></td></tr>
+              </tbody>
+            </table>
+          </article>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__mark">
+      <svg class="foot__mark-icon" viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg">
+        <g style="isolation:isolate">
+          <polygon points="47,0 23.5,40.7 -23.5,40.7 -47,0 -23.5,-40.7 23.5,-40.7"           fill="#D07C3C" style="mix-blend-mode:multiply"/>
+          <polygon points="47,-86.6 23.5,-45.9 -23.5,-45.9 -47,-86.6 -23.5,-127.3 23.5,-127.3" fill="#97431F" style="mix-blend-mode:multiply"/>
+          <polygon points="122,-43.3 98.5,-2.6 51.5,-2.6 28,-43.3 51.5,-84 98.5,-84"           fill="#B5532E" style="mix-blend-mode:multiply"/>
+          <polygon points="122,43.3 98.5,84 51.5,84 28,43.3 51.5,2.6 98.5,2.6"                fill="#E8A94F" style="mix-blend-mode:multiply"/>
+          <polygon points="47,86.6 23.5,127.3 -23.5,127.3 -47,86.6 -23.5,45.9 23.5,45.9"      fill="#B5532E" style="mix-blend-mode:multiply"/>
+          <polygon points="-28,43.3 -51.5,84 -98.5,84 -122,43.3 -98.5,2.6 -51.5,2.6"          fill="#97431F" style="mix-blend-mode:multiply"/>
+          <polygon points="-28,-43.3 -51.5,-2.6 -98.5,-2.6 -122,-43.3 -98.5,-84 -51.5,-84"    fill="#6E2E12" style="mix-blend-mode:multiply"/>
+        </g>
+      </svg>
+      <div>
+        <p class="foot__name">FDAX Playbook</p>
+        <p class="foot__sub">Рабочие правила · TPO / Market Profile</p>
+      </div>
+    </div>
+    <nav class="foot__nav" aria-label="Футер">
+      <a class="link" href="strategy-fdax.html">Стратегия FDAX</a>
+      <a class="link" href="strategy-nq.html">Стратегия NQ</a>
+      <a class="link" href="relief.html">Relief</a>
+      <a class="link" href="pricing.html">Цены</a>
+      <a class="link" href="about.html">О нас</a>
+    </nav>
+    <p class="foot__fine">
+      <span>TPO / Market Profile · PineScript v6</span><span aria-hidden="true">·</span><span>© 2026 Surface Tension</span>
+    </p>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+</body>
+</html>

@@ -387,72 +387,76 @@
       </div>
       <p class="sec-sub">Every closed period is checked top-down against six rules — the first match wins. Strong Trend is confirmed immediately; the other five are confirmed only once period N+1 fails to contradict the read.</p>
 
-      <!-- Hex-cycle diagram: 6 states as a typical auction path, real internal `reason` strings shown as flavor -->
-      <div class="reveal" style="--i:1;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:0.35rem;margin-top:clamp(1.6rem,3vw,2.2rem)">
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#1a9e78" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#0e6b52;background:rgba(26,158,120,0.14);border-color:rgba(26,158,120,0.32)">1</span>
-          <strong>Strong Trend</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">OTF streak ≥2, |RF|=2, extension holds, pullback &lt;50%.</span>
-          <span class="chip" style="font-size:8px">"OTF×3 RF+2 ext held"</span>
+      <div class="states-grid reveal" style="--i:1">
+        <div class="state-card" style="--st:#1a9e78">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#1a9e78" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Strong Trend</span>
+            <span class="state-card__no" style="color:#0e6b52">1</span>
+          </div>
+          <p class="state-card__txt">Strong trend. OTF streak ≥2, |RF|=2, extension holds, pullback &lt;50%.</p>
+          <span class="chip">"OTF×3 RF+2 ext held"</span>
         </div>
 
-        <span aria-hidden="true" style="align-self:center;color:var(--haze);font-size:1.3rem;padding:0 0.2rem">→</span>
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#c99a45" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#8a6a2e;background:rgba(201,154,69,0.16);border-color:rgba(201,154,69,0.32)">2</span>
-          <strong>Pullback</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">Body holds inside a Single Print zone, 30–60% retrace, no break.</span>
-          <span class="chip" style="font-size:8px">"pullback 42% SP hold"</span>
+        <div class="state-card" style="--st:#c99a45">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#c99a45" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Pullback</span>
+            <span class="state-card__no" style="color:#8a6a2e">2</span>
+          </div>
+          <p class="state-card__txt">Pullback. Body holds inside the Single Print zone, 30–60% retrace, no break.</p>
+          <span class="chip">"pullback 42% SP hold"</span>
         </div>
 
-        <span aria-hidden="true" style="align-self:center;color:var(--haze);font-size:1.3rem;padding:0 0.2rem">→</span>
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#e08a2e" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#97431f;background:rgba(224,138,46,0.16);border-color:rgba(224,138,46,0.32)">3</span>
-          <strong>Fading</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">2+ of 5 exhaustion signs: decay, growing overlap, a tail, POC not following, RF dropped.</span>
-          <span class="chip" style="font-size:8px">"fade vote 3/5"</span>
+        <div class="state-card" style="--st:#e08a2e">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#e08a2e" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Fading</span>
+            <span class="state-card__no" style="color:#97431f">3</span>
+          </div>
+          <p class="state-card__txt">Fading. 2+ of 5 exhaustion signs: decay, rising overlap, tail, POC not following, RF dropped.</p>
+          <span class="chip">"fade vote 3/5"</span>
         </div>
 
-        <span aria-hidden="true" style="align-self:center;color:var(--haze);font-size:1.3rem;padding:0 0.2rem">→</span>
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#c85a20" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#9a3f12;background:rgba(200,90,32,0.16);border-color:rgba(200,90,32,0.32)">4</span>
-          <strong>Reversal</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">A close breaks the old extreme AFTER fading — a confirmed flip in side.</span>
-          <span class="chip" style="font-size:8px">"OTF break after fade, RF+1"</span>
+        <div class="state-card" style="--st:#c85a20">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#c85a20" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Reversal</span>
+            <span class="state-card__no" style="color:#9a3f12">4</span>
+          </div>
+          <p class="state-card__txt">Reversal. A close breaks the old extreme AFTER fading — a confirmed side change.</p>
+          <span class="chip">"OTF break after fade, RF+1"</span>
         </div>
 
-        <span aria-hidden="true" style="align-self:center;color:var(--haze);font-size:1.3rem;padding:0 0.2rem">→</span>
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#ff9800" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#a35800;background:rgba(255,152,0,0.16);border-color:rgba(255,152,0,0.32)">5</span>
-          <strong>Sweep</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">A break with no prior fade — or a wick pierces the level and closes back.</span>
-          <span class="chip" style="font-size:8px">"wick pierce, closed back"</span>
+        <div class="state-card" style="--st:#ff9800">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#ff9800" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Sweep</span>
+            <span class="state-card__no" style="color:#a35800">5</span>
+          </div>
+          <p class="state-card__txt">Sweep. A break with no fading before it — or a wick pierced the level and closed back.</p>
+          <span class="chip">"wick pierce, closed back"</span>
         </div>
 
-        <span aria-hidden="true" style="align-self:center;color:var(--haze);font-size:1.3rem;padding:0 0.2rem">→</span>
-
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.55rem;width:150px;text-align:center">
-          <svg width="60" height="52" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#8a8a8a" fill-opacity="0.85"/></svg>
-          <span class="mod-card__step" style="color:#5c5c5c;background:rgba(43,33,24,0.08);border-color:rgba(43,33,24,0.2)">6</span>
-          <strong>Balance</strong>
-          <span style="font-size:0.8rem;color:var(--haze);line-height:1.5">Two periods in a row overlap ≥70% of range, |RF|≤1 — no edge for either side.</span>
-          <span class="chip" style="font-size:8px">"overlap 78% ×2"</span>
+        <div class="state-card" style="--st:#8a8a8a">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="#8a8a8a" fill-opacity="0.85"/></svg>
+            <span class="state-card__name">Balance</span>
+            <span class="state-card__no" style="color:#5c5c5c">6</span>
+          </div>
+          <p class="state-card__txt">Balance. Two periods overlap ≥70% of range, |RF|≤1 — nobody has the edge.</p>
+          <span class="chip">"overlap 78% ×2"</span>
         </div>
 
-      </div>
+        <div class="state-card state-card--none">
+          <div class="state-card__head">
+            <svg class="state-card__hex" viewBox="0 0 60 52" aria-hidden="true"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="none" stroke="var(--line-strong)" stroke-width="3" stroke-dasharray="5 5"/></svg>
+            <span class="state-card__name">Undefined</span>
+            <span class="state-card__no">0</span>
+          </div>
+          <p class="state-card__txt">None of the six rules matched. The period is left with no read: no allowed direction, no invalidation level.</p>
+        </div>
 
-      <div class="reveal" style="--i:2;display:flex;align-items:center;justify-content:center;gap:0.6rem;margin-top:1.4rem;padding:0.75rem 1.2rem;border:1px dashed var(--line-strong);border-radius:var(--r);max-width:34rem;margin-left:auto;margin-right:auto;background:color-mix(in srgb, var(--cream) 50%, transparent)">
-        <svg width="34" height="30" viewBox="0 0 60 52" aria-hidden="true" style="flex-shrink:0"><polygon points="30,2 55,15 55,37 30,50 5,37 5,15" fill="none" stroke="var(--line-strong)" stroke-width="2" stroke-dasharray="4 4"/></svg>
-        <span style="font-size:0.82rem;color:var(--haze)"><strong style="color:var(--ink-900)">0 · Undefined</strong> — none of the six rules matched. The period is left with no read: no allowed direction, no invalidation level.</span>
       </div>
 
       <p class="sec-sub" style="margin-top:1.6rem;max-width:var(--measure)">Reversal is the only read that can walk itself back: if period N+1 closes back past the break level, the read is retroactively demoted to Sweep. An unconfirmed reversal stays unconfirmed — no exceptions.</p>
@@ -469,6 +473,37 @@
       </div>
       <p class="sec-sub">The badge doesn't just say "this signal passed" — it shows why. Every bypass that passed gets its own dot-separated tag next to the direction.</p>
 
+      <div class="settings-wrap reveal" style="margin-bottom:1.6rem">
+        <table class="settings-table">
+          <thead>
+            <tr><th>Letter</th><th>Means</th><th>When it shows up</th></tr>
+          </thead>
+          <tbody>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-bull">Direction — first</span></td></tr>
+            <tr><td>↑ / ↓</td><td class="def">long / short</td><td>A delta bar with a confirmed Fair Value Gap.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-info">Bypasses — after the arrow, dot-separated</span></td></tr>
+            <tr><td>F</td><td class="def">VWAP break</td><td>First signal after N confirming closes past VWAP, in the break's direction.</td></tr>
+            <tr><td>V</td><td class="def">Volatile Bar</td><td>Signal inside a coloured VB dot's window. Counts when only the delta bar landed in it and the FVG matured later.</td></tr>
+            <tr><td>Eq</td><td class="def">EQ liquidity</td><td>The delta bar printed a significant equal high/low agreeing with the live period's colour.</td></tr>
+            <tr><td>FR · LDN</td><td class="def">session level</td><td>A Frankfurt or London high/low was taken. Highs arm shorts, lows arm longs.</td></tr>
+            <tr><td>PD · PW</td><td class="def">day / week level</td><td>Same for pdH/pdL and pwH/pwL. Tracked even when the lines are hidden.</td></tr>
+            <tr><td>RS</td><td class="def">re-sweep</td><td>The level left by a previous FR/LDN/PD/PW signal's delta bar gets taken again.</td></tr>
+
+            <tr class="grp-row"><td colspan="3"><span class="tag tag-struct">Scenario — always last</span></td></tr>
+            <tr><td>T</td><td class="def">1 · Strong Trend</td><td>Trend continuation, OTF direction only.</td></tr>
+            <tr><td>P</td><td class="def">2 · Pullback</td><td>Pullback in trend, anchored to a Single Print or a period edge.</td></tr>
+            <tr><td>D</td><td class="def">3 · Fading</td><td>Fade against an exhausting trend. D (fa<strong>D</strong>ing), not F — F in the badge already means the VWAP break.</td></tr>
+            <tr><td>R</td><td class="def">4 · Reversal</td><td>Break direction only, anchored to a retest of the break level.</td></tr>
+            <tr><td>W</td><td class="def">5 · Sweep</td><td>The return after a sweep, anchored to the level taken. W (s<strong>W</strong>eep), not S — S is taken by "short".</td></tr>
+            <tr><td>B</td><td class="def">6 · Balance</td><td>Edges only: top third shorts, bottom third longs, the middle is dead.</td></tr>
+            <tr><td><em>nothing</em></td><td class="def">0 · Undefined</td><td>No read — nothing to name.</td></tr>
+
+          </tbody>
+        </table>
+      </div>
+
       <div class="info-rows">
 
         <div class="info-row reveal" style="--i:0">
@@ -483,53 +518,6 @@
           </div>
         </div>
 
-        <div class="info-row reveal" style="--i:1">
-          <span class="info-row__badge tag-info">F</span>
-          <div>
-            <h3>After a VWAP break</h3>
-            <p>The first signal in either direction after N confirming closes past VWAP. The signal's direction must match the break direction — otherwise no tag gets attached, and the arm just resets silently.</p>
-          </div>
-        </div>
-
-        <div class="info-row reveal" style="--i:2">
-          <span class="info-row__badge tag-info">V</span>
-          <div>
-            <h3>Volatile Bar window</h3>
-            <p>A signal in the direction of a colored (non-gray) VB dot, within an N-bar window starting at the VB bar itself. Also fires when only the signal's delta bar landed in the window and the FVG completed later.</p>
-          </div>
-        </div>
-
-        <div class="info-row reveal" style="--i:3">
-          <span class="info-row__badge tag-info">Eq</span>
-          <div>
-            <h3>EQ liquidity</h3>
-            <p>The signal's own delta bar formed a significant equal high/low — but the tag only attaches if that agrees with the currently forming period's color.</p>
-          </div>
-        </div>
-
-        <div class="info-row reveal" style="--i:4">
-          <span class="info-row__badge tag-info">FR · LDN</span>
-          <div>
-            <h3>Session level sweep</h3>
-            <p>Sweeping the Frankfurt/London high arms shorts, sweeping the low arms longs (mean-reversion). Stays armed with no time limit until the next signal that actually passes.</p>
-          </div>
-        </div>
-
-        <div class="info-row reveal" style="--i:5">
-          <span class="info-row__badge tag-info">PD · PW</span>
-          <div>
-            <h3>Day/week level sweep</h3>
-            <p>Same logic for pdH/pdL and pwH/pwL: sweeping the high arms shorts, the low arms longs. Tracked independently of whether the level lines are even shown on the chart.</p>
-          </div>
-        </div>
-
-        <div class="info-row reveal" style="--i:6">
-          <span class="info-row__badge tag-info">RS</span>
-          <div>
-            <h3>Re-sweep</h3>
-            <p>Any FR/LDN/PD/PW-tagged signal leaves a level behind at its own delta bar. If price sweeps that level again, the next signal in the SAME direction gets an RS tag: a second liquidity grab on top of the first.</p>
-          </div>
-        </div>
 
         <div class="info-row reveal" style="--i:7">
           <span class="info-row__badge tag-struct">br → BR ✓ → BR ▲</span>
